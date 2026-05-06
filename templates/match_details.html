@@ -37,7 +37,7 @@
     <!-- TEAM 1 -->
     <div class="team-row">
         <div class="left">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team1 + '.png') }}" class="logo-img">
+            <img src="{{ url_for('static', filename='images/teams/' + first.batting + '.png') }}">
             {{ first.batting|upper }}
         </div>
         <div class="right">
@@ -49,7 +49,7 @@
     {% if second.score %}
     <div class="team-row">
         <div class="left">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team2 + '.png') }}" class="logo-img">
+            <img src="{{ url_for('static', filename='images/teams/' + second.batting + '.png') }}">
             {{ second.batting|upper }}
         </div>
         <div class="right">
