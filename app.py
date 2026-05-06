@@ -243,103 +243,174 @@ def home_live_data():
     import time
 
     if time.time() - home_cache["time"] < 2 and home_cache["data"]:
+
         return home_cache["data"]
 
     live_match = None
     completed_match = None
 
     try:
+
         folder = "data/all_match"
+
         lock_file = "data/home_current.txt"
 
         files = sorted(os.listdir(folder), reverse=True)
+
+        # 🔥 ONLY FIRST INNINGS FILE
         files = [f for f in files if f.endswith("_1st.txt")]
 
         # 🔥 LOCK LOAD
         if os.path.exists(lock_file):
+
             with open(lock_file) as f:
+
                 locked = f.read().strip()
 
             if locked in files:
+
                 files = [locked]
 
         for file in files:
+
             path = os.path.join(folder, file)
 
-            with open(path) as f:
-                content = f.read()
-
-            # 🔥 LOAD FIRST INNINGS
-
             first = {}
-
-            for line in content.splitlines():
-
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    first[k] = v
-
-            # 🔥 LOAD SECOND INNINGS
-
             second = {}
+
+            # =========================
+            # 🔥 LOAD FIRST INNINGS
+            # =========================
+
+            try:
+
+                with open(path) as f:
+
+                    for line in f:
+
+                        if "=" in line:
+
+                            k, v = line.strip().split("=", 1)
+
+                            first[k] = v
+
+            except:
+                continue
+
+            # =========================
+            # 🔥 LOAD SECOND INNINGS
+            # =========================
 
             second_file = path.replace("_1st.txt", "_2nd.txt")
 
             if os.path.exists(second_file):
 
-                with open(second_file) as sf:
+                try:
 
-                    for line in sf:
+                    with open(second_file) as sf:
 
-                        if "=" in line:
-                            k, v = line.strip().split("=", 1)
-                            second[k] = v
+                        for line in sf:
+
+                            if "=" in line:
+
+                                k, v = line.strip().split("=", 1)
+
+                                second[k] = v
+
+                except:
+                    pass
+
+            # =========================
+            # 🔥 MATCH INFO
+            # =========================
 
             innings_break = len(second) > 0
 
             team1 = first.get("batting")
+
             team2 = second.get("batting") or first.get("bowling")
 
             team2_score = second.get("score", "")
-            team2_wickets = second.get("wickets", "")
-            team2_over = f"{second.get('over','0')}.{second.get('ball','0')}"
 
-            if second.get("over", "0") == "0" and second.get("ball", "0") == "0":
+            team2_wickets = second.get("wickets", "")
+
+            team2_over = (
+                f"{second.get('over','0')}."
+                f"{second.get('ball','0')}"
+            )
+
+            if (
+                second.get("over", "0") == "0"
+                and second.get("ball", "0") == "0"
+            ):
+
                 if innings_break:
+
                     team2_score = "0"
                     team2_wickets = "0"
                     team2_over = "0.0"
+
                 else:
+
                     team2_score = ""
                     team2_wickets = ""
                     team2_over = ""
 
-            result_text = ""
+            # =========================
+            # 🔥 RESULT
+            # =========================
+
             result_text = second.get("match_result", "")
+
             match_data = {
+
                 "team1": team1,
+
                 "team1_score": first.get("score", "0"),
+
                 "team1_wickets": first.get("wickets", "0"),
-                "team1_over": f"{first.get('over','0')}.{first.get('ball','0')}",
+
+                "team1_over":
+                f"{first.get('over','0')}."
+                f"{first.get('ball','0')}",
 
                 "team2": team2,
+
                 "team2_score": team2_score,
+
                 "team2_wickets": team2_wickets,
+
                 "team2_over": team2_over,
 
                 "result": result_text,
+
                 "need_text": second.get("need_text"),
+
                 "toss": first.get("toss"),
+
                 "opt": first.get("opt"),
+
                 "innings_break": innings_break,
             }
 
+            # =========================
+            # 🔥 LIVE
+            # =========================
+
             if not result_text and live_match is None:
+
                 match_data["status"] = "LIVE"
+
                 live_match = match_data
 
+            # =========================
+            # 🔥 COMPLETED
+            # =========================
+
             if result_text and completed_match is None:
+
                 match_data["status"] = "COMPLETED"
+
                 completed_match = match_data
 
             if live_match and completed_match:
@@ -356,6 +427,7 @@ def home_live_data():
     )
 
     home_cache["data"] = response
+
     home_cache["time"] = time.time()
 
     return response
@@ -3018,147 +3090,276 @@ def latest_history():
     import os
 
     folder = "data/all_match"
+
     matches = []
 
-    for file in os.listdir(folder):
-        path = os.path.join(folder, file)
+    # 🔥 ONLY FIRST INNINGS FILE
+    files = [f for f in os.listdir(folder) if f.endswith("_1st.txt")]
 
-        with open(path) as f:
-            content = f.read()
+    for file in files:
 
-        # শুধু COMPLETED
-        if "===== MATCH RESULT =====" not in content or content.strip().endswith("====="):
-         continue
-
-        # 🔥 FIRST INNINGS
         first = {}
-
-        first_part = content.split("===== END OF FIRST INNINGS =====")[0]
-
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
-
-        # 🔥 SECOND INNINGS (NEW ADD — SAFE)
         second = {}
 
-        if "===== END OF FIRST INNINGS =====" in content:
-            second_part = content.split("===== END OF FIRST INNINGS =====")[1]
+        path = os.path.join(folder, file)
 
-            for line in second_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    second[k] = v
+        # =========================
+        # 🔥 LOAD FIRST INNINGS
+        # =========================
+
+        try:
+
+            with open(path) as f:
+
+                for line in f:
+
+                    if "=" in line:
+
+                        k, v = line.strip().split("=", 1)
+
+                        first[k] = v
+
+        except:
+            continue
+
+        # =========================
+        # 🔥 LOAD SECOND INNINGS
+        # =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            try:
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+
+                            k, v = line.strip().split("=", 1)
+
+                            second[k] = v
+
+            except:
+                pass
+
+        # =========================
+        # 🔥 COMPLETED ONLY
+        # =========================
+
+        result = second.get("match_result", "")
+
+        if not result:
+            continue
+
+        # =========================
+        # 🔥 TEAM INFO
+        # =========================
 
         team1 = first.get("batting")
 
         team2 = second.get("batting")
+
         if not team2:
+
             team2 = first.get("bowling")
 
-        # 🔥 NEW ✔ (ONLY FIRST LINE)
-        result_block = content.split("===== MATCH RESULT =====")[-1].strip()
-        result = result_block.splitlines()[0] if result_block else ""
+        # =========================
+        # 🔥 APPEND
+        # =========================
 
         matches.append({
+
             "team1": team1,
+
             "team2": team2,
 
-            "team1_score": first.get("score","0"),
-            "team1_wickets": first.get("wickets","0"),
-            "team1_over": f"{first.get('over','0')}.{first.get('ball','0')}",
+            "team1_score": first.get("score", "0"),
 
-            # 🔥 FIXED (SECOND INNINGS)
-            "team2_score": second.get("score","0"),
-            "team2_wickets": second.get("wickets","0"),
-            "team2_over": f"{second.get('over','0')}.{second.get('ball','0')}",
+            "team1_wickets": first.get("wickets", "0"),
+
+            "team1_over":
+            f"{first.get('over','0')}."
+            f"{first.get('ball','0')}",
+
+            "team2_score": second.get("score", "0"),
+
+            "team2_wickets": second.get("wickets", "0"),
+
+            "team2_over":
+            f"{second.get('over','0')}."
+            f"{second.get('ball','0')}",
+
             "date": first.get("match_time"),
+
             "result": result,
+
             "status": "COMPLETED",
+
             "file": file
         })
 
+    # =========================
+    # 🔥 SORT
+    # =========================
+
     from datetime import datetime
+
     def parse_time(m):
+
         try:
-            return datetime.strptime(m.get("date",""), "%d %b %Y, %I:%M %p")
+
+            return datetime.strptime(
+                m.get("date", ""),
+                "%d %b %Y, %I:%M %p"
+            )
+
         except:
+
             return datetime.min
 
-    matches.sort(key=parse_time, reverse=True)  # latest first
+    matches.sort(key=parse_time, reverse=True)
 
-    return render_template("history_partial.html", matches=matches[:10], hide_delete=True)
+    return render_template(
+        "history_partial.html",
+        matches=matches[:10],
+        hide_delete=True
+    )
 
 @app.route("/history-scorecard-data")
 def history_scorecard_data():
 
-    import os, json
+    import os
+    import json
 
     file = request.args.get("file")
+
     path = os.path.join("data/all_match", file)
 
     first = {}
     second = {}
 
+    # =========================
+    # 🔥 LOAD FIRST INNINGS
+    # =========================
+
     try:
+
         with open(path) as f:
-            content = f.read()
 
-        parts = content.split("===== END OF FIRST INNINGS =====")
+            for line in f:
 
-        first_part = parts[0]
-        second_part = parts[1] if len(parts) > 1 else ""
+                if "=" in line:
 
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
+                    k, v = line.strip().split("=", 1)
 
-        for line in second_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                second[k] = v
+                    first[k] = v
 
     except:
         pass
 
-    def safe_json(text):
+    # =========================
+    # 🔥 LOAD SECOND INNINGS
+    # =========================
+
+    second_file = path.replace("_1st.txt", "_2nd.txt")
+
+    if os.path.exists(second_file):
+
         try:
-            return json.loads(text)
+
+            with open(second_file) as sf:
+
+                for line in sf:
+
+                    if "=" in line:
+
+                        k, v = line.strip().split("=", 1)
+
+                        second[k] = v
+
         except:
+            pass
+
+    # =========================
+    # 🔥 SAFE JSON
+    # =========================
+
+    def safe_json(text):
+
+        try:
+
+            return json.loads(text)
+
+        except:
+
             return []
 
-    first["wickets_log"] = safe_json(first.get("wickets_log","[]"))
-    second["wickets_log"] = safe_json(second.get("wickets_log","[]"))
+    first["wickets_log"] = safe_json(
+        first.get("wickets_log", "[]")
+    )
+
+    second["wickets_log"] = safe_json(
+        second.get("wickets_log", "[]")
+    )
+
+    # =========================
+    # 🔥 DISMISSALS
+    # =========================
 
     def clean(n):
+
         return n.split('(')[0].strip().lower()
 
     def build_map(log):
+
         d = {}
+
         for w in log:
+
             key = clean(w.get("batsman", ""))
+
             t = (w.get("type") or "").lower()
+
             bowler = w.get("bowler", "")
 
             if t == "bowled":
+
                 d[key] = f"b {bowler}"
+
             elif "catch" in t:
+
                 d[key] = f"c b {bowler}"
+
             elif "run out" in t:
+
                 d[key] = "run out"
+
             elif t == "lbw":
+
                 d[key] = f"lbw b {bowler}"
+
             else:
+
                 d[key] = w.get("type", "out")
 
         return d
 
-    first["dismissals"] = build_map(first["wickets_log"])
-    second["dismissals"] = build_map(second["wickets_log"])
+    first["dismissals"] = build_map(
+        first["wickets_log"]
+    )
 
-    return render_template("partials/history_scorecard.html", first=first, second=second)
+    second["dismissals"] = build_map(
+        second["wickets_log"]
+    )
+
+    return render_template(
+        "partials/history_scorecard.html",
+        first=first,
+        second=second
+    )
 
 @app.route("/all-match-files")
 def all_match_files_page():
