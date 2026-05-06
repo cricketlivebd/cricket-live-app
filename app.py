@@ -1230,7 +1230,7 @@ def opening_players():
 @app.route("/save-match")
 def save_match():
 
-    import os  # 🔥 ADD
+    import os
 
     open("data/history.txt", "w").close()
 
@@ -1240,32 +1240,54 @@ def save_match():
     opt = request.args.get("opt")
     overs = request.args.get("overs")
 
-    toss_winner = host if toss == "host" else visitor
-
-    if opt == "bat":
-        batting = toss_winner
-        bowling = visitor if toss_winner == host else host
+    # 🔥 SAFE TOSS WINNER
+    if toss == "host":
+        toss_winner = host
     else:
+        toss_winner = visitor
+
+    # 🔥 SAFE BATTING / BOWLING
+    if opt == "bat":
+
+        batting = toss_winner
+
+        if toss_winner == host:
+            bowling = visitor
+        else:
+            bowling = host
+
+    else:
+
         bowling = toss_winner
-        batting = visitor if toss_winner == host else host
+
+        if toss_winner == host:
+            batting = visitor
+        else:
+            batting = host
 
     # 🔥 MATCH FILE NAME
     file_name = f"data/all_match/{host}_vs_{visitor}.txt".replace(" ", "_")
     open(file_name, "a").close()
 
     from datetime import datetime
+
     bd_time = datetime.now(pytz.timezone("Asia/Dhaka"))
     match_time = bd_time.strftime("%d %b %Y, %I:%M %p")
 
     import json
 
-    import json
     def load_team(file):
+
         players = []
+
         try:
+
             with open(file) as f:
+
                 for line in f:
+
                     line = line.strip()
+
                     if not line:
                         continue
 
@@ -1280,14 +1302,16 @@ def save_match():
                         "role": role,
                         "extra": extra
                     })
+
         except:
             pass
 
         return players
+
     team1_list = load_team(f"data/teamlist/{host}.txt")
     team2_list = load_team(f"data/teamlist/{visitor}.txt")
 
-    # 🔥 WRITE ALL DATA ONCE
+    # 🔥 WRITE MATCH DATA
     with open("data/current_match.txt", "w") as f:
 
         f.write(f"host={host}\n")
@@ -1327,21 +1351,23 @@ def save_match():
 
         f.write("extra=0,0LB,0B,0WD,0NB\n")
         f.write("partnerships=[]\n")
-        f.write("innings=1\n")
 
         # 🔥 IMPORTANT
+        f.write("innings=1\n")
+
         f.write(f"match_file={file_name}\n")
         f.write(f"match_time={match_time}\n")
+
         f.write("wickets_log=[]\n")
-        # 🔥 SQUAD SAVE (NEW - SAFE)
-        # 🔥 dynamic squad key
+
+        # 🔥 SQUADS
         t1_key = host.replace(" ", "_") + "_squad"
         t2_key = visitor.replace(" ", "_") + "_squad"
 
         f.write(f"{t1_key}={json.dumps(team1_list)}\n")
         f.write(f"{t2_key}={json.dumps(team2_list)}\n")
 
-    # 🔥🔥🔥 ADD THIS (VERY IMPORTANT)
+    # 🔥 RESET HOME LOCK
     try:
         os.remove("data/home_current.txt")
     except:
