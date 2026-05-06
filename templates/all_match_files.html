@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Match Files</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="nav">
+    <a href="/live">Back</a>
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+</div>
+
+<h2 class="fixture-title">All Match Files</h2>
+
+<div class="team-grid">
+
+    {% for m in matches %}
+    <a href="/match-editor?file={{ m.file }}" class="team-card row-card">
+
+        <!-- 🔴 TEAM 1 -->
+        <div class="team-side">
+            <img src="{{ url_for('static', filename='images/teams/' + m.team1|lower + '.png') }}">
+            <span>{{ m.team1 }}</span>
+        </div>
+
+        <!-- 🆚 -->
+        <div class="vs-text">VS</div>
+
+        <!-- 🔵 TEAM 2 -->
+        <div class="team-side">
+            <img src="{{ url_for('static', filename='images/teams/' + m.team2|lower + '.png') }}">
+            <span>{{ m.team2 }}</span>
+        </div>
+
+    </a>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

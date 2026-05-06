@@ -1,0 +1,93 @@
+host=X-Factor-10
+visitor=LEGENDS-09
+toss=X-Factor-10
+opt=bat
+batting=X-Factor-10
+bowling=LEGENDS-09
+overs=1
+score=36
+wickets=0
+over=1
+ball=0
+s_runs=0
+s_balls=0
+s_4=0
+s_6=0
+s_sr=0
+ns_runs=36
+ns_balls=6
+ns_4=0
+ns_6=6
+ns_sr=0
+b_runs=36
+b_balls=6
+b_maiden=0
+b_wickets=0
+b_er=0
+batsman_log=MEHEDI (VC)=36,6,0,6,0|MUNNA (C)=0,0,0,0,0
+this_over=
+over_log=6,6,6,6,6,6
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"MEHEDI (VC)","nonStriker":"MUNNA (C)","runs":36,"balls":6}]
+innings=1
+match_file=data/all_match/X-Factor-10_vs_LEGENDS-09.txt
+match_time=05 May 2026, 02:32 PM
+wickets_log=[]
+X-Factor-10_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+LEGENDS-09_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=MUNNA (C)
+non_striker=MEHEDI (VC)
+bowler=MARUF
+bowler_log=MARUF=1.0,36,0,0,0
+
+===== END OF FIRST INNINGS =====
+
+host=X-Factor-10
+visitor=LEGENDS-09
+toss=X-Factor-10
+opt=bat
+batting=LEGENDS-09
+bowling=X-Factor-10
+overs=1
+score=6
+wickets=0
+over=1
+ball=0
+s_runs=3
+s_balls=3
+s_4=0
+s_6=0
+s_sr=0
+ns_runs=3
+ns_balls=3
+ns_4=0
+ns_6=0
+ns_sr=0
+b_runs=6
+b_balls=6
+b_maiden=0
+b_wickets=0
+b_er=0
+batsman_log=SWEET (WK)=3,3,0,0,0|POLASH=3,3,0,0,0
+this_over=
+over_log=1,1,1,1,1,1
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"SWEET (WK)","nonStriker":"POLASH","runs":6,"balls":6}]
+innings=2
+match_file=data/all_match/X-Factor-10_vs_LEGENDS-09.txt
+match_time=05 May 2026, 02:32 PM
+wickets_log=
+X-Factor-10_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+LEGENDS-09_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=POLASH
+non_striker=SWEET (WK)
+bowler=MEHEDI (VC)
+bowler_log=MEHEDI (VC)=1.0,6,0,0,0
+target=37
+Man_of_the_Match=
+need_runs=31
+need_balls=0
+need_text=LEGENDS-09 need 31 runs in 0 balls
+
+===== MATCH RESULT =====
+X-Factor-10 Win by 30 runs

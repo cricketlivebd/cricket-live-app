@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Player Images</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 🔥 Navigation -->
+<div class="nav">
+    <a href="/live">Back</a>
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+
+<h2 class="fixture-title">Player Images</h2>
+
+<!-- 🔥 TOP BAR -->
+<div class="top-bar">
+
+    <!-- Upload -->
+    <form action="/upload-player-image" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <!-- Select + Delete -->
+    <div>
+        <button type="button" onclick="toggleSelect()">Select</button>
+
+        <form id="deleteForm" action="/delete-multiple" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Delete selected images?')">Delete</button>
+        </form>
+    </div>
+
+</div>
+
+<!-- 🔥 Image List -->
+<div class="image-grid">
+    {% for img in images %}
+    <div class="image-card" oncontextmenu="renameImage(event, '{{img}}')">
+
+        <!-- 🔥 checkbox -->
+        <input type="checkbox" name="files" value="{{ img }}" class="select-box" form="deleteForm">
+
+        <img src="{{ url_for('static', filename='images/players/' + img) }}">
+        <p>{{ img }}</p>
+
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function toggleSelect() {
+    const boxes = document.querySelectorAll(".select-box");
+
+    boxes.forEach(box => {
+        box.style.display = "block";
+    });
+}
+
+function renameImage(e, oldName) {
+    e.preventDefault(); // 🔥 right click menu off
+
+    let newName = prompt("Enter new name:", oldName);
+
+    if (!newName) return;
+
+    fetch("/rename-image", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "old=" + encodeURIComponent(oldName) + "&new=" + encodeURIComponent(newName)
+    })
+    .then(() => location.reload());
+}
+
+</script>
+
+</body>
+</html>

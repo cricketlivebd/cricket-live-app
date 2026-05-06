@@ -1,0 +1,86 @@
+{% for m in matches %}
+
+<div class="history-card"onclick="goDetails('{{ m.file }}')"data-file="{{ m.file }}">
+    <div class="status-badge {{ m.status|lower }}">
+        {{ m.status }}
+    </div>
+
+    <div class="match-date">
+        {{ m.date if m.date else "Match" }}
+    </div>
+
+    <div class="team-row">
+        <div class="team-left">
+            <img src="{{ url_for('static', filename='images/teams/' + m.team1|lower + '.png') }}" class="logo-img">
+            <span>{{ m.team1 }}</span>
+        </div>
+
+        <div class="team-score">
+            {{ m.team1_score }}/{{ m.team1_wickets }}
+            <span>({{ m.team1_over }})</span>
+        </div>
+    </div>
+
+    <div class="team-row">
+        <div class="team-left">
+            <img src="{{ url_for('static', filename='images/teams/' + m.team2|lower + '.png') }}" class="logo-img">
+            <span>{{ m.team2 }}</span>
+        </div>
+
+        <div class="team-score">
+
+            {% if m.team2_score != "" %}
+                {{ m.team2_score }}/{{ m.team2_wickets }}
+                <span>({{ m.team2_over }})</span>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="result-row">
+
+        <span class="result-text">
+
+            {% if m.result %}
+                {{ m.result }}
+
+            {% elif m.need_text %}
+                {{ m.need_text }}
+
+            {% elif m.innings_break %}
+                Innings Break
+
+            {% else %}
+                {{ m.toss }} opted to {{ m.opt }}
+            {% endif %}
+
+        </span>
+
+    </div>
+
+    <!-- 🔥 NEW ACTION ROW -->
+    <div class="action-row">
+
+        {% if m.status != "COMPLETED" %}
+        <a href="{{ url_for('resume_match', file=m.file) }}" class="resume-btn">
+            ▶ Resume
+        </a>
+        {% endif %}
+
+        {% if not hide_delete %}
+        <a href="/delete-match/{{ m.file }}"
+        class="delete-icon"
+        onclick="event.stopPropagation(); return confirm('Delete this match?')">
+        🗑
+        </a>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endfor %}
+<script>
+function goDetails(file){
+    window.location.href = "/match-details?file=" + file;
+}
+</script>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="nav">
+    <a href="/live-score">Back</a>
+    <a href="/">Home</a>
+</div>
+
+<h2 class="fixture-title">📜 Match History</h2>
+
+<!-- 🔥 ONLY THIS DIV WILL UPDATE -->
+<div id="history-container">
+    {% include "history_partial.html" %}
+</div>
+
+<!-- 🔥 AJAX SCRIPT -->
+<script>
+setInterval(() => {
+    fetch("/history-data?t=" + new Date().getTime())
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("history-container").innerHTML = html;
+        });
+}, 500);
+</script>
+
+</body>
+</html>

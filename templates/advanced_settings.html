@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<!-- 🔥 Navigation -->
+<div class="nav">
+    <a href="/new-match">Back</a>
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+<h2 class="fixture-title">⚙️ Match Settings</h2>
+
+<div class="adv-form">
+
+    <!-- Players -->
+<label>Players per team?</label>
+<div class="adv-card">
+    <input type="number" name="players" value="{{ data.players }}">
+</div>
+
+<!-- No Ball -->
+<label>No Ball</label>
+<div class="adv-card adv-row">
+    <span>Enable</span>
+    <input type="checkbox" class="toggle" name="noball"
+        {% if data.noball == '1' %}checked{% endif %}>
+</div>
+
+<div class="adv-card">
+    <div class="adv-row">
+        <span>Re-ball</span>
+        <input type="checkbox" class="toggle" name="noball_reball"
+            {% if data.noball_reball == '1' %}checked{% endif %}>
+    </div>
+    <div class="adv-row">
+        <span>No ball run</span>
+        <input type="number" name="noball_run" value="{{ data.noball_run }}">
+    </div>
+</div>
+
+<!-- Wide Ball -->
+<label>Wide Ball</label>
+<div class="adv-card adv-row">
+    <span>Enable</span>
+    <input type="checkbox" class="toggle" name="wide"
+        {% if data.wide == '1' %}checked{% endif %}>
+</div>
+
+<div class="adv-card">
+    <div class="adv-row">
+        <span>Re-ball</span>
+        <input type="checkbox" class="toggle" name="wide_reball"
+            {% if data.wide_reball == '1' %}checked{% endif %}>
+    </div>
+    <div class="adv-row">
+        <span>Wide ball run</span>
+        <input type="number" name="wide_run" value="{{ data.wide_run }}">
+    </div>
+</div>
+
+<!-- Save -->
+<button onclick="saveSettings()" class="save-btn">
+    Save Settings
+</button>
+
+</div>
+<script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
+</body>
+</html>

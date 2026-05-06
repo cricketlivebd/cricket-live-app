@@ -1,0 +1,10 @@
+Shimul,All Rounder
+Shakkhor,All rounder
+SWEET (WK),Wicket keeper
+POLASH,All rounder
+SAKIL,BATSMAN
+MARUF,BOWLAR
+SAIKAT,ALROUNDER
+SHOHAG,Batsman
+RONY,bench, Batsman
+piyas,stf, coach

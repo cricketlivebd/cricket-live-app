@@ -1,0 +1,94 @@
+host=DANGER-23
+visitor=FIRE FALCON-21
+toss=DANGER-23
+opt=bat
+batting=DANGER-23
+bowling=FIRE FALCON-21
+overs=1
+score=6
+wickets=0
+over=1
+ball=0
+s_runs=3
+s_balls=3
+s_4=0
+s_6=0
+s_sr=0
+ns_runs=3
+ns_balls=3
+ns_4=0
+ns_6=0
+ns_sr=0
+b_runs=6
+b_balls=6
+b_maiden=0
+b_wickets=0
+b_er=0
+batsman_log=SAKIL=3,3,0,0,0|MEHEDI (VC)=3,3,0,0,0
+this_over=
+over_log=1,1,1,1,1,1
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"SAKIL","nonStriker":"MEHEDI (VC)","runs":6,"balls":6}]
+innings=1
+match_file=data/all_match/DANGER-23_vs_FIRE_FALCON-21.txt
+match_time=05 May 2026, 12:39 PM
+wickets_log=[]
+DANGER-23_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+FIRE_FALCON-21_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=MEHEDI (VC)
+non_striker=SAKIL
+bowler=RONY
+bowler_log=RONY=1.0,6,0,0,0
+
+===== END OF FIRST INNINGS =====
+
+host=DANGER-23
+visitor=FIRE FALCON-21
+toss=DANGER-23
+opt=bat
+batting=FIRE FALCON-21
+bowling=DANGER-23
+overs=1
+score=8
+wickets=0
+over=0
+ball=4
+s_runs=8
+s_balls=4
+s_4=2
+s_6=0
+s_sr=200.00
+ns_runs=0
+ns_balls=0
+ns_4=0
+ns_6=0
+ns_sr=0
+b_runs=8
+b_balls=4
+b_maiden=0
+b_wickets=0
+b_er=12.00
+batsman_log=MEHEDI (VC)=8,4,2,0,200.00|SWEET (WK)=0,0,0,0,0
+this_over=4,0,0,4
+over_log=
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"MEHEDI (VC)","nonStriker":"SWEET (WK)","runs":8,"balls":4}]
+innings=2
+match_file=data/all_match/DANGER-23_vs_FIRE_FALCON-21.txt
+match_time=05 May 2026, 12:39 PM
+wickets_log=
+DANGER-23_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+FIRE_FALCON-21_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=MEHEDI (VC)
+non_striker=SWEET (WK)
+bowler=piyas
+bowler_log=piyas=0.4,8,0,0,12.00
+===== END OF FIRST INNINGS =====
+target=7
+Man_of_the_Match=
+need_runs=0
+need_balls=2
+need_text=FIRE FALCON-21 need 0 runs in 2 balls
+
+===== MATCH RESULT =====
+FIRE FALCON-21 won by 8 wickets

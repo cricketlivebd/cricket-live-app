@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Most Runs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body{
+            margin:0;
+            font-family: Arial;
+            background: linear-gradient(135deg, #1d2b64, #f8cdda);
+        }
+
+        .nav {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            background: linear-gradient(45deg, #4facfe, #00f2fe, #43e97b);
+            /*background: linear-gradient(45deg, #667eea, #764ba2);*/
+            overflow-y: visible;
+            scrollbar-width: none;
+        }
+
+        .nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav a{
+            flex:1;
+            padding:10px;
+            text-align:center;
+            text-decoration:none;
+            color:black;
+            font-weight:bold;
+            border-right: 1px solid rgba(255,255,255,0.4);
+        }
+
+        /* TITLE */
+        .title{
+            text-align:center;
+            margin:15px;
+            font-size:22px;
+            font-weight:bold;
+            color:white;
+        }
+
+        /* TABLE */
+        .table-box{
+            margin:10px;
+        }
+
+        .header{
+            display:grid;
+            grid-template-columns: 2fr repeat(6, 1fr);
+            padding:12px;
+            background: linear-gradient(90deg, #ff512f, #dd2476, #1fa2ff);
+            color:white;
+            font-weight:bold;
+            border-radius:12px;
+            text-align:center;
+        }
+
+        .header div:first-child{
+            text-align:left;
+            padding-left:10px;
+        }
+
+        .row{
+            display:grid;
+            grid-template-columns: 2fr repeat(6, 1fr);
+            padding:10px;
+            margin:6px 0;
+            background: rgba(255,255,255,0.08);
+            border-radius:10px;
+            color:white;
+            align-items:center;
+            text-align:center;
+        }
+
+        .row div:first-child{
+            text-align:left;
+            padding-left:10px;
+        }
+
+        .row:hover{
+            background: rgba(0,150,255,0.25);
+        }
+
+        /* TOP 4 */
+        .top{
+            background: rgba(255,255,255,0.08);
+            color:white;
+            font-weight:bold;
+             border-left: 5px solid gold;
+        }
+
+        /* MOBILE */
+        @media(max-width:768px){
+            .header,.row{
+                font-size:11px;
+                padding:8px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<div class="nav">
+    <a href="/stats">Back</a>
+    <a href="/">Home</a>
+    <a href="/stats">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+</div>
+
+<!-- TITLE -->
+<div class="title">🏏 Most Runs</div>
+
+<!-- TABLE -->
+<div class="table-box">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div>Player</div>
+        <div>M</div>
+        <div>Inns</div>
+        <div>Runs</div>
+        <div>SR</div>
+        <div>4s</div>
+        <div>6s</div>
+    </div>
+
+    <!-- DATA -->
+    {% for p in players %}
+    <div class="row {% if loop.index <= 1 %}top{% endif %}">
+        <div>{{ p.player }}</div>
+        <div>{{ p.match }}</div>
+        <div>{{ p.inns }}</div>
+        <div><b>{{ p.runs }}</b></div>
+        <div>{{ p.sr }}</div>
+        <div>{{ p.fours }}</div>
+        <div>{{ p.sixes }}</div>
+    </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

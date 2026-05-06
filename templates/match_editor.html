@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match Editor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body{
+            margin: 0;
+            background: linear-gradient(135deg, #1d2b64, #f8cdda);
+            font-family: Arial, sans-serif;
+        }
+
+        .editor-container{
+            max-width: 1500px;
+            margin: auto;
+            padding: 12px;
+        }
+
+        .card-block{
+            background:linear-gradient(135deg, #1d2b64, #f8cdda);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 4px 12px linear-gradient(135deg, #1d2b64, #f8cdda);
+        }
+
+        .card-title{
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00ff9c;
+        }
+
+        .label{
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        textarea, input{
+            width: 100%;
+            max-width: 100%;
+            border-radius: 10px;
+            border: none;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #1d2b64);
+            color: white;
+            font-size: 14px;
+        }
+
+        textarea{
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .hint{
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .save-btn{
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg,#09d83c,#33eb3c);
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .save-btn:hover{
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="/all-match-files">Back</a>
+    <a href="/">Home</a>
+</div>
+
+<div class="editor-container">
+
+<h2 class="fixture-title">
+    🏏 {{ team1 }} vs {{ team2 }}
+</h2>
+
+<form method="POST" action="/update-match">
+
+<input type="hidden" name="file" value="{{ file }}">
+
+<!-- 🔴 FIRST INNINGS -->
+<div class="card-block">
+    <div class="card-title">🏏 1st Innings</div>
+
+    <div class="label">Wicket Log</div>
+    <textarea 
+        name="wickets_log_1"
+        placeholder='{{ first.get("wickets_log", "[{\"batsman\": \"PLAYER NAME\", \"type\": \"Bowled\", \"bowler\": \"BOWLER NAME\"}]") }}'
+    >{{ first.get("wickets_log","") }}</textarea>
+
+    <small class="hint">
+        👉 Format: [{"batsman": "PLAYER NAME", "type": "Bowled/LBW/Catch", "bowler": "BOWLER NAME"}]
+    </small>
+
+    <div class="label">Bowler Log</div>
+    <textarea 
+        name="bowler_log_1"
+        placeholder='{{ first.get("bowler_log", "BOWLER=Overs,Runs,Maiden,Wickets,ER|") }}'
+    >{{ first.get("bowler_log","") }}</textarea>
+
+    <small class="hint">
+        👉 Example: Shakib=4.0,20,0,2,5.0|
+    </small>
+</div>
+
+<!-- 🔵 SECOND INNINGS -->
+<div class="card-block">
+    <div class="card-title">🏏 2nd Innings</div>
+
+    <div class="label">Wicket Log</div>
+    <textarea 
+        name="wickets_log_2"
+        placeholder='{{ second.get("wickets_log", "[{\"batsman\": \"PLAYER NAME\", \"type\": \"LBW\", \"bowler\": \"BOWLER NAME\"}]") }}'
+    >{{ second.get("wickets_log","") }}</textarea>
+
+    <small class="hint">
+        👉 Same format as 1st innings
+    </small>
+
+    <div class="label">Bowler Log</div>
+    <textarea 
+        name="bowler_log_2"
+        placeholder='{{ second.get("bowler_log", "BOWLER=Overs,Runs,Maiden,Wickets,ER|") }}'
+    >{{ second.get("bowler_log","") }}</textarea>
+
+    <small class="hint">
+        👉 Example: Bumrah=4.0,18,1,3,4.5|
+    </small>
+</div>
+
+<!-- 🏆 MAN OF THE MATCH -->
+<div class="card-block">
+    <div class="card-title">🏆 Man of the Match</div>
+
+    <input 
+        type="text" 
+        name="man_of_match" 
+        value="{{ pom }}"
+        placeholder="{{ pom if pom else 'PLAYER NAME (runs + wickets)' }}"
+    >
+
+    <small class="hint">
+        👉 Example: Player Name (45 runs & 2 wickets)
+    </small>
+</div>
+<!-- 🏁 MATCH RESULT -->
+<div class="card-block">
+    <div class="card-title">🏁 Match Result</div>
+
+    <input 
+        type="text" 
+        name="match_result" 
+        value="{{ result if result else '' }}"
+        placeholder="Team A won by 10 runs"
+    >
+
+    <small class="hint">
+        👉 Example: Team A won by 5 wickets
+    </small>
+</div>
+<button class="save-btn">💾 Save Changes</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

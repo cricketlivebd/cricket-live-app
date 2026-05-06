@@ -1,0 +1,174 @@
+<h2 class="fixture-title">🏏 Match Summary</h2>
+
+<h3 class="result-text">{{ result }}</h3>
+    <!-- 🔴 FIRST INNINGS -->
+    <div class="team-header">
+        <img src="/static/images/teams/{{ first.batting|lower }}.png">
+        <span>{{ first.batting }}</span>
+        <span class="score-right">
+            {{ first.score }}-{{ first.wickets }} ({{ first.over }}.{{ first.ball }})
+        </span>
+    </div>
+
+    <div class="table-header">
+        <span>Batsman</span><span>R</span><span>B</span><span>4s</span><span>6s</span><span>SR</span>
+    </div>
+
+    {% for b in first.batsman_log.split("|") %}
+        {% set name = b.split("=")[0] %}
+        {% set s = b.split("=")[1].split(",") %}
+
+        <div class="table-row">
+            <div>
+                <div class="name">{{ name }}</div>
+
+                <!-- ✅ FIXED DISMISSAL -->
+                {% set clean_name = name.split('(')[0].strip().lower() %}
+                <div class="out">
+                    {{ first.dismissals.get(clean_name, "not out") }}
+                </div>
+            </div>
+
+            <span>{{ s[0] }}</span>
+            <span>{{ s[1] }}</span>
+            <span>{{ s[2] }}</span>
+            <span>{{ s[3] }}</span>
+            {% set runs = s[0]|int %}
+            {% set balls = s[1]|int %}
+
+            <span>
+            {% if s[4]|float > 0 %}
+                {{ s[4] }}
+            {% elif balls > 0 %}
+                {{ ((runs / balls) * 100)|round(2) }}
+            {% else %}
+                0.00
+            {% endif %}
+            </span>
+        </div>
+    {% endfor %}
+
+    <div class="summary-line">
+        <span class="left">Extras {{ first.extra }}</span>
+        <span class="right">
+            Total {{ first.score }}-{{ first.wickets }} ({{ first.over }}.{{ first.ball }})
+        </span>
+    </div>
+
+    <div class="table-header">
+        <span>Bowler</span><span>O</span><span>R</span><span>M</span><span>W</span><span>ER</span>
+    </div>
+
+    {% for b in first.bowler_log.split("|") %}
+        {% set name = b.split("=")[0] %}
+        {% set s = b.split("=")[1].split(",") %}
+
+        <div class="table-row">
+            <span>{{ name }}</span>
+            <span>{{ s[0] }}</span>
+            <span>{{ s[1] }}</span>
+            <span>{{ s[2] }}</span>
+            <span>{{ s[3] }}</span>
+            {% set runs = s[1]|int %}
+            {% set overs = s[0].split('.') %}
+
+            {% set total_balls = (overs[0]|int * 6) + (overs[1]|int if overs|length > 1 else 0) %}
+
+            <span>
+            {% if s[4]|float > 0 %}
+                {{ s[4] }}
+            {% elif total_balls > 0 %}
+                {{ ((runs / total_balls) * 6)|round(2) }}
+            {% else %}
+                0.00
+            {% endif %}
+            </span>
+        </div>
+    {% endfor %}
+
+    <!-- 🔵 SECOND INNINGS -->
+    {% if second.score %}
+    <div class="team-header">
+        <img src="/static/images/teams/{{ second.batting|lower }}.png">
+        <span>{{ second.batting }}</span>
+        <span class="score-right">
+            {{ second.score }}-{{ second.wickets }} ({{ second.over }}.{{ second.ball }})
+        </span>
+    </div>
+
+    <div class="table-header">
+        <span>Batsman</span><span>R</span><span>B</span><span>4s</span><span>6s</span><span>SR</span>
+    </div>
+
+    {% for b in second.batsman_log.split("|") %}
+        {% set name = b.split("=")[0] %}
+        {% set s = b.split("=")[1].split(",") %}
+
+        <div class="table-row">
+            <div>
+                <div class="name">{{ name }}</div>
+
+                <!-- ✅ FIXED DISMISSAL -->
+                {% set clean_name = name.split('(')[0].strip().lower() %}
+                <div class="out">
+                    {{ second.dismissals.get(clean_name, "not out") }}
+                </div>
+            </div>
+
+            <span>{{ s[0] }}</span>
+            <span>{{ s[1] }}</span>
+            <span>{{ s[2] }}</span>
+            <span>{{ s[3] }}</span>
+            {% set runs = s[0]|int %}
+            {% set balls = s[1]|int %}
+
+            <span>
+            {% if s[4]|float > 0 %}
+                {{ s[4] }}
+            {% elif balls > 0 %}
+                {{ ((runs / balls) * 100)|round(2) }}
+            {% else %}
+                0.00
+            {% endif %}
+            </span>
+        </div>
+    {% endfor %}
+
+    <div class="summary-line">
+        <span class="left">Extras {{ second.extra }}</span>
+        <span class="right">
+            Total {{ second.score }}-{{ second.wickets }} ({{ second.over }}.{{ second.ball }})
+        </span>
+    </div>
+
+    <div class="table-header">
+        <span>Bowler</span><span>O</span><span>R</span><span>M</span><span>W</span><span>ER</span>
+    </div>
+
+    {% for b in second.bowler_log.split("|") %}
+        {% set name = b.split("=")[0] %}
+        {% set s = b.split("=")[1].split(",") %}
+
+        <div class="table-row">
+            <span>{{ name }}</span>
+            <span>{{ s[0] }}</span>
+            <span>{{ s[1] }}</span>
+            <span>{{ s[2] }}</span>
+            <span>{{ s[3] }}</span>
+            {% set runs = s[1]|int %}
+            {% set overs = s[0].split('.') %}
+
+            {% set total_balls = (overs[0]|int * 6) + (overs[1]|int if overs|length > 1 else 0) %}
+
+            <span>
+            {% if s[4]|float > 0 %}
+                {{ s[4] }}
+            {% elif total_balls > 0 %}
+                {{ ((runs / total_balls) * 6)|round(2) }}
+            {% else %}
+                0.00
+            {% endif %}
+            </span>
+        </div>
+    {% endfor %}
+    {% endif %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teams</title>
+
+    <!-- 🔥 CSS link (main fix) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- 🔥 responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- 🔥 Navigation -->
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+
+<h2 class="fixture-title">All Teams</h2>
+
+<div class="team-grid">
+    {% for team in teams %}
+    <a href="/team/{{team}}" class="team-card">
+
+        <img src="{{ url_for('static', filename='images/teams/' + team + '.png') }}">
+        <p>{{ team }}</p>
+
+    </a>
+    {% endfor %}
+</div>
+
+</body>
+</html>

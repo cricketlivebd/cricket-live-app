@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Score Update</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<!-- 🔥 Navigation -->
+<div class="nav">
+    <a href="/live">Back</a>
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+<h2 class="fixture-title">🏏 Score Update Panel</h2>
+
+<div class="score-grid">
+
+    <a href="/new-match" class="team-card score-box">
+    <h3>➕ New Match</h3>
+</a>
+
+    <a href="/team-manager" class="team-card score-box">
+        <h3>👥 Teams</h3>
+    </a>
+
+    <a href="/history" class="team-card score-box">
+        <h3>📜 History</h3>
+    </a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ team }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+
+<h2 class="fixture-title">{{ team }}</h2>
+
+<!-- 🔥 TEAM CARD -->
+<div class="team-card row-card team-main">
+    <div class="left">{{ team }}</div>
+    <div class="right">
+        <img src="{{ url_for('static', filename='images/teams/' + team + '.png') }}">
+    </div>
+</div>
+
+<!-- 🔥 HEADER CARD -->
+<div class="team-card row-card header-card .right">
+    <div class="left">Players</div>
+    <div class="right">Role</div>
+</div>
+
+<!-- 🔥 PLAYING XI -->
+<div class="team-card row-card center-card playing">
+    <div class="left">Team Squads</div>
+    <div class="right"></div>
+</div>
+<!-- 🔥 PLAYER CARDS -->
+{% for p in players %}
+<div class="team-card row-card">
+
+    <div class="left player-info">
+        <img src="{{ url_for('static', filename='images/players/' + p.name + '.jpg') }}">
+        <span>{{ p.name }}</span>
+    </div>
+
+    <div class="right">
+        {{ p.role }}
+    </div>
+
+</div>
+{% endfor %}
+<!-- 🔥 BENCH -->
+<!--<div class="team-card row-card center-card bench">
+    <div>Bench</div>
+</div> -->
+
+{% for b in bench %}
+<div class="team-card row-card">
+
+    <div class="left player-info">
+        <img src="{{ url_for('static', filename='images/players/' + b.name + '.jpg') }}">
+        <span>{{ b.name }}</span>
+    </div>
+
+    <div class="right">
+        {{ b.role }}
+    </div>
+
+</div>
+{% endfor %}
+
+
+<!-- 🔥 SUPPORTING STAFF -->
+<div class="team-card row-card center-card staff">
+    <div>Supporting Staff</div>
+</div>
+
+{% for s in staff %}
+<div class="team-card row-card">
+
+    <div class="left player-info">
+        <img src="{{ url_for('static', filename='images/players/' + s.name + '.jpg') }}">
+        <span>{{ s.name }}</span>
+    </div>
+
+    <div class="right">
+        {{ s.role }}
+    </div>
+
+</div>
+{% endfor %}
+
+</body>
+</html>

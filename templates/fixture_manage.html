@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fixture Update</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- 🔥 Navigation -->
+<div class="nav">
+    <a href="/live">Back</a>
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+
+<h2 class="fixture-title">Fixture Update</h2>
+
+<!-- 🔥 ADD -->
+<form action="/add-fixture" method="POST">
+<div class="team-card row-card add-box">
+    <input type="text" name="fixture"
+        placeholder="Team1 vs Team2 | Time | Date | Stage(knockout/final/group)" required>
+    <button type="submit">Add</button>
+</div>
+</form>
+
+<!-- 🔥 LIST -->
+{% for f in fixtures %}
+<div class="team-card row-card player-row">
+
+    <div class="left">
+        {{ loop.index }}. {{ f }}
+    </div>
+
+    <div class="right actions">
+
+        <!-- EDIT -->
+        <button type="button"
+        onclick="openEdit({{loop.index0}}, `{{f}}`)"
+        class="edit-btn">Edit</button>
+
+        <!-- DELETE -->
+        <a href="/delete-fixture/{{loop.index0}}"
+           onclick="return confirm('Delete fixture?')"
+           class="delete-btn">Delete</a>
+
+    </div>
+
+</div>
+{% endfor %}
+
+<!-- 🔥 MODAL -->
+<div id="editModal" class="modal">
+    <div class="team-card row-card add-box">
+        <form id="editForm" method="POST">
+            <input type="text" name="fixture" id="editInput" required>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEdit(index, value) {
+
+    const modal = document.getElementById("editModal");
+    const input = document.getElementById("editInput");
+    const form = document.getElementById("editForm");
+
+    input.value = value;
+    form.action = "/edit-fixture/" + index;
+
+    modal.classList.add("show");
+}
+
+window.onclick = function(e) {
+    const modal = document.getElementById("editModal");
+    if (e.target === modal) {
+        modal.classList.remove("show");
+    }
+}
+</script>
+
+</body>
+</html>

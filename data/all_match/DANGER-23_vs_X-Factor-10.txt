@@ -1,0 +1,93 @@
+host=DANGER-23
+visitor=X-Factor-10
+toss=DANGER-23
+opt=bat
+batting=DANGER-23
+bowling=X-Factor-10
+overs=1
+score=14
+wickets=0
+over=1
+ball=0
+s_runs=2
+s_balls=2
+s_4=0
+s_6=0
+s_sr=0
+ns_runs=12
+ns_balls=4
+ns_4=1
+ns_6=1
+ns_sr=0
+b_runs=14
+b_balls=6
+b_maiden=0
+b_wickets=0
+b_er=0
+batsman_log=SWEET (WK)=12,4,1,1,0|POLASH=2,2,0,0,0
+this_over=
+over_log=1,1,1,1,4,6
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"SWEET (WK)","nonStriker":"POLASH","runs":14,"balls":6}]
+innings=1
+match_file=data/all_match/DANGER-23_vs_X-Factor-10.txt
+match_time=05 May 2026, 08:10 AM
+wickets_log=[]
+DANGER-23_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+X-Factor-10_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=POLASH
+non_striker=SWEET (WK)
+bowler=MEHEDI (VC)
+bowler_log=MEHEDI (VC)=1.0,14,0,0,0
+
+===== END OF FIRST INNINGS =====
+
+host=DANGER-23
+visitor=X-Factor-10
+toss=DANGER-23
+opt=bat
+batting=X-Factor-10
+bowling=DANGER-23
+overs=1
+score=16
+wickets=0
+over=0
+ball=3
+s_runs=16
+s_balls=3
+s_4=1
+s_6=2
+s_sr=533.33
+ns_runs=0
+ns_balls=0
+ns_4=0
+ns_6=0
+ns_sr=0
+b_runs=16
+b_balls=3
+b_maiden=0
+b_wickets=0
+b_er=32.00
+batsman_log=MEHEDI (VC)=16,3,1,2,533.33|MUNNA (C)=0,0,0,0,0
+this_over=4,6,6
+over_log=
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"MEHEDI (VC)","nonStriker":"MUNNA (C)","runs":16,"balls":3}]
+innings=2
+match_file=data/all_match/DANGER-23_vs_X-Factor-10.txt
+match_time=05 May 2026, 08:10 AM
+wickets_log=
+DANGER-23_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+X-Factor-10_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=MEHEDI (VC)
+non_striker=MUNNA (C)
+bowler=POLASH
+bowler_log=POLASH=0.3,16,0,0,32.00
+target=15
+Man_of_the_Match=
+need_runs=0
+need_balls=3
+need_text=X-Factor-10 need 0 runs in 3 balls
+
+===== MATCH RESULT =====
+X-Factor-10 won by 8 wickets

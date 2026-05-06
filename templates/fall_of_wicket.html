@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fall of wicket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="wicket-nav">
+    <a href="/live-match" class="wicket-back">←</a>
+    <span class="wicket-title">Fall of wicket</span>
+</div>
+
+<div class="wicket-form">
+
+    <label class="wicket-label">How wicket fall?</label>
+    <div class="wicket-card wicket-select-card">
+        <select id="wicketType">
+            <option>Bowled</option>
+            <option>Catch out</option>
+            <option>Run out striker </option>
+            <option>Run out striker non-striker side</option>
+            <option>Run out non-striker</option>
+            <option>Run out non-striker striker side</option>
+            <option>Stumping</option>
+            <option>LBW</option>
+            <option>Hit wicket</option>
+        </select>
+    </div>
+
+    <label class="wicket-label">New batsman</label>
+    <div class="wicket-card">
+        <input list="playerList" id="newBatsman" placeholder="Player name">
+    </div>
+
+    <datalist id="playerList">
+        {% for p in players %}
+            <option value="{{ p }}">
+        {% endfor %}
+    </datalist>
+    <label class="wicket-label">Out batsman</label>
+    <div class="wicket-card wicket-select-card">
+        <select id="outPlayer">
+            <option value="">Select Out Player</option>
+        </select>
+    </div>
+
+    <button class="wicket-btn" onclick="saveWicket()">Done</button>
+
+</div>
+
+<script>
+
+// 🔥 AUTO LOAD CURRENT PLAYERS
+window.onload = function(){
+
+    const striker = localStorage.getItem("strikerName");
+    const nonStriker = localStorage.getItem("nonStrikerName");
+
+    const select = document.getElementById("outPlayer");
+
+    if(striker){
+        let op = document.createElement("option");
+        op.value = striker;
+        op.text = striker + " ";
+        select.appendChild(op);
+    }
+
+    if(nonStriker){
+        let op = document.createElement("option");
+        op.value = nonStriker;
+        op.text = nonStriker + " ";
+        select.appendChild(op);
+    }
+
+    // 🔥 default select striker
+    if(striker){
+        select.value = striker;
+    }
+    
+};
+function saveWicket(){
+
+    const player = document.getElementById("newBatsman").value;
+    const type = document.getElementById("wicketType").value;
+    const overEnded = localStorage.getItem("overEnded") || "false";
+
+    if(!player.trim()){
+        alert("Select batsman");
+        return;
+    }
+
+    // 🔥 SAVE TYPE (existing)
+    localStorage.setItem("wicketType", type);
+
+    const outPlayer = document.getElementById("outPlayer").value;
+
+    fetch("/save-wicket", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            wicket_type: type,
+            out_player: outPlayer   // 🔥 FIXED
+        })
+    });
+
+    // 🔽 existing code (UNCHANGED)
+    if(overEnded === "true"){
+        window.location.href = "/choose-bowler?new=" 
+            + encodeURIComponent(player)
+            + "&type=" + encodeURIComponent(type)
+            + "&overEnded=true";
+    }
+    else{
+        window.location.href = "/live-match?new=" 
+            + encodeURIComponent(player)
+            + "&type=" + encodeURIComponent(type)
+            + "&overEnded=false";
+    }
+}
+</script>
+
+</body>
+</html>

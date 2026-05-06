@@ -1,0 +1,7 @@
+players=9
+noball=1
+noball_reball=1
+noball_run=1
+wide=1
+wide_reball=1
+wide_run=1

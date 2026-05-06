@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KCL</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- Banner -->
+<div class="banner">
+    {% if banner %}
+    <img src="{{ url_for('static', filename='images/banner/' + banner) }}">
+    {% endif %}
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="/stats">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    {% if admin %}
+
+<a href="/live">Live Score Update</a>
+
+<a href="/logout" onclick="return confirm('Logout?')">Logout</a>
+
+{% else %}
+<a href="/login">Admin</a>
+{% endif %}
+</div>
+
+<!-- Live Score Card -->
+<!-- 🔥 LIVE CONTAINER -->
+<div id="home-live-container">
+    {% include "home_live_partial.html" %}
+</div>
+
+<h3> Latest Match</h3>
+<!-- Latest News -->
+<div id="latest-history-container"></div>
+
+
+<h3> Spncer by</h3>
+<!-- Image Slider -->
+<div class="slider">
+    <div class="slider-track">
+
+        {% for img in sponsors %}
+        <img src="{{ url_for('static', filename='images/uploads/' + img) }}">
+        {% endfor %}
+
+        {% for img in sponsors %}
+        <img src="{{ url_for('static', filename='images/uploads/' + img) }}">
+        {% endfor %}
+
+    </div>
+</div>
+
+<!-- Next Match -->
+<h3>Next Match</h3>
+
+<div class="matches">
+    {% for match in fixtures[:2] %}
+    <div class="card match">
+
+        <!-- 🔥 TIME + DATE -->
+        <div class="match-time">
+            {{ match.time }}
+            <div class="match-date">
+                {{ match.date }}
+            </div>
+        </div>
+
+        <!-- 🔥 TEAMS -->
+        <div class="teams-row">
+
+            <div class="team">
+                <img src="{{ url_for('static', filename='images/teams/' + match.team1 + '.png') }}">
+                <p>{{ match.team1 }}</p>
+            </div>
+
+            <!-- 🔥 VS + STAGE -->
+            <div class="vs-box">
+                <div class="vs">VS</div>
+
+                {% if match.stage == "knockout" %}
+                <div class="stage-tag knockout">Knock Out</div>
+
+                {% elif match.stage == "final" %}
+                <div class="stage-tag final">Final 🏆</div>
+                {% endif %}
+            </div>
+
+            <div class="team">
+                <img src="{{ url_for('static', filename='images/teams/' + match.team2 + '.png') }}">
+                <p>{{ match.team2 }}</p>
+            </div>
+
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+<script>
+setInterval(() => {
+    fetch("/home-live-data")
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("home-live-container").innerHTML = html;
+        });
+}, 1000);
+
+</script>
+<!-- auto off-->
+<!--<script>
+setInterval(() => {
+    fetch("/latest-history?t=" + new Date().getTime())
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("latest-history-container").innerHTML = html;
+        });
+}, 2000); // 2 sec
+</script>
+<script>
+function goDetails(file){
+    window.location.href = "/match-details?file=" + file;
+}
+</script> -->
+<script>
+function loadLatestHistory(){
+    fetch("/latest-history?t=" + Date.now())
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("latest-history-container").innerHTML = html;
+        });
+}
+
+// 🔥 only first load
+loadLatestHistory();
+</script>
+<script>
+document.getElementById("latest-history-container")
+.addEventListener("click", function(e){
+
+    let card = e.target.closest(".history-card");
+
+    if(!card) return;
+
+    let file = card.getAttribute("data-file");
+
+    if(file){
+        window.location.href = "/match-details?file=" + file;
+    }
+
+});
+</script>
+<script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
+</body>
+</html>

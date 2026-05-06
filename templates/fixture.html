@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fixture</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .vs-box{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
+
+        .stage-tag{
+            font-size:11px;
+            color:#fff;
+            padding:2px 6px;
+            border-radius:6px;
+            margin-top:4px;
+        }
+
+        .knockout{ background:#ff3d00; }
+        .final{ background:gold; color:black; }
+
+        .section-title{
+            display:grid;
+            background: linear-gradient(90deg, #ff512f, #dd2476, #1fa2ff);
+            padding:10px;
+            font-size:18px;
+            font-weight:bold;
+            text-align:center;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+</div>
+
+<h2 class="fixture-title">KCL Match Fixtures</h2>
+
+<!-- ================= GROUP + KNOCKOUT ================= -->
+<div class="section-title">Group Stage & Knockout</div>
+
+<div class="matches">
+{% for match in fixtures %}
+    {% if match.stage != "final" %}
+
+    <div class="card match">
+
+        <div class="match-time">
+            {{ match.time }}
+            <div class="match-date">
+                {{ match.date }}
+            </div>
+        </div>
+
+        <div class="teams-row">
+
+            <div class="team">
+                <img src="{{ url_for('static', filename='images/teams/' + match.team1 + '.png') }}">
+                <p>{{ match.team1 }}</p>
+            </div>
+
+            <div class="vs-box">
+                <div class="vs">VS</div>
+
+                {% if match.stage == "knockout" %}
+                <div class="stage-tag knockout">Knock Out</div>
+                {% endif %}
+            </div>
+
+            <div class="team">
+                <img src="{{ url_for('static', filename='images/teams/' + match.team2 + '.png') }}">
+                <p>{{ match.team2 }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+{% endfor %}
+</div>
+
+
+<!-- ================= FINAL ================= -->
+<div class="section-title">Final 🏆</div>
+
+<div class="matches">
+
+{% if final_a and final_b %}
+
+<div class="card match">
+
+    <div class="match-time">
+        Final Match
+        <div class="match-date">
+            TBD
+        </div>
+    </div>
+
+    <div class="teams-row">
+
+        <div class="team">
+            <img src="{{ url_for('static', filename='images/teams/' + final_a + '.png') }}">
+            <p>{{ final_a }}</p>
+        </div>
+
+        <div class="vs-box">
+            <div class="vs">VS</div>
+            <div class="stage-tag final">FINAL 🏆</div>
+        </div>
+
+        <div class="team">
+            <img src="{{ url_for('static', filename='images/teams/' + final_b + '.png') }}">
+            <p>{{ final_b }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+{% else %}
+
+<p style="padding:10px;">Final teams not decided yet</p>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

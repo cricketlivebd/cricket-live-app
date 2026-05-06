@@ -1,0 +1,93 @@
+host=Toxic25
+visitor=DESERT VIPERS- 24
+toss=Toxic25
+opt=bat
+batting=Toxic25
+bowling=DESERT VIPERS- 24
+overs=1
+score=17
+wickets=1
+over=1
+ball=0
+s_runs=1
+s_balls=1
+s_4=0
+s_6=0
+s_sr=0
+ns_runs=4
+ns_balls=1
+ns_4=1
+ns_6=0
+ns_sr=0
+b_runs=17
+b_balls=6
+b_maiden=0
+b_wickets=2
+b_er=0
+batsman_log=POLASH=1,1,0,0,0|SAKIL=6,3,1,0,200.00|MARUF=4,1,1,0,0
+this_over=
+over_log=1,2,4,W,6,4
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"POLASH","nonStriker":"SAKIL","runs":7,"balls":3},{"striker":"MARUF","nonStriker":"POLASH","runs":10,"balls":2}]
+innings=1
+match_file=data/all_match/Toxic25_vs_DESERT_VIPERS-_24.txt
+match_time=06 May 2026, 06:36 AM
+wickets_log=[]
+Toxic25_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+DESERT_VIPERS-_24_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=POLASH
+non_striker=MARUF
+bowler=SHOHAG
+bowler_log=SHOHAG=1.0,17,0,2,0
+
+===== END OF FIRST INNINGS =====
+
+host=Toxic25
+visitor=DESERT VIPERS- 24
+toss=Toxic25
+opt=bat
+batting=DESERT VIPERS- 24
+bowling=Toxic25
+overs=1
+score=18
+wickets=0
+over=0
+ball=5
+s_runs=17
+s_balls=4
+s_4=2
+s_6=1
+s_sr=425.00
+ns_runs=1
+ns_balls=1
+ns_4=0
+ns_6=0
+ns_sr=100.00
+b_runs=18
+b_balls=5
+b_maiden=0
+b_wickets=0
+b_er=21.60
+batsman_log=MEHEDI (VC)=17,4,2,1,425.00|MUNNA (C)=1,1,0,0,100.00
+this_over=4,6,4,3,1
+over_log=
+extra=0,0LB,0B,0WD,0NB
+partnerships=[{"striker":"MEHEDI (VC)","nonStriker":"MUNNA (C)","runs":18,"balls":5}]
+innings=2
+match_file=data/all_match/Toxic25_vs_DESERT_VIPERS-_24.txt
+match_time=06 May 2026, 06:36 AM
+wickets_log=
+Toxic25_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+DESERT_VIPERS-_24_squad=[{"name": "MUNNA (C)", "role": "All Rounder", "extra": []}, {"name": "MEHEDI (VC)", "role": "All rounder", "extra": []}, {"name": "SWEET (WK)", "role": "Wicket keeper", "extra": []}, {"name": "POLASH", "role": "All rounder", "extra": []}, {"name": "SAKIL", "role": "BATSMAN", "extra": []}, {"name": "MARUF", "role": "BOWLAR", "extra": []}, {"name": "SAIKAT", "role": "ALROUNDER", "extra": []}, {"name": "SHOHAG", "role": "Batsman", "extra": []}, {"name": "RONY", "role": "Batsman", "extra": ["bench"]}, {"name": "piyas", "role": "coach", "extra": ["stf"]}]
+striker=MEHEDI (VC)
+non_striker=MUNNA (C)
+bowler=MARUF
+bowler_log=MARUF=0.5,18,0,0,21.60
+target=18
+Man_of_the_Match=
+need_runs=0
+need_balls=1
+need_text=DESERT VIPERS- 24 need 0 runs in 1 balls
+
+===== MATCH RESULT =====
+DESERT VIPERS- 24 won by 8 wickets

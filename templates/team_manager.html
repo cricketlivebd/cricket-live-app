@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Team Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+*{ box-sizing: border-box; }
+
+body{
+    margin:0;
+    background:linear-gradient(135deg, #1d2b64, #f8cdda);
+    font-family: Arial;
+}
+
+/* 🔥 CARD */
+.tm-card{
+    margin:10px;
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:linear-gradient(145deg,#4c4f74,#5a5d85);
+    border-radius:16px;
+}
+
+/* LEFT */
+.tm-left{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+/* AVATAR */
+.tm-avatar{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    overflow:hidden;
+    position:relative;
+    background:#4CAF50;
+}
+
+.tm-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.tm-initial{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-weight:bold;
+}
+
+/* TEXT */
+.tm-name{
+    color:white;
+    font-size:18px;
+    font-weight:600;
+}
+
+.tm-stats{
+    color:#ddd;
+    font-size:13px;
+}
+
+/* BUTTON */
+.tm-btn{
+    padding:8px 10px;
+    border-radius:10px;
+    background:#111;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    background:#1e1e1e;
+    padding:20px;
+    border-radius:14px;
+    width:90%;
+}
+
+input{
+    width:100%;
+    margin-bottom:10px;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+}
+
+button.save{
+    width:100%;
+    padding:10px;
+    background:#00ff9c;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+     <a href="/live-score">Back</a>
+    <a href="/">Home</a>
+</div>
+
+<h2 class="fixture-title" style="padding:10px;">🏏 Team Result</h2>
+
+{% for team in teams %}
+<div class="tm-card">
+
+    <div class="tm-left">
+
+        <div class="tm-avatar">
+            <img src="/static/images/teams/{{ team.name|lower|replace(' ','_') }}.png"
+                 onload="this.nextElementSibling.style.display='none'"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+            <div class="tm-initial">{{ team.name[:2]|upper }}</div>
+        </div>
+
+        <div>
+            <div class="tm-name">{{ team.name }}</div>
+            <div class="tm-stats">
+                Matches: {{ team.matches }} |
+                Won: {{ team.won }} |
+                Lost: {{ team.lost }}
+            </div>
+        </div>
+
+    </div>
+
+    <div style="display:flex; gap:8px;">
+
+        <!-- ✏️ EDIT -->
+        <button class="tm-btn"
+        onclick="openEdit('{{team.name}}','{{team.matches}}','{{team.won}}','{{team.lost}}')">
+        ✏️
+        </button>
+
+        <!-- 🗑️ DELETE -->
+        <a href="/delete-team-manager?team={{ team.name }}"
+        onclick="return confirm('Delete team?')"
+        class="tm-btn">
+        🗑️
+        </a>
+
+    </div>
+
+</div>
+{% endfor %}
+
+
+<!-- 🔥 MODAL -->
+<div id="editModal" class="modal">
+
+<div class="modal-box">
+
+    <h3 style="color:white;">Update Stats</h3>
+
+    <input type="hidden" id="teamName">
+
+    <input type="number" id="matches" placeholder="Matches">
+    <input type="number" id="won" placeholder="Won">
+    <input type="number" id="lost" placeholder="Lost">
+
+    <button class="save" onclick="saveStats()">Save</button>
+
+</div>
+
+</div>
+
+<script>
+
+function openEdit(team,m,w,l){
+    document.getElementById("editModal").classList.add("show");
+
+    document.getElementById("teamName").value = team;
+    document.getElementById("matches").value = m;
+    document.getElementById("won").value = w;
+    document.getElementById("lost").value = l;
+}
+
+function saveStats(){
+
+    let fd = new FormData();
+
+    fd.append("team", document.getElementById("teamName").value);
+    fd.append("matches", document.getElementById("matches").value);
+    fd.append("won", document.getElementById("won").value);
+    fd.append("lost", document.getElementById("lost").value);
+
+    fetch("/update-team-stats",{
+        method:"POST",
+        body:fd
+    })
+    .then(res=>res.json())
+    .then(()=>{
+        location.reload();
+    });
+
+}
+
+// close modal
+window.onclick = function(e){
+    let modal = document.getElementById("editModal");
+    if(e.target === modal){
+        modal.classList.remove("show");
+    }
+}
+
+</script>
+
+</body>
+</html>

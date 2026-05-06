@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="#">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    
+</div>
+
+
+<h2 class="fixture-title">Admin Panel</h2>
+
+<!-- 🔥 CARDS -->
+<div class="matches">
+
+    <div class="team-card row-card center-card">
+        <a href="/live-score">🏏 Score Update</a>
+    </div>
+    <div class="team-card row-card center-card">
+        <a href="/all-match-files">👤Update Player of the match</a>
+    </div>
+    <div class="team-card row-card center-card">
+        <a href="/group">🏳️ Group Update</a>
+    </div>
+    <div class="team-card row-card center-card">
+        <a href="/manage-teams">🏳️ Add Teams</a>
+    </div>
+    <div class="team-card row-card center-card">
+        <a href="/player-images">🖼️ Player Image Update</a>
+    </div>
+
+    <div class="team-card row-card center-card">
+        <a href="/team-logos">👤 Logo Update</a>
+    </div>
+
+    <div class="team-card row-card center-card">
+        <a href="/fixture-manage">📅 Fixture Management</a>
+    </div>
+
+    <div class="team-card row-card center-card">
+         <a href="/squad">👥 Squad Update</a>
+    </div>
+
+    <div class="team-card row-card center-card">   
+         <a href="/sponsor-images">🧾 Sponsor Image Update</a>   
+    </div>
+
+    <div class="team-card row-card center-card">   
+         <a href="/banner-images">🧾 Banner Update</a>   
+    </div>
+
+</div>
+
+</body>
+</html>

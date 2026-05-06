@@ -1,0 +1,54 @@
+<h2 class="fixture-title">🏏 Team Squads</h2>
+
+<div class="squad-header">
+    <span>{{ team1 }}</span>
+    <span>{{ team2 }}</span>
+</div>
+
+<div class="squad-grid">
+
+    <!-- TEAM 1 -->
+    <div>
+        {% for p in t1 %}
+        <div class="player-row">
+            <div class="player-left">
+
+                <div class="avatar">
+                    <img src="/static/images/players/{{ p.name.split(',')[0] }}.jpg"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="initial">{{ p.name[0] }}</div>
+                </div>
+
+                <div>
+                    <div class="p-name">{{ p.name }}</div>
+                    <div class="p-role">{{ p.role }}</div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- TEAM 2 -->
+    <div>
+        {% for p in t2 %}
+        <div class="player-row">
+            <div class="player-left">
+
+                <div class="avatar">
+                    <img src="/static/images/players/{{ p.name.split(',')[0] }}.jpg"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="initial">{{ p.name[0] }}</div>
+                </div>
+
+                <div>
+                    <div class="p-name">{{ p.name }}</div>
+                    <div class="p-role">{{ p.role }}</div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>

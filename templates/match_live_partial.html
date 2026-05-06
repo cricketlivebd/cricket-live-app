@@ -1,0 +1,177 @@
+<div class="live-container">
+
+    <!-- SCORE -->
+    <div class="live-card">
+        <div class="live-top">
+            <span>
+            {{ data.batting }},
+            {{ "2nd innings" if data.get("innings") == "2" else "1st innings" }}
+            </span>
+
+            <div style="display:flex; gap:40px; align-items:center;">
+                <div style="text-align:center;">
+                    <div>CRR</div>
+                    <div id="crr">0.00</div>
+                </div>
+
+                {% if data.innings == "2" %}
+                <div style="text-align:center;">
+                    <div>RR</div>
+                    <div id="rrr">0.00</div>
+                </div>
+
+                <div style="text-align:center;">
+                    <div>Target</div>
+                    <div id="target">{{ data.target }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h1>
+            <span id="score">{{ data.score }} - {{ data.wickets }}</span>
+            <small>(<span id="over">{{ data.over }}.{{ data.ball }}</span>)</small>
+        </h1>
+
+        {% if data.innings == "2" %}
+        {% set total_balls = data.overs|int * 6 %}
+        {% set used_balls = data.over|int * 6 + data.ball|int %}
+        {% set left_balls = total_balls - used_balls %}
+
+        <div id="needText" style="text-align:center;">
+            {{ data.batting }} need {{ data.target|int - data.score|int }} runs in 
+            {{ (left_balls // 6) }}.{{ (left_balls % 6) }} overs
+        </div>
+        {% endif %}
+
+        {% if data.result %}
+        <div style="text-align:center; font-weight:bold;">
+            {{ data.result }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- BATSMAN -->
+    <div class="live-card">
+        <div class="live-row header">
+            <span>Batsman</span>
+            <span>R</span>
+            <span>B</span>
+            <span>4s</span>
+            <span>6s</span>
+            <span>SR</span>
+        </div>
+
+        <div class="live-row">
+            <span id="strikerName">
+                {{ data.striker }} <span class="striker-mark">★</span>
+            </span>
+            <span id="sRuns">{{ data.s_runs }}</span>
+            <span id="sBalls">{{ data.s_balls }}</span>
+            <span id="s4">{{ data.s_4 }}</span>
+            <span id="s6">{{ data.s_6 }}</span>
+            <span id="sSR">{{ data.s_sr }}</span>
+        </div>
+
+        <div class="live-row">
+            <span id="nonStrikerName">{{ data.non_striker }}</span>
+            <span id="nsRuns">{{ data.ns_runs }}</span>
+            <span id="nsBalls">{{ data.ns_balls }}</span>
+            <span id="ns4">{{ data.ns_4 }}</span>
+            <span id="ns6">{{ data.ns_6 }}</span>
+            <span id="nsSR">{{ data.ns_sr }}</span>
+        </div>
+
+        <div class="live-row header">
+            <span>Bowler</span>
+            <span>O</span>
+            <span>R</span>
+            <span>M</span>
+            <span>W</span>
+            <span>ER</span>
+        </div>
+
+        <div class="live-row">
+            <span id="bowlerName">{{ data.bowler }}</span>
+            <span id="bOver">
+                {{ (data.get('b_balls', 0)|int // 6) }}.{{ (data.get('b_balls', 0)|int % 6) }}
+            </span>
+            <span id="bRun">{{ data.b_runs }}</span>
+            <span id="bMaiden">{{ data.b_maiden }}</span>
+            <span id="bWicket">{{ data.b_wickets }}</span>
+            <span id="bER">{{ data.b_er }}</span>
+        </div>
+    </div>
+
+    <!-- THIS OVER -->
+    <div class="live-card">
+        <div class="this-over-row">
+            <span>This over:</span>
+            <div id="thisOver">{{ data.this_over }}</div>
+        </div>
+    </div>
+
+    <!-- BUTTON -->
+    <div class="live-card">
+        <button onclick="openPartner()">Partnerships</button>
+        <button onclick="openExtra()">Extras</button>
+    </div>
+
+    <!-- hidden -->
+    <div id="extraData" style="display:none;">
+        {{ data.extra or "0,0,0,0,0" }}
+    </div>
+
+    <div id="partnerData" style="display:none;">
+        {{ data.partnerships or "[]" }}
+    </div>
+
+    <div id="totalOvers" style="display:none;">
+        {{ data.overs }}
+    </div>
+
+    <div id="inningsData" style="display:none;">
+        {{ data.innings }}
+    </div>
+
+    <div id="oversData" style="display:none;">
+        {{ data.overs }}
+    </div>
+
+    <div id="playersData" style="display:none;">
+        {{ data.players }}
+    </div>
+
+    <span id="bowlingTeamData" style="display:none;">
+        {% if data.innings == "2" %}
+            {{ data.bowling }}
+        {% endif %}
+    </span>
+
+</div>
+
+<div id="partnerModal" class="modal">
+    <div class="team-card row-card add-box" style="flex-direction: column; gap: 15px;">
+
+        <h3 style="color:white;">Partnerships</h3>
+
+        <div id="partnerList" style="width:100%; color:white;"></div>
+
+        <button onclick="closePartner()">Close</button>
+    </div>
+</div>
+
+<!-- 🟡 Extras Modal -->
+<div id="extraModal" class="modal">
+    <div class="team-card row-card add-box" style="flex-direction: column; gap: 15px;">
+        <h3 style="color:white;">Extras</h3>
+        <div style="width:100%; color:white;">
+            <p>Total: <span id="exTotal">0</span></p>
+            <p>Leg Bye: <span id="exLB">0</span></p>
+            <p>Bye: <span id="exB">0</span></p>
+            <p>Wide: <span id="exWD">0</span></p>
+            <p>No Ball: <span id="exNB">0</span></p>
+        </div>
+        <button onclick="closeExtra()">Close</button>
+    </div>
+</div>

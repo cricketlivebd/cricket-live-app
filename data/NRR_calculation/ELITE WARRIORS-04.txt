@@ -1,0 +1,4 @@
+total_runs_scored=26
+total_overs_faced=2.0
+total_runs_conceded=32
+total_overs_bowled=1.33
