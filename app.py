@@ -11,8 +11,39 @@ from flask_compress import Compress
 Compress(app)
 import os
 from werkzeug.utils import secure_filename
+# 🔥 SAFE FILE WRITE
+def safe_write(path, data):
 
+    import os
+    import uuid
 
+    # 🔥 UNIQUE TEMP FILE
+    temp_path = path + "." + str(uuid.uuid4()) + ".tmp"
+
+    with open(temp_path, "w", encoding="utf-8") as f:
+
+        for k, v in data.items():
+            f.write(f"{k}={v}\n")
+
+    os.replace(temp_path, path)
+# 🔥 SAFE HISTORY APPEND
+def append_history(line):
+
+    temp = "data/history_temp.txt"
+
+    old = ""
+
+    if os.path.exists("data/history.txt"):
+
+        with open("data/history.txt", "r") as f:
+            old = f.read()
+
+    old += line + "\n"
+
+    with open(temp, "w") as f:
+        f.write(old)
+
+    os.replace(temp, "data/history.txt")
 # 🔥 ensure folder exists
 os.makedirs("data/all_match", exist_ok=True)
 
@@ -76,7 +107,8 @@ def home():
         lock_file = "data/home_current.txt"
 
         files = sorted(os.listdir(folder), reverse=True)
-
+        # 🔥 ONLY FIRST INNINGS FILE
+        files = [f for f in files if f.endswith("_1st.txt")]
         # 🔥 LOCK LOAD (FIXED)
         if os.path.exists(lock_file):
             with open(lock_file) as f:
@@ -91,24 +123,33 @@ def home():
             with open(path) as f:
                 content = f.read()
 
-            innings_break = "===== END OF FIRST INNINGS =====" in content
-
-            parts = content.split("===== END OF FIRST INNINGS =====")
-
-            first_part = parts[0]
-            second_part = parts[1] if len(parts) > 1 else ""
+            # 🔥 LOAD FIRST INNINGS
 
             first = {}
-            for line in first_part.splitlines():
+
+            for line in content.splitlines():
+
                 if "=" in line:
                     k, v = line.strip().split("=", 1)
                     first[k] = v
 
+            # 🔥 LOAD SECOND INNINGS
+
             second = {}
-            for line in second_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    second[k] = v
+
+            second_file = path.replace("_1st.txt", "_2nd.txt")
+
+            if os.path.exists(second_file):
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+                            k, v = line.strip().split("=", 1)
+                            second[k] = v
+
+            innings_break = len(second) > 0
 
             team1 = first.get("batting")
             team2 = second.get("batting") or first.get("bowling")
@@ -128,8 +169,7 @@ def home():
                     team2_over = ""
 
             result_text = ""
-            if "===== MATCH RESULT =====" in content:
-                result_text = content.split("===== MATCH RESULT =====")[-1].strip()
+            result_text = second.get("match_result", "")
 
             match_data = {
                 "team1": team1,
@@ -213,6 +253,7 @@ def home_live_data():
         lock_file = "data/home_current.txt"
 
         files = sorted(os.listdir(folder), reverse=True)
+        files = [f for f in files if f.endswith("_1st.txt")]
 
         # 🔥 LOCK LOAD
         if os.path.exists(lock_file):
@@ -228,24 +269,33 @@ def home_live_data():
             with open(path) as f:
                 content = f.read()
 
-            innings_break = "===== END OF FIRST INNINGS =====" in content
-
-            parts = content.split("===== END OF FIRST INNINGS =====")
-
-            first_part = parts[0]
-            second_part = parts[1] if len(parts) > 1 else ""
+            # 🔥 LOAD FIRST INNINGS
 
             first = {}
-            for line in first_part.splitlines():
+
+            for line in content.splitlines():
+
                 if "=" in line:
                     k, v = line.strip().split("=", 1)
                     first[k] = v
 
+            # 🔥 LOAD SECOND INNINGS
+
             second = {}
-            for line in second_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    second[k] = v
+
+            second_file = path.replace("_1st.txt", "_2nd.txt")
+
+            if os.path.exists(second_file):
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+                            k, v = line.strip().split("=", 1)
+                            second[k] = v
+
+            innings_break = len(second) > 0
 
             team1 = first.get("batting")
             team2 = second.get("batting") or first.get("bowling")
@@ -265,9 +315,7 @@ def home_live_data():
                     team2_over = ""
 
             result_text = ""
-            if "===== MATCH RESULT =====" in content:
-                result_text = content.split("===== MATCH RESULT =====")[-1].strip()
-
+            result_text = second.get("match_result", "")
             match_data = {
                 "team1": team1,
                 "team1_score": first.get("score", "0"),
@@ -320,16 +368,18 @@ def match_page():
 
     data = {}
 
-    # 🔵 current match (UNCHANGED)
+    # 🔵 current match
     try:
         with open("data/current_match.txt") as f:
+
             for line in f:
+
                 if "=" in line:
                     k, v = line.strip().split("=", 1)
                     data[k] = v
+
     except:
         pass
-
 
     # 🔥 =========================
     # 🔥 GET FILE FROM URL
@@ -341,101 +391,130 @@ def match_page():
     second = {}
 
     try:
+
         if file:
+
             path = os.path.join("data/all_match", file)
+
         else:
+
             folder = "data/all_match"
+
             files = sorted(
-                os.listdir(folder),
+                [f for f in os.listdir(folder) if f.endswith("_1st.txt")],
                 key=lambda x: os.path.getmtime(os.path.join(folder, x)),
                 reverse=True
             )
+
             path = os.path.join(folder, files[0]) if files else None
+
+        # 🔥 =========================
+        # 🔥 LOAD FIRST INNINGS
+        # 🔥 =========================
 
         if path and os.path.exists(path):
 
             with open(path) as f:
-                content = f.read()
 
-            parts = content.split("===== END OF FIRST INNINGS =====")
+                for line in f:
 
-            first_part = parts[0]
-            second_part = parts[1] if len(parts) > 1 else ""
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        first[k] = v
 
-            # 🔵 FIRST INNINGS
-            for line in first_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    first[k] = v
+            # 🔥 =========================
+            # 🔥 LOAD SECOND INNINGS
+            # 🔥 =========================
 
-            # 🔵 SECOND INNINGS
-            for line in second_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    second[k] = v
+            second_file = path.replace("_1st.txt", "_2nd.txt")
+
+            if os.path.exists(second_file):
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+                            k, v = line.strip().split("=", 1)
+                            second[k] = v
 
     except:
         pass
 
-
     # 🔥 =========================
-    # 🔥 SAFE JSON (FIXED)
+    # 🔥 SAFE JSON
     # 🔥 =========================
 
     def safe_json(text):
+
         try:
             return json.loads(text)
+
         except:
+
             try:
                 return ast.literal_eval(text)
+
             except:
                 return []
-
 
     # 🔥 wickets
     first["wickets_log"] = safe_json(first.get("wickets_log", "[]"))
     second["wickets_log"] = safe_json(second.get("wickets_log", "[]"))
-
 
     # 🔥 =========================
     # 🔥 DISMISSALS
     # 🔥 =========================
 
     def clean(n):
+
         return n.split('(')[0].strip().lower()
 
     def build_map(log):
+
         d = {}
+
         for w in log:
+
             key = clean(w.get("batsman", ""))
+
             t = (w.get("type") or "").lower()
+
             bowler = w.get("bowler", "")
 
             if t == "bowled":
                 d[key] = f"b {bowler}"
+
             elif "catch" in t:
                 d[key] = f"c b {bowler}"
+
             elif "run out" in t:
                 d[key] = "run out"
+
             elif t == "lbw":
                 d[key] = f"lbw b {bowler}"
+
             else:
                 d[key] = w.get("type", "out")
+
         return d
 
     first["dismissals"] = build_map(first["wickets_log"])
     second["dismissals"] = build_map(second["wickets_log"])
 
-
     # 🔥 =========================
-    # 🔥 SQUADS (FINAL FIX)
+    # 🔥 SQUADS
     # 🔥 =========================
 
     def find_squad_key(data, team):
+
         team = team.lower()
+
         for k in data.keys():
+
             if k.lower() == team + "_squad":
                 return k
+
         return team + "_squad"
 
     host = first.get("host", "")
@@ -450,20 +529,28 @@ def match_page():
 
     # 🔥 split squads
     def split_squad(squad):
-        playing, bench, staff = [], [], []
+
+        playing = []
+        bench = []
+        staff = []
+
         for p in squad:
+
             extra = p.get("extra", [])
+
             if "bench" in extra:
                 bench.append(p)
+
             elif "stf" in extra:
                 staff.append(p)
+
             else:
                 playing.append(p)
+
         return playing, bench, staff
 
     t1_play, t1_bench, t1_staff = split_squad(first.get(host_key, []))
     t2_play, t2_bench, t2_staff = split_squad(first.get(visitor_key, []))
-
 
     # 🔥 =========================
     # 🔥 RETURN
@@ -471,7 +558,9 @@ def match_page():
 
     return render_template(
         "match.html",
+
         data=data,
+
         first=first,
         second=second,
 
@@ -625,6 +714,7 @@ def get_final_teams():
     team_b = group_b[0]["team"] if group_b else None
 
     return team_a, team_b
+
 @app.route("/fixture")
 def fixture():
 
@@ -1231,7 +1321,10 @@ def opening_players():
 def save_match():
 
     import os
+    import json
+    from datetime import datetime
 
+    # 🔥 RESET HISTORY
     open("data/history.txt", "w").close()
 
     host = request.args.get("host")
@@ -1265,17 +1358,23 @@ def save_match():
         else:
             batting = host
 
-    # 🔥 MATCH FILE NAME
-    file_name = f"data/all_match/{host}_vs_{visitor}.txt".replace(" ", "_")
-    open(file_name, "a").close()
+    # 🔥 MATCH FILE
+    # 🔥 MATCH FILES
 
-    from datetime import datetime
+    base_name = f"data/all_match/{host}_vs_{visitor}".replace(" ", "_")
 
+    first_file = base_name + "_1st.txt"
+    second_file = base_name + "_2nd.txt"
+
+    open(first_file, "a").close()
+    open(second_file, "a").close()
+
+    # 🔥 MATCH TIME
     bd_time = datetime.now(pytz.timezone("Asia/Dhaka"))
+
     match_time = bd_time.strftime("%d %b %Y, %I:%M %p")
 
-    import json
-
+    # 🔥 LOAD TEAM
     def load_team(file):
 
         players = []
@@ -1294,7 +1393,9 @@ def save_match():
                     parts = [x.strip() for x in line.split(",")]
 
                     name = parts[0]
+
                     role = parts[-1] if len(parts) > 1 else ""
+
                     extra = parts[1:-1] if len(parts) > 2 else []
 
                     players.append({
@@ -1311,61 +1412,70 @@ def save_match():
     team1_list = load_team(f"data/teamlist/{host}.txt")
     team2_list = load_team(f"data/teamlist/{visitor}.txt")
 
-    # 🔥 WRITE MATCH DATA
-    with open("data/current_match.txt", "w") as f:
+    # 🔥 DYNAMIC SQUAD KEYS
+    t1_key = host.replace(" ", "_") + "_squad"
+    t2_key = visitor.replace(" ", "_") + "_squad"
 
-        f.write(f"host={host}\n")
-        f.write(f"visitor={visitor}\n")
-        f.write(f"toss={toss_winner}\n")
-        f.write(f"opt={opt}\n")
-        f.write(f"batting={batting}\n")
-        f.write(f"bowling={bowling}\n")
-        f.write(f"overs={overs}\n")
+    # 🔥 MATCH DATA
+    match_data = {
 
-        f.write("score=0\n")
-        f.write("wickets=0\n")
-        f.write("over=0\n")
-        f.write("ball=0\n")
+        "host": host,
+        "visitor": visitor,
 
-        f.write("s_runs=0\n")
-        f.write("s_balls=0\n")
-        f.write("s_4=0\n")
-        f.write("s_6=0\n")
-        f.write("s_sr=0\n")
+        "toss": toss_winner,
+        "opt": opt,
 
-        f.write("ns_runs=0\n")
-        f.write("ns_balls=0\n")
-        f.write("ns_4=0\n")
-        f.write("ns_6=0\n")
-        f.write("ns_sr=0\n")
+        "batting": batting,
+        "bowling": bowling,
 
-        f.write("b_runs=0\n")
-        f.write("b_balls=0\n")
-        f.write("b_maiden=0\n")
-        f.write("b_wickets=0\n")
-        f.write("b_er=0\n")
+        "overs": overs,
 
-        f.write("batsman_log=\n")
-        f.write("this_over=\n")
-        f.write("over_log=\n")
+        "score": "0",
+        "wickets": "0",
 
-        f.write("extra=0,0LB,0B,0WD,0NB\n")
-        f.write("partnerships=[]\n")
+        "over": "0",
+        "ball": "0",
 
-        # 🔥 IMPORTANT
-        f.write("innings=1\n")
+        "s_runs": "0",
+        "s_balls": "0",
+        "s_4": "0",
+        "s_6": "0",
+        "s_sr": "0",
 
-        f.write(f"match_file={file_name}\n")
-        f.write(f"match_time={match_time}\n")
+        "ns_runs": "0",
+        "ns_balls": "0",
+        "ns_4": "0",
+        "ns_6": "0",
+        "ns_sr": "0",
 
-        f.write("wickets_log=[]\n")
+        "b_runs": "0",
+        "b_balls": "0",
+        "b_maiden": "0",
+        "b_wickets": "0",
+        "b_er": "0",
 
-        # 🔥 SQUADS
-        t1_key = host.replace(" ", "_") + "_squad"
-        t2_key = visitor.replace(" ", "_") + "_squad"
+        "batsman_log": "",
+        "this_over": "",
+        "over_log": "",
 
-        f.write(f"{t1_key}={json.dumps(team1_list)}\n")
-        f.write(f"{t2_key}={json.dumps(team2_list)}\n")
+        "extra": "0,0LB,0B,0WD,0NB",
+
+        "partnerships": "[]",
+
+        "innings": "1",
+
+        "first_match_file": first_file,
+        "second_match_file": second_file,
+        "match_time": match_time,
+
+        "wickets_log": "[]",
+
+        t1_key: json.dumps(team1_list),
+        t2_key: json.dumps(team2_list)
+    }
+
+    # 🔥 SAFE SAVE
+    safe_write("data/current_match.txt", match_data)
 
     # 🔥 RESET HOME LOCK
     try:
@@ -1403,14 +1513,11 @@ def save_opening():
     # 🔵 INIT BOWLER LOG (opening instant show)
     data["bowler_log"] = f"{bowler}=0.0,0,0,0,0.00"
     # 🔥 rewrite file
-    with open("data/current_match.txt", "w") as f:
-        for k, v in data.items():
-            f.write(f"{k}={v}\n")
+    safe_write("data/current_match.txt", data)
 
     # 🔥 SAVE INITIAL STATE FOR UNDO
-    with open("data/history.txt", "a") as f:
-        line = ";;".join([f"{k}={v}" for k, v in data.items()])
-        f.write(line + "\n")
+    line = ";;".join([f"{k}={v}" for k, v in data.items()])
+    append_history(line)
     return redirect("/live-match")
 
 
@@ -1457,9 +1564,7 @@ def live_match():
         current_line = ";;".join([f"{k}={data[k]}" for k in data])
 
         if not lines or lines[-1].strip() != current_line:
-            with open("data/history.txt", "a") as f:
-                f.write(current_line + "\n")
-
+            append_history(current_line)
     # 🔥 2. URL data
     score = request.args.get("score")
     wickets = request.args.get("wickets")
@@ -1765,20 +1870,10 @@ def live_match():
         # 🔥 INSTANT MATCH FILE UPDATE (NEW BATSMAN FIX)
         # 🔥 =========================
 
-        match_file = data.get("match_file")
-
-        if match_file:
-            try:
-                with open(match_file, "w") as f:
-                    for k, v in data.items():
-                        f.write(f"{k}={v}\n")
-            except:
-                pass
+        
 
     # 🔥 5. save
-    with open("data/current_match.txt", "w") as f:
-        for k, v in data.items():
-            f.write(f"{k}={v}\n")
+    safe_write("data/current_match.txt", data)
 
     # 🔥 LOAD PLAYERS FROM ADVANCED SETTINGS
     try:
@@ -2047,40 +2142,27 @@ def update_score():
         match["need_text"] = f"{batting_team} need {runs_needed} runs in {balls_left} balls"
 
     # 🔥 MATCH FILE SAVE
-    match_file = match.get("match_file")
+    if match.get("innings") == "1":
+        match_file = match.get("first_match_file")
+    else:
+        match_file = match.get("second_match_file")
 
     if match_file:
 
         # 🔥 SAFE FIRST INNINGS
         if str(match.get("innings", "1")).strip() == "1":
 
-            with open(match_file, "w") as f:
-                for k, v in match.items():
-                    f.write(f"{k}={v}\n")
+            safe_write(match_file, match)
 
         # 🔥 SAFE SECOND INNINGS
-        elif str(match.get("innings", "1")).strip() == "2":
+        temp_match = match_file + ".tmp"
 
-            marker = "===== END OF FIRST INNINGS ====="
-
-            old_content = ""
-
-            if os.path.exists(match_file):
-                with open(match_file, "r") as f:
-                    old_content = f.read()
-
-            if marker in old_content:
-                first_part = old_content.split(marker)[0] + marker + "\n\n"
-            else:
-                first_part = old_content + "\n" + marker + "\n\n"
-
-            second_part = ""
+        with open(temp_match, "w") as f:
 
             for k, v in match.items():
-                second_part += f"{k}={v}\n"
+                f.write(f"{k}={v}\n")
 
-            with open(match_file, "w") as f:
-                f.write(first_part + second_part)
+        os.replace(temp_match, match_file)
 
     # 🔥 SAFE HISTORY
     safe_match = {}
@@ -2092,14 +2174,11 @@ def update_score():
 
         safe_match[k] = v
 
-    with open("data/history.txt", "a") as f:
-        line = ";;".join([f"{k}={safe_match[k]}" for k in safe_match])
-        f.write(line + "\n")
+    line = ";;".join([f"{k}={safe_match[k]}" for k in safe_match])
+    append_history(line)
 
     # 🔥 SAVE CURRENT MATCH
-    with open("data/current_match.txt", "w") as f:
-        for k, v in match.items():
-            f.write(f"{k}={v}\n")
+    safe_write("data/current_match.txt", match)
 
     return jsonify({"status": "ok"})
 
@@ -2186,52 +2265,72 @@ def choose_bowler():
 @app.route("/undo")
 def undo():
 
-   
     try:
-        # 🔥 read history
+
+        # 🔥 READ HISTORY
         with open("data/history.txt", "r") as f:
             lines = f.readlines()
 
         if len(lines) < 2:
             return redirect("/live-match")
 
-        # 🔥 remove last state
+        # 🔥 REMOVE LAST STATE
         lines = lines[:-1]
 
-        with open("data/history.txt", "w") as f:
+        # 🔥 SAFE SAVE HISTORY
+        temp_history = "data/history_temp.txt"
+
+        with open(temp_history, "w") as f:
             f.writelines(lines)
 
-        # 🔥 get previous state
+        os.replace(temp_history, "data/history.txt")
+
+        # 🔥 GET PREVIOUS STATE
         last = lines[-1].strip()
 
         new_data = {}
 
-        # 🔥 SAFE SPLIT (using ;; separator)
+        # 🔥 SAFE SPLIT
         items = last.split(";;")
 
         for item in items:
+
             if "=" in item:
                 k, v = item.split("=", 1)
                 new_data[k] = v
 
-        # 🔥 overwrite current_match.txt
-        with open("data/current_match.txt", "w") as f:
-            for k, v in new_data.items():
-                f.write(f"{k}={v}\n")
-        # 🔥 ALSO UPDATE MATCH FILE ON UNDO
+        # 🔥 SAVE CURRENT MATCH
+        safe_write("data/current_match.txt", new_data)
 
-        match_file = new_data.get("match_file")
+        # 🔥 ALSO UPDATE MATCH FILE
+        # 🔥 UPDATE MATCH FILE
+
+        if new_data.get("innings") == "1":
+
+            match_file = new_data.get("first_match_file")
+
+        else:
+
+            match_file = new_data.get("second_match_file")
 
         if match_file:
 
-            if new_data.get("innings") == "1":
-                with open(match_file, "w") as f:
-                    for k, v in new_data.items():
-                        f.write(f"{k}={v}\n")
+            safe_write(match_file, new_data)
 
+        if match_file:
+
+            # 🔥 FIRST INNINGS
+            if new_data.get("innings") == "1":
+
+                safe_write(match_file, new_data)
+
+            # 🔥 SECOND INNINGS
             else:
+
                 old_content = ""
+
                 if os.path.exists(match_file):
+
                     with open(match_file, "r") as f:
                         old_content = f.read()
 
@@ -2243,13 +2342,19 @@ def undo():
                     first_part = ""
 
                 second_part = ""
+
                 for k, v in new_data.items():
                     second_part += f"{k}={v}\n"
 
-                with open(match_file, "w") as f:
+                temp_match = match_file + ".tmp"
+
+                with open(temp_match, "w") as f:
                     f.write(first_part + second_part)
 
+                os.replace(temp_match, match_file)
+
     except Exception as e:
+
         print("UNDO ERROR:", e)
 
     return redirect("/live-match")
@@ -2267,17 +2372,15 @@ def start_second():
                 k, v = line.strip().split("=", 1)
                 data[k] = v
 
-    match_file = data.get("match_file")
+    match_file = data.get("first_match_file")
 
-    # 🔥 SAVE 1ST INNINGS (FREEZE)
+    # 🔥 SAFE SAVE 1ST INNINGS (ATOMIC)
+    # 🔥 SAVE FIRST INNINGS FILE
+
     if match_file:
-        with open(match_file, "w") as f:
-            for k, v in data.items():
-                f.write(f"{k}={v}\n")
 
-            f.write("\n===== END OF FIRST INNINGS =====\n\n")
+        safe_write(match_file, data)
 
-    # 🔥 target
     data["target"] = str(int(data.get("score", 0)) + 1)
 
     # 🔥 swap
@@ -2312,50 +2415,53 @@ def start_second():
     data["b_wickets"] = "0"
     data["b_maiden"] = "0"
     data["b_er"] = "0"
+
     data["bowler_log"] = ""
-    data["wickets_log"] = ""
+    data["wickets_log"] = "[]"
     data["Man_of_the_Match"] = ""
+
     data["innings"] = "2"
 
-    with open("data/current_match.txt", "w") as f:
-        for k, v in data.items():
-            f.write(f"{k}={v}\n")
+    # 🔥 SAFE SAVE CURRENT MATCH
+    safe_write("data/current_match.txt", data)
 
     return redirect("/opening-players")
+
 
 @app.route("/save-result", methods=["POST"])
 def save_result():
 
     data_json = request.json
+
     result = data_json.get("result", "")
 
-    print("RESULT RECEIVED:", result)  # 🔥 DEBUG
+    print("RESULT RECEIVED:", result)
 
     match = {}
 
+    # 🔥 LOAD CURRENT MATCH
     with open("data/current_match.txt") as f:
+
         for line in f:
+
             if "=" in line:
                 k, v = line.strip().split("=", 1)
                 match[k] = v
 
-    match_file = match.get("match_file")
-
-    # 🔥 SAVE TO current_match
+    # 🔥 SAVE RESULT
     match["match_result"] = result
 
-    with open("data/current_match.txt", "w") as f:
-        for k, v in match.items():
-            f.write(f"{k}={v}\n")
+    # 🔥 SAVE CURRENT MATCH
+    safe_write("data/current_match.txt", match)
 
-    # 🔥 SAVE TO match_file
+    # 🔥 SAVE SECOND INNINGS FILE
+    match_file = match.get("second_match_file")
+
     if match_file:
-        with open(match_file, "a") as f:
-            f.write("\n===== MATCH RESULT =====\n")
-            f.write(result + "\n")
+
+        safe_write(match_file, match)
 
     return "OK"
-
 @app.route("/history")
 def history():
 
@@ -2364,69 +2470,65 @@ def history():
     folder = "data/all_match"
     matches = []
 
-    for file in os.listdir(folder):
+    # 🔥 ONLY FIRST INNINGS FILE
+    files = [f for f in os.listdir(folder) if f.endswith("_1st.txt")]
+
+    for file in files:
+
         path = os.path.join(folder, file)
 
-        with open(path) as f:
-            content = f.read()
-
-        # 🔥 GET MATCH TIME (NEW)
-        match_time = ""
-        for line in content.splitlines():
-            if line.startswith("match_time="):
-                match_time = line.split("=", 1)[1]
-                break
-
-        # 🔥 NEW: INNINGS BREAK DETECT
-        innings_break = "===== END OF FIRST INNINGS =====" in content
-
-        # 🔥 split innings safely
-        parts = content.split("===== END OF FIRST INNINGS =====")
-
-        if len(parts) < 2:
-            first_part = content
-            second_part = ""
-        else:
-            first_part = parts[0]
-            second_part = parts[1]
-
-        # 🔥 result
-        # 🔥 result (FIXED)
-        result_text = ""
-        if "===== MATCH RESULT =====" in content:
-            result_block = content.split("===== MATCH RESULT =====")[-1].strip()
-            result_text = result_block.splitlines()[0] if result_block else ""
-
-        # 🔵 parse first innings
+        # 🔥 LOAD FIRST INNINGS
         first = {}
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
 
-        # 🔴 parse second innings (safe)
+        with open(path) as f:
+
+            for line in f:
+
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    first[k] = v
+
+        # 🔥 LOAD SECOND INNINGS
         second = {}
-        for line in second_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                second[k] = v
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            with open(second_file) as sf:
+
+                for line in sf:
+
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        second[k] = v
+
+        # 🔥 MATCH TIME
+        match_time = first.get("match_time", "")
+
+        # 🔥 RESULT
+        result_text = second.get("match_result", "")
+
+        innings_break = len(second) > 0
 
         # 🔥 TEAM ORDER
-        team1 = first.get("batting")
-        team2 = second.get("batting")
+        team1 = first.get("batting", "")
+        team2 = second.get("batting", "")
         if not team2:
             team2 = first.get("bowling")
 
-        # 🔥 TEAM2 SCORE FIX
+        # 🔥 TEAM2 SCORE
         team2_score = second.get("score", "")
         team2_wickets = second.get("wickets", "")
         team2_over = f"{second.get('over','0')}.{second.get('ball','0')}"
 
         if second.get("over", "0") == "0" and second.get("ball", "0") == "0":
+
             if innings_break:
                 team2_score = "0"
                 team2_wickets = "0"
                 team2_over = "0.0"
+
             else:
                 team2_score = ""
                 team2_wickets = ""
@@ -2436,6 +2538,7 @@ def history():
         status = "COMPLETED" if result_text else "LIVE"
 
         match_info = {
+
             "team1": team1,
             "team1_score": first.get("score", "0"),
             "team1_wickets": first.get("wickets", "0"),
@@ -2448,13 +2551,17 @@ def history():
 
             "result": result_text,
             "need_text": second.get("need_text"),
+
             "toss": first.get("toss"),
             "opt": first.get("opt"),
+
             "status": status,
 
-            "innings_break": innings_break,   # 🔥 NEW
+            "innings_break": innings_break,
 
             "date": match_time,
+
+            # 🔥 IMPORTANT
             "file": file
         }
 
@@ -2463,14 +2570,20 @@ def history():
     from datetime import datetime
 
     def parse_time(m):
+
         try:
             return datetime.strptime(m["date"], "%d %b %Y, %I:%M %p")
+
         except:
             return datetime.min
 
     matches.sort(key=parse_time, reverse=True)
 
-    return render_template("history.html", matches=matches, hide_delete=False)
+    return render_template(
+        "history.html",
+        matches=matches,
+        hide_delete=False
+    )
 
 
 @app.route("/history-data")
@@ -2481,72 +2594,77 @@ def history_data():
     folder = "data/all_match"
     matches = []
 
-    for file in os.listdir(folder):
+    # 🔥 ONLY FIRST INNINGS FILE
+    files = [f for f in os.listdir(folder) if f.endswith("_1st.txt")]
+
+    for file in files:
+
         path = os.path.join(folder, file)
 
-        with open(path) as f:
-            content = f.read()
-
-        # 🔥 GET MATCH TIME
-        match_time = ""
-        for line in content.splitlines():
-            if line.startswith("match_time="):
-                match_time = line.split("=", 1)[1]
-                break
-
-        # 🔥 NEW
-        innings_break = "===== END OF FIRST INNINGS =====" in content
-
-        parts = content.split("===== END OF FIRST INNINGS =====")
-
-        if len(parts) < 2:
-            first_part = content
-            second_part = ""
-        else:
-            first_part = parts[0]
-            second_part = parts[1]
-
-        # 🔥 result (FIXED)
-        result_text = ""
-        if "===== MATCH RESULT =====" in content:
-            result_block = content.split("===== MATCH RESULT =====")[-1].strip()
-            result_text = result_block.splitlines()[0] if result_block else ""
-
+        # 🔥 LOAD FIRST INNINGS
         first = {}
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
 
+        with open(path) as f:
+
+            for line in f:
+
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    first[k] = v
+
+        # 🔥 LOAD SECOND INNINGS
         second = {}
-        for line in second_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                second[k] = v
 
-        team1 = first.get("batting")
+        second_file = path.replace("_1st.txt", "_2nd.txt")
 
-        team2 = second.get("batting")
+        if os.path.exists(second_file):
+
+            with open(second_file) as sf:
+
+                for line in sf:
+
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        second[k] = v
+
+        # 🔥 MATCH TIME
+        match_time = first.get("match_time", "")
+
+        # 🔥 RESULT
+        result_text = second.get("match_result", "")
+
+        innings_break = len(second) > 0
+
+        # 🔥 TEAM ORDER
+        team1 = first.get("batting", "")
+
+        team2 = second.get("batting", "")
+
         if not team2:
             team2 = first.get("bowling")
 
+        # 🔥 TEAM2 SCORE
         team2_score = second.get("score", "")
         team2_wickets = second.get("wickets", "")
         team2_over = f"{second.get('over','0')}.{second.get('ball','0')}"
 
         if second.get("over", "0") == "0" and second.get("ball", "0") == "0":
+
             if innings_break:
                 team2_score = "0"
                 team2_wickets = "0"
                 team2_over = "0.0"
+
             else:
                 team2_score = ""
                 team2_wickets = ""
                 team2_over = ""
 
+        # 🔥 STATUS
         status = "COMPLETED" if result_text else "LIVE"
 
         match_info = {
+
             "team1": team1,
             "team1_score": first.get("score", "0"),
             "team1_wickets": first.get("wickets", "0"),
@@ -2559,13 +2677,17 @@ def history_data():
 
             "result": result_text,
             "need_text": second.get("need_text"),
+
             "toss": first.get("toss"),
             "opt": first.get("opt"),
+
             "status": status,
 
-            "innings_break": innings_break,   # 🔥 NEW
+            "innings_break": innings_break,
 
             "date": match_time,
+
+            # 🔥 IMPORTANT
             "file": file
         }
 
@@ -2574,24 +2696,43 @@ def history_data():
     from datetime import datetime
 
     def parse_time(m):
+
         try:
             return datetime.strptime(m["date"], "%d %b %Y, %I:%M %p")
+
         except:
             return datetime.min
 
     matches.sort(key=parse_time, reverse=True)
 
-    return render_template("history_partial.html", matches=matches,hide_delete=False)
+    return render_template(
+        "history_partial.html",
+        matches=matches,
+        hide_delete=False
+    )
 
 @app.route("/delete-match/<filename>")
 def delete_match(filename):
 
     import os
 
-    path = os.path.join("data/all_match", filename)
+    first_file = os.path.join(
+        "data/all_match",
+        filename + "_1st.txt"
+    )
 
-    if os.path.exists(path):
-        os.remove(path)
+    second_file = os.path.join(
+        "data/all_match",
+        filename + "_2nd.txt"
+    )
+
+    # 🔥 DELETE FIRST INNINGS
+    if os.path.exists(first_file):
+        os.remove(first_file)
+
+    # 🔥 DELETE SECOND INNINGS
+    if os.path.exists(second_file):
+        os.remove(second_file)
 
     return redirect("/history")
 
@@ -2599,18 +2740,46 @@ def delete_match(filename):
 def resume_match(file):
 
     import shutil
+    import os
 
-    source = f"data/all_match/{file}"
+    first_file = f"data/all_match/{file}_1st.txt"
+    second_file = f"data/all_match/{file}_2nd.txt"
+
     target = "data/current_match.txt"
 
     try:
-        # 🔥 STEP 1: clear current match
-        open(target, "w").close()
 
-        # 🔥 STEP 2: copy new match
-        shutil.copy(source, target)
+        data = {}
 
-    except:
+        # 🔥 LOAD FIRST INNINGS
+        if os.path.exists(first_file):
+
+            with open(first_file) as f:
+
+                for line in f:
+
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        data[k] = v
+
+        # 🔥 LOAD SECOND INNINGS
+        if os.path.exists(second_file):
+
+            with open(second_file) as f:
+
+                for line in f:
+
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        data[k] = v
+
+        # 🔥 SAVE CURRENT MATCH
+        safe_write(target, data)
+
+    except Exception as e:
+
+        print("RESUME ERROR:", e)
+
         return "Resume failed"
 
     return redirect("/live-match")
@@ -2653,9 +2822,7 @@ def save_wicket():
         match["wickets_log"] = json.dumps(log)
 
     # 🔥 SAVE BACK
-    with open("data/current_match.txt", "w") as f:
-        for k, v in match.items():
-            f.write(f"{k}={v}\n")
+    safe_write("data/current_match.txt", match)
 
     return {"status": "ok"}
 
@@ -2667,55 +2834,52 @@ def match_details():
     from flask import request, render_template
 
     file = request.args.get("file")
+
     path = os.path.join("data/all_match", file)
 
     first = {}
     second = {}
+
     result = ""
-    pom = ""   # 🔥 PLAYER OF MATCH
+    pom = ""
 
     try:
+
+        # =====================
+        # 🔥 LOAD FIRST INNINGS
+        # =====================
         with open(path) as f:
-            content = f.read()
+
+            for line in f:
+
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    first[k] = v
 
         # =====================
-        # 🔥 SPLIT INNINGS
+        # 🔥 LOAD SECOND INNINGS
         # =====================
-        parts = content.split("===== END OF FIRST INNINGS =====")
+        second_file = path.replace("_1st.txt", "_2nd.txt")
 
-        first_part = parts[0]
-        second_part = parts[1] if len(parts) > 1 else ""
+        if os.path.exists(second_file):
 
-        # 🔴 FIRST INNINGS
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
+            with open(second_file) as sf:
 
-        # 🔵 SECOND INNINGS
-        for line in second_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                second[k] = v
+                for line in sf:
+
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        second[k] = v
 
         # =====================
         # 🏁 RESULT
         # =====================
-        result = ""
-
-        if "===== MATCH RESULT =====" in content:
-            after_result = content.split("===== MATCH RESULT =====")[-1]
-
-            # 🔥 only first line নাও
-            result = after_result.strip().splitlines()[0]
+        result = second.get("match_result", "")
 
         # =====================
-        # 🔥 PLAYER OF MATCH (FIXED)
+        # 🔥 PLAYER OF MATCH
         # =====================
-        for line in content.splitlines():
-            if "man_of_match=" in line:
-                pom = line.split("=", 1)[1].strip()
-                break
+        pom = second.get("Man_of_the_Match", "")
 
     except:
         pass
@@ -2724,8 +2888,10 @@ def match_details():
     # 🔥 SAFE JSON
     # =====================
     def safe_json(text):
+
         try:
             return json.loads(text)
+
         except:
             return []
 
@@ -2739,23 +2905,33 @@ def match_details():
     # 🔥 DISMISSALS
     # =====================
     def clean(n):
+
         return n.split('(')[0].strip().lower()
 
     def build_map(log):
+
         d = {}
+
         for w in log:
+
             key = clean(w.get("batsman", ""))
+
             t = (w.get("type") or "").lower()
+
             bowler = w.get("bowler", "")
 
             if t == "bowled":
                 d[key] = f"b {bowler}"
+
             elif "catch" in t:
                 d[key] = f"c b {bowler}"
+
             elif "run out" in t:
                 d[key] = "run out"
+
             elif t == "lbw":
                 d[key] = f"lbw b {bowler}"
+
             else:
                 d[key] = w.get("type", "out")
 
@@ -2765,13 +2941,16 @@ def match_details():
     second["dismissals"] = build_map(second["wickets_log"])
 
     # =====================
-    # 🔥 SQUAD FIND (FIXED FOR MULTI WORD TEAM)
+    # 🔥 SQUAD FIND
     # =====================
     def find_squad_key(data, team):
+
         team_clean = team.lower().replace(" ", "").replace("-", "").replace("_", "")
 
         for k in data.keys():
+
             key_clean = k.lower().replace("_", "").replace("-", "")
+
             if team_clean in key_clean:
                 return k
 
@@ -2790,15 +2969,21 @@ def match_details():
     # 🔥 SPLIT SQUAD
     # =====================
     def split_squad(squad):
-        playing, bench, staff = [], [], []
+
+        playing = []
+        bench = []
+        staff = []
 
         for p in squad:
+
             extra = p.get("extra", [])
 
             if "bench" in extra:
                 bench.append(p)
+
             elif "stf" in extra:
                 staff.append(p)
+
             else:
                 playing.append(p)
 
@@ -2812,10 +2997,12 @@ def match_details():
     # =====================
     return render_template(
         "match_details.html",
+
         first=first,
         second=second,
+
         result=result,
-        pom=pom,   # 🔥 THIS WAS YOUR MAIN ISSUE
+        pom=pom,
 
         t1_play=t1_play,
         t1_bench=t1_bench,
@@ -2979,168 +3166,180 @@ def all_match_files_page():
     import os
 
     folder = "data/all_match"
+
     matches = []
 
-    files = sorted(os.listdir(folder), reverse=True)
+    # 🔥 ONLY FIRST INNINGS FILES
+    files = sorted(
+        [f for f in os.listdir(folder) if f.endswith("_1st.txt")],
+        reverse=True
+    )
 
     for file in files:
+
         path = os.path.join(folder, file)
 
         first = {}
 
         try:
+
             with open(path) as f:
-                content = f.read()
 
-            first_part = content.split("===== END OF FIRST INNINGS =====")[0]
+                for line in f:
 
-            for line in first_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
-                    first[k] = v
+                    if "=" in line:
+
+                        k, v = line.strip().split("=", 1)
+
+                        first[k] = v
 
         except:
             continue
 
         team1 = first.get("host", "team")
+
         team2 = first.get("visitor", "team")
 
         matches.append({
+
             "file": file,
+
             "team1": team1,
+
             "team2": team2
         })
 
-    return render_template("all_match_files.html", matches=matches)
+    return render_template(
+        "all_match_files.html",
+        matches=matches
+    )
 
-@app.route("/update-match", methods=["POST"])  
-def update_match():  
+@app.route("/update-match", methods=["POST"])
+def update_match():
 
-    import os  
-    from flask import request, redirect  
+    import os
 
-    file = request.form.get("file")  
-    path = os.path.join("data/all_match", file)  
+    from flask import request, redirect
 
-    with open(path) as f:  
-        content = f.read()  
+    file = request.form.get("file")
 
-    parts = content.split("===== END OF FIRST INNINGS =====")  
+    path = os.path.join("data/all_match", file)
 
-    first_part = parts[0]  
-    second_part = parts[1] if len(parts) > 1 else ""  
+    second_file = path.replace("_1st.txt", "_2nd.txt")
 
-    # 🔴 UPDATE FIRST INNINGS  
-    new_first = []  
-    for line in first_part.splitlines():  
-        if line.startswith("wickets_log="):  
-            line = "wickets_log=" + request.form.get("wickets_log_1", "")  
-        elif line.startswith("bowler_log="):  
-            line = "bowler_log=" + request.form.get("bowler_log_1", "")  
-        new_first.append(line)  
-
-    # 🔵 UPDATE SECOND INNINGS  
-    new_second = []  
-    for line in second_part.splitlines():  
-        if line.startswith("wickets_log="):  
-            line = "wickets_log=" + request.form.get("wickets_log_2", "")  
-        elif line.startswith("bowler_log="):  
-            line = "bowler_log=" + request.form.get("bowler_log_2", "")  
-        new_second.append(line)  
-
-    # 🏆 PLAYER OF MATCH  
-    pom = request.form.get("man_of_match", "").strip()  
-
-    # 🔥 REBUILD FILE  
-    final = "\n".join(new_first)  
-
-    if second_part:  
-        final += "\n===== END OF FIRST INNINGS =====\n"  
-        final += "\n".join(new_second)  
-
-    # =====================  
-    # 🔥 FIX: REMOVE OLD POM + ADD NEW ONE  
-    # =====================  
-    lines = final.splitlines()  
-
-    clean_lines = []  
-    found = False  
-
-    for line in lines:  
-        if line.startswith("man_of_match="):  
-            if not found:  
-                clean_lines.append(f"man_of_match={pom}")  
-                found = True  
-        else:  
-            clean_lines.append(line)  
-
-    if pom and not found:  
-        clean_lines.append(f"man_of_match={pom}")  
-
-    final = "\n".join(clean_lines)  
-
-    # =====================  
-    # 🏁 MATCH RESULT FIX  
-    # =====================  
-    match_result = request.form.get("match_result","")  
-
-    lines = final.splitlines()  
-    new_lines = []  
-    skip = False  
-
-    for line in lines:  
-        if line.startswith("===== MATCH RESULT ====="):  
-            skip = True  
-            continue  
-
-        if skip:  
-            if line.startswith("man_of_match="):  
-                skip = False  
-                new_lines.append(line)  
-            continue  
-
-        new_lines.append(line)  
-
-    final = "\n".join(new_lines)  
-
-    if match_result:  
-        final += "\n===== MATCH RESULT =====\n"  
-        final += match_result + "\n"  
-
-    # 🔥 WRITE BACK  
-    with open(path, "w") as f:  
-        f.write(final)  
-
+    first = {}
+    second = {}
 
     # =========================
-    # 🔥 AUTO TEAM STATS UPDATE (SAFE)
+    # 🔥 LOAD FIRST INNINGS
     # =========================
+
+    if os.path.exists(path):
+
+        with open(path) as f:
+
+            for line in f:
+
+                if "=" in line:
+
+                    k, v = line.strip().split("=", 1)
+
+                    first[k] = v
+
+    # =========================
+    # 🔥 LOAD SECOND INNINGS
+    # =========================
+
+    if os.path.exists(second_file):
+
+        with open(second_file) as sf:
+
+            for line in sf:
+
+                if "=" in line:
+
+                    k, v = line.strip().split("=", 1)
+
+                    second[k] = v
+
+    # =========================
+    # 🔥 UPDATE FIRST
+    # =========================
+
+    first["wickets_log"] = request.form.get(
+        "wickets_log_1",
+        first.get("wickets_log", "")
+    )
+
+    first["bowler_log"] = request.form.get(
+        "bowler_log_1",
+        first.get("bowler_log", "")
+    )
+
+    # =========================
+    # 🔥 UPDATE SECOND
+    # =========================
+
+    second["wickets_log"] = request.form.get(
+        "wickets_log_2",
+        second.get("wickets_log", "")
+    )
+
+    second["bowler_log"] = request.form.get(
+        "bowler_log_2",
+        second.get("bowler_log", "")
+    )
+
+    # =========================
+    # 🏆 PLAYER OF MATCH
+    # =========================
+
+    pom = request.form.get("man_of_match", "").strip()
+
+    if pom:
+
+        second["Man_of_the_Match"] = pom
+
+    # =========================
+    # 🏁 MATCH RESULT
+    # =========================
+
+    match_result = request.form.get("match_result", "").strip()
+
+    if match_result:
+
+        second["match_result"] = match_result
+
+    # =========================
+    # 🔥 SAVE FIRST INNINGS
+    # =========================
+
+    safe_write(path, first)
+
+    # =========================
+    # 🔥 SAVE SECOND INNINGS
+    # =========================
+
+    if second:
+
+        safe_write(second_file, second)
+
+    # =========================
+    # 🔥 AUTO TEAM STATS UPDATE
+    # =========================
+
     try:
-        first = {}
-        second = {}
 
-        parts = final.split("===== END OF FIRST INNINGS =====")
+        rebuild_stats_logic()
 
-        first_part = parts[0]
-        second_part = parts[1] if len(parts) > 1 else ""
-
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
-
-        for line in second_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                second[k] = v
-
-        update_team_stats_from_match(final, first, second)
+        update_nrr_stats()
 
     except:
         pass
 
-
-    return redirect(f"/match-editor?file={file}")
+    return redirect(
+        f"/match-editor?file={file}"
+    )
 
 @app.route("/match-editor")
 def match_editor():
@@ -3152,69 +3351,105 @@ def match_editor():
 
     first = {}
     second = {}
+
     pom = ""
+
+    result = ""
+
     team1 = ""
     team2 = ""
 
     if file:
+
         path = os.path.join("data/all_match", file)
 
+        # =========================
+        # 🔥 LOAD FIRST INNINGS
+        # =========================
+
         if os.path.exists(path):
-            with open(path) as f:
-                content = f.read()
 
-            # 🔥 SPLIT INNINGS
-            parts = content.split("===== END OF FIRST INNINGS =====")
+            try:
 
-            first_part = parts[0]
-            second_part = parts[1] if len(parts) > 1 else ""
+                with open(path) as f:
 
-            # 🔴 FIRST INNINGS PARSE
-            for line in first_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
+                    for line in f:
 
-                    if k in ["wickets_log", "bowler_log"]:
-                        first[k] = v
+                        if "=" in line:
 
-                    # 🔥 TEAM1
-                    if k == "batting":
-                        team1 = v
+                            k, v = line.strip().split("=", 1)
 
-                    # 🔥 fallback team2 (if no 2nd innings)
-                    if k == "bowling" and not team2:
-                        team2 = v
+                            if k in ["wickets_log", "bowler_log"]:
 
-            # 🔵 SECOND INNINGS PARSE
-            for line in second_part.splitlines():
-                if "=" in line:
-                    k, v = line.strip().split("=", 1)
+                                first[k] = v
 
-                    if k in ["wickets_log", "bowler_log"]:
-                        second[k] = v
+                            # 🔥 TEAM1
+                            if k == "batting":
+                                team1 = v
 
-                    # 🔥 TEAM2 (priority)
-                    if k == "batting":
-                        team2 = v
+                            # 🔥 fallback TEAM2
+                            if k == "bowling" and not team2:
+                                team2 = v
 
-            # 🏆 MAN OF MATCH
-            for line in content.splitlines():
-                if line.startswith("man_of_match="):
-                    pom = line.split("=", 1)[1]
-                    break
-            result = ""
+                            # 🔥 SAVE
+                            first[k] = v
 
-            # 🏁 MATCH RESULT
-            if "===== MATCH RESULT =====" in content:
-                result_block = content.split("===== MATCH RESULT =====")[-1].strip()
-                result = result_block.splitlines()[0] if result_block else ""
+            except:
+                pass
+
+        # =========================
+        # 🔥 LOAD SECOND INNINGS
+        # =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            try:
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+
+                            k, v = line.strip().split("=", 1)
+
+                            if k in ["wickets_log", "bowler_log"]:
+
+                                second[k] = v
+
+                            # 🔥 TEAM2 priority
+                            if k == "batting":
+                                team2 = v
+
+                            # 🔥 RESULT
+                            if k == "match_result":
+                                result = v
+
+                            # 🔥 POM
+                            if k == "Man_of_the_Match":
+                                pom = v
+
+                            # 🔥 SAVE
+                            second[k] = v
+
+            except:
+                pass
+
     return render_template(
+
         "match_editor.html",
+
         first=first,
         second=second,
+
         pom=pom,
-        result=result,   # 🔥 NEW
+
+        result=result,
+
         file=file,
+
         team1=team1,
         team2=team2
     )
@@ -3336,32 +3571,50 @@ def update_team_stats_from_match(content, first, second):
 # =========================
 @app.route("/team-manager")
 def team_manager():
-   
-    
 
-    # 🔥 NRR UPDATE (ADD THIS)
+    import os
+
+    # 🔥 NRR UPDATE
     try:
+
         update_nrr_stats()
+
+    except:
+        pass
+    try:
+
+        rebuild_stats_logic()
+
     except:
         pass
 
     folder = "data/teamlist"
+
     teams = []
 
     for file in os.listdir(folder):
+
         if file.endswith(".txt"):
-            team_name = file.replace(".txt","")
+
+            team_name = file.replace(".txt", "")
 
             s = load_stats(team_name)
 
             teams.append({
+
                 "name": team_name,
+
                 "matches": s["matches"],
+
                 "won": s["won"],
+
                 "lost": s["lost"]
             })
 
-    return render_template("team_manager.html", teams=teams)
+    return render_template(
+        "team_manager.html",
+        teams=teams
+    )
 
 # =========================
 # 🔥 UPDATE STATS (SAVE)
@@ -3406,42 +3659,80 @@ def rebuild_stats_logic():
     import os
 
     match_folder = "data/all_match"
+
     result_folder = "data/match_result"
 
     os.makedirs(result_folder, exist_ok=True)
 
     stats = {}
 
-    for file in os.listdir(match_folder):
+    # 🔥 ONLY FIRST INNINGS FILE
+    files = [f for f in os.listdir(match_folder) if f.endswith("_1st.txt")]
 
-        path = os.path.join(match_folder, file)
-
-        with open(path) as f:
-            content = f.read()
-
-        if "===== MATCH RESULT =====" not in content:
-            continue
-
-        result_block = content.split("===== MATCH RESULT =====")[-1].strip()
-        result = result_block.splitlines()[0] if result_block else ""
-
-        parts = content.split("===== END OF FIRST INNINGS =====")
+    for file in files:
 
         first = {}
         second = {}
 
-        for line in parts[0].splitlines():
-            if "=" in line:
-                k, v = line.split("=",1)
-                first[k] = v
+        path = os.path.join(match_folder, file)
 
-        if len(parts) > 1:
-            for line in parts[1].splitlines():
-                if "=" in line:
-                    k, v = line.split("=",1)
-                    second[k] = v
+        # =========================
+        # 🔥 LOAD FIRST INNINGS
+        # =========================
+
+        try:
+
+            with open(path) as f:
+
+                for line in f:
+
+                    if "=" in line:
+
+                        k, v = line.strip().split("=", 1)
+
+                        first[k] = v
+
+        except:
+            continue
+
+        # =========================
+        # 🔥 LOAD SECOND INNINGS
+        # =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            try:
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+
+                            k, v = line.strip().split("=", 1)
+
+                            second[k] = v
+
+            except:
+                pass
+
+        # =========================
+        # 🔥 RESULT
+        # =========================
+
+        result = second.get("match_result", "")
+
+        if not result:
+            continue
+
+        # =========================
+        # 🔥 TEAM INFO
+        # =========================
 
         team1 = first.get("batting")
+
         team2 = second.get("batting") or first.get("bowling")
 
         if not team1 or not team2:
@@ -3449,31 +3740,46 @@ def rebuild_stats_logic():
 
         r = result.lower()
 
-        # 🔥 init
+        # =========================
+        # 🔥 INIT
+        # =========================
+
         for t in [team1, team2]:
+
             if t not in stats:
-                stats[t] = {"matches":0,"won":0,"lost":0}
+
+                stats[t] = {
+                    "matches": 0,
+                    "won": 0,
+                    "lost": 0
+                }
 
         # =========================
-        # 🔥 CASE 1: DRAW / TIE
+        # 🔥 DRAW / TIE
         # =========================
+
         if "draw" in r or "tie" in r:
 
-            # ✅ match++ only once
             stats[team1]["matches"] += 1
             stats[team2]["matches"] += 1
 
-            # 🔹 running super over → nothing more
+            # 🔥 running super over
             if "running super over" in r:
                 continue
 
-            # 🔹 super over winner
+            # 🔥 super over winner
             if "won the super over" in r:
 
                 if team1.lower() in r:
-                    winner, loser = team1, team2
+
+                    winner = team1
+                    loser = team2
+
                 elif team2.lower() in r:
-                    winner, loser = team2, team1
+
+                    winner = team2
+                    loser = team1
+
                 else:
                     continue
 
@@ -3482,35 +3788,47 @@ def rebuild_stats_logic():
 
                 continue
 
-            # 🔹 normal draw
+            # 🔥 normal draw
             continue
 
+        # =========================
+        # 🔥 NORMAL RESULT
+        # =========================
 
-        # =========================
-        # 🔥 CASE 2: NORMAL RESULT
-        # =========================
         if team1.lower() in r:
-            winner, loser = team1, team2
+
+            winner = team1
+            loser = team2
+
         elif team2.lower() in r:
-            winner, loser = team2, team1
+
+            winner = team2
+            loser = team1
+
         else:
             continue
 
-        # ✅ match++ only once
         stats[team1]["matches"] += 1
         stats[team2]["matches"] += 1
 
         stats[winner]["won"] += 1
         stats[loser]["lost"] += 1
 
-
     # =========================
     # 🔥 SAVE
     # =========================
+
     for t, s in stats.items():
-        with open(os.path.join(result_folder, f"{t}.txt"), "w") as f:
+
+        with open(
+            os.path.join(result_folder, f"{t}.txt"),
+            "w"
+        ) as f:
+
             f.write(f"matches={s['matches']}\n")
+
             f.write(f"won={s['won']}\n")
+
             f.write(f"lost={s['lost']}\n")
 
 @app.route("/rebuild-team-stats")
@@ -3654,10 +3972,11 @@ def ensure_nrr_files():
 
         path = os.path.join(nrr_folder, f"{team_name}.txt")
 
-        # 🔥 যদি না থাকে তাহলে create
+        # 🔥 create if not exists
         if not os.path.exists(path):
 
             with open(path, "w") as f:
+
                 f.write("total_runs_scored=0\n")
                 f.write("total_overs_faced=0\n")
                 f.write("total_runs_conceded=0\n")
@@ -3666,90 +3985,156 @@ def ensure_nrr_files():
 
 @app.route("/create-nrr")
 def create_nrr():
+
     ensure_nrr_files()
+
     return "NRR files created"
+
 
 def update_nrr_stats():
 
     import os
 
     match_folder = "data/all_match"
+
     nrr_folder = "data/NRR_calculation"
 
-    # 🔥 get total players
+    # 🔥 total players
     total_players = 11
+
     try:
+
         with open("data/advanced_setting.txt") as f:
+
             for line in f:
+
                 if line.startswith("players="):
+
                     total_players = int(line.split("=")[1])
+
     except:
         pass
 
     all_out_wickets = total_players - 1
 
-    # 🔥 init storage
+    # 🔥 init
     stats = {}
 
-    for file in os.listdir(match_folder):
+    # 🔥 ONLY FIRST INNINGS FILE
+    files = [f for f in os.listdir(match_folder) if f.endswith("_1st.txt")]
 
-        path = os.path.join(match_folder, file)
-
-        with open(path) as f:
-            content = f.read()
-
-        parts = content.split("===== END OF FIRST INNINGS =====")
+    for file in files:
 
         first = {}
         second = {}
 
-        for line in parts[0].splitlines():
-            if "=" in line:
-                k,v = line.strip().split("=",1)
-                first[k]=v
+        path = os.path.join(match_folder, file)
 
-        if len(parts)>1:
-            for line in parts[1].splitlines():
-                if "=" in line:
-                    k,v = line.strip().split("=",1)
-                    second[k]=v
+        # =========================
+        # 🔥 LOAD FIRST INNINGS
+        # =========================
+
+        try:
+
+            with open(path) as f:
+
+                for line in f:
+
+                    if "=" in line:
+
+                        k, v = line.strip().split("=", 1)
+
+                        first[k] = v
+
+        except:
+            continue
+
+        # =========================
+        # 🔥 LOAD SECOND INNINGS
+        # =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            try:
+
+                with open(second_file) as sf:
+
+                    for line in sf:
+
+                        if "=" in line:
+
+                            k, v = line.strip().split("=", 1)
+
+                            second[k] = v
+
+            except:
+                pass
+
+        # =========================
+        # 🔥 TEAM INFO
+        # =========================
 
         team1 = first.get("batting")
+
         team2 = second.get("batting") or first.get("bowling")
 
         if not team1 or not team2:
             continue
 
-        # 🔥 get values
+        # =========================
+        # 🔥 SCORE DATA
+        # =========================
+
         def get_data(d):
 
-            runs = int(d.get("score","0"))
-            wickets = int(d.get("wickets","0"))
-            over = int(d.get("over","0"))
-            ball = int(d.get("ball","0"))
+            runs = int(d.get("score", "0"))
 
-            overs = over + (ball/6)
+            wickets = int(d.get("wickets", "0"))
 
-            # 🔥 ALL OUT FIX
+            over = int(d.get("over", "0"))
+
+            ball = int(d.get("ball", "0"))
+
+            overs = over + (ball / 6)
+
+            # 🔥 all out
             if wickets >= all_out_wickets:
-                overs = 20  # ⚠️ later dynamic korbo
+
+                try:
+
+                    overs = int(d.get("overs", "20"))
+
+                except:
+
+                    overs = 20
 
             return runs, overs
 
         t1_runs, t1_overs = get_data(first)
+
         t2_runs, t2_overs = get_data(second)
 
-        # 🔥 init
+        # =========================
+        # 🔥 INIT
+        # =========================
+
         for t in [team1, team2]:
+
             if t not in stats:
+
                 stats[t] = {
-                    "runs_scored":0,
-                    "overs_faced":0,
-                    "runs_conceded":0,
-                    "overs_bowled":0
+                    "runs_scored": 0,
+                    "overs_faced": 0,
+                    "runs_conceded": 0,
+                    "overs_bowled": 0
                 }
 
-        # 🔥 update
+        # =========================
+        # 🔥 UPDATE
+        # =========================
+
         stats[team1]["runs_scored"] += t1_runs
         stats[team1]["overs_faced"] += t1_overs
         stats[team1]["runs_conceded"] += t2_runs
@@ -3760,21 +4145,36 @@ def update_nrr_stats():
         stats[team2]["runs_conceded"] += t1_runs
         stats[team2]["overs_bowled"] += t1_overs
 
+    # =========================
+    # 🔥 SAVE
+    # =========================
 
-    # 🔥 SAVE FILE
     for team, s in stats.items():
 
         path = os.path.join(nrr_folder, f"{team}.txt")
 
         with open(path, "w") as f:
+
             f.write(f"total_runs_scored={s['runs_scored']}\n")
-            f.write(f"total_overs_faced={round(s['overs_faced'],2)}\n")
-            f.write(f"total_runs_conceded={s['runs_conceded']}\n")
-            f.write(f"total_overs_bowled={round(s['overs_bowled'],2)}\n")
+
+            f.write(
+                f"total_overs_faced={round(s['overs_faced'],2)}\n"
+            )
+
+            f.write(
+                f"total_runs_conceded={s['runs_conceded']}\n"
+            )
+
+            f.write(
+                f"total_overs_bowled={round(s['overs_bowled'],2)}\n"
+            )
+
 
 @app.route("/update-nrr")
 def update_nrr():
+
     update_nrr_stats()
+
     return "NRR updated"
 
 @app.route("/current-squad")
@@ -3886,29 +4286,61 @@ def most_runs():
 
 @app.route("/build-most-runs")
 def build_runs():
+
     build_most_runs()
+
     return "✅ Most Runs Updated"
+
 
 def build_most_runs():
 
     import os, json
 
     folder = "data/all_match"
+
     save_path = "data/most_runs.txt"
 
     players = {}
 
     for file in os.listdir(folder):
 
+        # 🔥 ONLY FIRST INNINGS FILE
+        if not file.endswith("_1st.txt"):
+            continue
+
         path = os.path.join(folder, file)
 
-        with open(path) as f:
-            content = f.read()
+        innings_parts = []
 
-        # 🔥 SPLIT INNINGS
-        innings_parts = content.split("===== END OF FIRST INNINGS =====")
+        # =========================
+        # 🔥 FIRST INNINGS
+        # =========================
 
-        # 🔥 এই set ensure করবে match একবারই count হয়
+        try:
+
+            with open(path) as f:
+                innings_parts.append(f.read())
+
+        except:
+            continue
+
+        # =========================
+        # 🔥 SECOND INNINGS
+        # =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            try:
+
+                with open(second_file) as sf:
+                    innings_parts.append(sf.read())
+
+            except:
+                pass
+
+        # 🔥 match count safe
         match_players = set()
 
         for inn in innings_parts:
@@ -3916,41 +4348,49 @@ def build_most_runs():
             lines = inn.splitlines()
 
             # =========================
-            # 🔥 SQUAD (ONLY COLLECT NAME)
+            # 🔥 SQUAD
             # =========================
+
             for line in lines:
 
                 if "_squad=" in line:
+
                     try:
-                        data = json.loads(line.split("=",1)[1])
+
+                        data = json.loads(line.split("=", 1)[1])
 
                         for p in data:
+
                             name = p["name"].strip()
+
                             match_players.add(name)
 
                     except:
                         pass
 
         # =========================
-        # 🔥 MATCH++ (ONLY ONCE PER FILE)
+        # 🔥 MATCH ++
         # =========================
+
         for name in match_players:
 
             if name not in players:
+
                 players[name] = {
-                    "match":0,
-                    "inns":0,
-                    "runs":0,
-                    "balls":0,
-                    "4s":0,
-                    "6s":0
+                    "match": 0,
+                    "inns": 0,
+                    "runs": 0,
+                    "balls": 0,
+                    "4s": 0,
+                    "6s": 0
                 }
 
             players[name]["match"] += 1
 
         # =========================
-        # 🔥 BATTING LOG (INNS + RUN ADD)
+        # 🔥 BATTING LOG
         # =========================
+
         for inn in innings_parts:
 
             lines = inn.splitlines()
@@ -3959,7 +4399,7 @@ def build_most_runs():
 
                 if line.startswith("batsman_log="):
 
-                    log = line.split("=",1)[1]
+                    log = line.split("=", 1)[1]
 
                     if not log.strip():
                         continue
@@ -3969,30 +4409,36 @@ def build_most_runs():
                     for e in entries:
 
                         try:
+
                             name, stats = e.split("=")
+
                             vals = stats.split(",")
 
                             runs = int(vals[0])
+
                             balls = int(vals[1])
+
                             fours = int(vals[2])
+
                             sixes = int(vals[3])
 
                             name = name.strip()
 
                             if name not in players:
+
                                 players[name] = {
-                                    "match":0,
-                                    "inns":0,
-                                    "runs":0,
-                                    "balls":0,
-                                    "4s":0,
-                                    "6s":0
+                                    "match": 0,
+                                    "inns": 0,
+                                    "runs": 0,
+                                    "balls": 0,
+                                    "4s": 0,
+                                    "6s": 0
                                 }
 
                             # 🔥 INNS++
                             players[name]["inns"] += 1
 
-                            # 🔥 ADD STATS
+                            # 🔥 STATS
                             players[name]["runs"] += runs
                             players[name]["balls"] += balls
                             players[name]["4s"] += fours
@@ -4004,6 +4450,7 @@ def build_most_runs():
     # =========================
     # 🔥 SAVE FILE
     # =========================
+
     with open(save_path, "w") as f:
 
         f.write("Player|Match|Inns|Runs|SR|4s|6s\n")
@@ -4012,73 +4459,119 @@ def build_most_runs():
 
             sr = (s["runs"] / s["balls"] * 100) if s["balls"] > 0 else 0
 
-            line = f"{name}|{s['match']}|{s['inns']}|{s['runs']}|{sr:.2f}|{s['4s']}|{s['6s']}\n"
+            line = (
+                f"{name}|{s['match']}|{s['inns']}|"
+                f"{s['runs']}|{sr:.2f}|{s['4s']}|{s['6s']}\n"
+            )
+
             f.write(line)
 
 @app.route("/build-most-wicket")
 def build_most_wicket_route():
 
     try:
+
         build_most_wickets()
+
         return "✅ Most Wicket Data Updated"
+
     except Exception as e:
+
         return f"❌ Error: {e}"
-    
+
+
 def build_most_wickets():
 
     import os
     import json
 
     match_folder = "data/all_match"
+
     save_path = "data/most_wicket.txt"
 
     players = {}
 
     for file in os.listdir(match_folder):
 
+        # 🔥 ONLY FIRST INNINGS FILE
+        if not file.endswith("_1st.txt"):
+            continue
+
         path = os.path.join(match_folder, file)
 
-        with open(path, encoding="utf-8") as f:
-            content = f.read()
-
-        parts = content.split("===== END OF FIRST INNINGS =====")
-
-        first = parts[0]
-        second = parts[1] if len(parts) > 1 else ""
+        innings_list = []
 
         # =========================
-        # 🔥 MATCH COUNT (ONLY ONCE)
+        # 🔥 FIRST INNINGS
         # =========================
 
-        all_data = first + "\n" + second
+        try:
+
+            with open(path, encoding="utf-8") as f:
+
+                innings_list.append(f.read())
+
+        except:
+            continue
+
+        # =========================
+        # 🔥 SECOND INNINGS
+        # =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            try:
+
+                with open(second_file, encoding="utf-8") as sf:
+
+                    innings_list.append(sf.read())
+
+            except:
+                pass
+
+        # =========================
+        # 🔥 MATCH COUNT
+        # =========================
+
+        all_data = "\n".join(innings_list)
+
         data_map = {}
 
         for line in all_data.splitlines():
+
             if "=" in line:
+
                 k, v = line.split("=", 1)
+
                 data_map[k.strip()] = v.strip()
 
-        counted_players = set()  # 🔥 DUPLICATE STOP
+        counted_players = set()
 
         for key in data_map:
 
             if key.endswith("_squad"):
 
                 try:
+
                     squad = json.loads(data_map[key])
+
                 except:
                     continue
 
                 for p in squad:
+
                     name = p["name"]
 
-                    # 🔥 already counted → skip
+                    # 🔥 already counted
                     if name in counted_players:
                         continue
 
                     counted_players.add(name)
 
                     if name not in players:
+
                         players[name] = {
                             "match": 0,
                             "balls": 0,
@@ -4086,22 +4579,23 @@ def build_most_wickets():
                             "runs": 0
                         }
 
-                    # ✅ MATCH ++ (ONLY ONCE PER MATCH)
+                    # 🔥 MATCH ++
                     players[name]["match"] += 1
 
         # =========================
-        # 🔥 STATS (FROM BOWLER LOG)
+        # 🔥 BOWLER LOG
         # =========================
-
-        innings_list = [first, second]
 
         for inning in innings_list:
 
             data = {}
 
             for line in inning.splitlines():
+
                 if "=" in line:
+
                     k, v = line.split("=", 1)
+
                     data[k.strip()] = v.strip()
 
             bowler_log = data.get("bowler_log", "")
@@ -4119,23 +4613,31 @@ def build_most_wickets():
                 name, stats = e.split("=")
 
                 name = name.strip()
+
                 vals = stats.split(",")
 
                 if len(vals) < 5:
                     continue
 
                 over_str = vals[0]
+
                 runs = int(vals[1])
+
                 wickets = int(vals[3])
 
                 # 🔥 overs → balls
                 if "." in over_str:
+
                     o, b = over_str.split(".")
+
                     balls = int(o) * 6 + int(b)
+
                 else:
+
                     balls = int(over_str) * 6
 
                 if name not in players:
+
                     players[name] = {
                         "match": 0,
                         "balls": 0,
@@ -4144,7 +4646,9 @@ def build_most_wickets():
                     }
 
                 players[name]["balls"] += balls
+
                 players[name]["wickets"] += wickets
+
                 players[name]["runs"] += runs
 
     # =========================
@@ -4156,17 +4660,19 @@ def build_most_wickets():
         for name, d in players.items():
 
             balls = d["balls"]
+
             overs = f"{balls//6}.{balls%6}"
 
             wickets = d["wickets"]
+
             runs = d["runs"]
 
             avg = round(balls / wickets, 2) if wickets > 0 else 0
 
             f.write(
-                f"{name}|{d['match']}|{overs}|{balls}|{wickets}|{avg}|{runs}\n"
+                f"{name}|{d['match']}|{overs}|"
+                f"{balls}|{wickets}|{avg}|{runs}\n"
             )
-
 @app.route("/most-wicket")
 def most_wicket():
 
@@ -4210,87 +4716,128 @@ def all_match():
     import os
 
     folder = "data/all_match"
+
     matches = []
 
-    for file in os.listdir(folder):
+    # 🔥 ONLY FIRST INNINGS FILE
+    files = [f for f in os.listdir(folder) if f.endswith("_1st.txt")]
+
+    for file in files:
+
         path = os.path.join(folder, file)
 
-        with open(path) as f:
-            content = f.read()
-
-        match_time = ""
-        for line in content.splitlines():
-            if line.startswith("match_time="):
-                match_time = line.split("=", 1)[1]
-                break
-
-        innings_break = "===== END OF FIRST INNINGS =====" in content
-
-        parts = content.split("===== END OF FIRST INNINGS =====")
-        first_part = parts[0]
-        second_part = parts[1] if len(parts) > 1 else ""
-
-        result_text = ""
-        if "===== MATCH RESULT =====" in content:
-            result_block = content.split("===== MATCH RESULT =====")[-1].strip()
-            result_text = result_block.splitlines()[0] if result_block else ""
-
         first = {}
-        for line in first_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                first[k] = v
-
         second = {}
-        for line in second_part.splitlines():
-            if "=" in line:
-                k, v = line.strip().split("=", 1)
-                second[k] = v
 
+        # 🔥 =========================
+        # 🔥 LOAD FIRST INNINGS
+        # 🔥 =========================
+
+        with open(path) as f:
+
+            for line in f:
+
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    first[k] = v
+
+        # 🔥 =========================
+        # 🔥 LOAD SECOND INNINGS
+        # 🔥 =========================
+
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
+        if os.path.exists(second_file):
+
+            with open(second_file) as sf:
+
+                for line in sf:
+
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        second[k] = v
+
+        # 🔥 =========================
+        # 🔥 MATCH TIME
+        # 🔥 =========================
+
+        match_time = first.get("match_time", "")
+
+        # 🔥 innings break
+        innings_break = len(second) > 0
+
+        # 🔥 RESULT
+        result_text = second.get("match_result", "")
+
+        # 🔥 TEAMS
         team1 = first.get("batting")
         team2 = second.get("batting") or first.get("bowling")
 
+        # 🔥 SECOND SCORE
         team2_score = second.get("score", "")
         team2_wickets = second.get("wickets", "")
         team2_over = f"{second.get('over','0')}.{second.get('ball','0')}"
 
         if second.get("over", "0") == "0" and second.get("ball", "0") == "0":
+
             if innings_break:
+
                 team2_score = "0"
                 team2_wickets = "0"
                 team2_over = "0.0"
+
             else:
+
                 team2_score = ""
                 team2_wickets = ""
                 team2_over = ""
 
+        # 🔥 STATUS
         status = "COMPLETED" if result_text else "LIVE"
 
         matches.append({
+
             "team1": team1,
+
             "team1_score": first.get("score", "0"),
             "team1_wickets": first.get("wickets", "0"),
             "team1_over": f"{first.get('over','0')}.{first.get('ball','0')}",
 
             "team2": team2,
+
             "team2_score": team2_score,
             "team2_wickets": team2_wickets,
             "team2_over": team2_over,
 
             "result": result_text,
+
             "need_text": second.get("need_text"),
+
             "toss": first.get("toss"),
             "opt": first.get("opt"),
+
             "status": status,
+
             "innings_break": innings_break,
+
             "date": match_time,
+
             "file": file
         })
 
     from datetime import datetime
-    matches.sort(key=lambda m: datetime.strptime(m["date"], "%d %b %Y, %I:%M %p") if m["date"] else datetime.min, reverse=True)
 
-    return render_template("all_match.html", matches=matches)
+    matches.sort(
+        key=lambda m:
+        datetime.strptime(m["date"], "%d %b %Y, %I:%M %p")
+        if m["date"] else datetime.min,
+        reverse=True
+    )
+
+    return render_template(
+        "all_match.html",
+        matches=matches
+    )
 
 
 

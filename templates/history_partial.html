@@ -1,6 +1,6 @@
 {% for m in matches %}
 
-<div class="history-card"onclick="goDetails('{{ m.file }}')"data-file="{{ m.file }}">
+<div class="history-card" onclick="goDetails('{{ m.file }}') "data-file="{{ m.file }}">
     <div class="status-badge {{ m.status|lower }}">
         {{ m.status }}
     </div>

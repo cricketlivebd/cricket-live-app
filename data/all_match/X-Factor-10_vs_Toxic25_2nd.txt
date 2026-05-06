@@ -41,7 +41,7 @@ non_striker=SHOHAG
 bowler=MEHEDI (VC)
 bowler_log=MEHEDI (VC)=1.0,6,0,2,0
 target=31
-Man_of_the_Match=
+Man_of_the_Match=MEHEDI (VC)
 need_runs=25
 need_balls=0
 need_text=Toxic25 need 25 runs in 0 balls
