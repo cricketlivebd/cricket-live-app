@@ -1771,7 +1771,6 @@ def live_match():
 @app.route("/update-score", methods=["POST"])
 def update_score():
 
-  
     import os
 
     data = request.json
@@ -1790,9 +1789,6 @@ def update_score():
     match["wickets"] = str(data["wickets"])
     match["over"] = str(data["over"])
     match["ball"] = str(data["ball"])
-    # 🔥 NEED CALCULATION (ONLY 2ND INNINGS)
-
-    
 
     match["striker"] = data.get("striker", match.get("striker"))
     match["non_striker"] = data.get("non_striker", match.get("non_striker"))
@@ -1823,6 +1819,7 @@ def update_score():
 
     # 🔥 FINISHED OVER
     if data.get("finished_over"):
+
         old = match.get("over_log", "")
 
         if old:
@@ -1831,7 +1828,7 @@ def update_score():
             match["over_log"] = data.get("finished_over")
 
         match["this_over"] = ""
-        
+
     # 🔥 EXTRA
     extra = data.get("extra", "")
     if extra:
@@ -1842,13 +1839,7 @@ def update_score():
     if p and p.strip() not in ["", "[]", "null"]:
         match["partnerships"] = p
 
-    # 🔥 SAVE HISTORY (EVERY BALL)
-    # 🔥 CLEAN DATA (VERY IMPORTANT)
-    
-
-   
-
-    # 🔥 FORCE SAVE LAST BOWLER (UNCHANGED)
+    # 🔥 FORCE SAVE LAST BOWLER
     total_overs = int(match.get("overs", 0))
     current_over = int(match.get("over", 0))
     current_ball = int(match.get("ball", 0))
@@ -1868,14 +1859,16 @@ def update_score():
             rem = balls % 6
             over_text = f"{overs_done}.{rem}"
 
-            er = round((runs / (balls/6)) if balls else 0, 2)
+            er = round((runs / (balls / 6)) if balls else 0, 2)
 
             log = match.get("bowler_log", "")
             new_log = []
             found = False
 
             if log:
+
                 for entry in log.split("|"):
+
                     name, stats = entry.split("=")
 
                     if name == bowler:
@@ -1892,8 +1885,7 @@ def update_score():
             else:
                 match["bowler_log"] = f"{bowler}={over_text},{runs},{maiden},{wickets},{er}"
 
-    # 🔥 ===== NEW: INSTANT BATSMAN LOG (SAFE) =====
-
+    # 🔥 BATSMAN LOG
     def update_batsman_log(match, name, runs, balls, fours, sixes, sr):
 
         if not name:
@@ -1908,7 +1900,9 @@ def update_score():
         found = False
 
         if log:
+
             for entry in log.split("|"):
+
                 n = entry.split("=")[0].strip()
 
                 if n == name:
@@ -1938,7 +1932,7 @@ def update_score():
         match.get("s_sr")
     )
 
-    # 🔵 NON-STRIKER
+    # 🔵 NON STRIKER
     match = update_batsman_log(
         match,
         match.get("non_striker"),
@@ -1948,14 +1942,13 @@ def update_score():
         match.get("ns_6"),
         match.get("ns_sr")
     )
-    # 🔵 INSTANT BOWLER LOG UPDATE (LIKE BATSMAN)
 
+    # 🔵 BOWLER LOG
     def update_bowler_log(match, name, runs, balls, maiden, wickets, er):
 
         if not name:
             return match
 
-        # balls → overs format
         overs_done = int(balls) // 6
         rem = int(balls) % 6
         over_text = f"{overs_done}.{rem}"
@@ -1967,11 +1960,13 @@ def update_score():
         found = False
 
         if log:
+
             for entry in log.split("|"):
+
                 n = entry.split("=")[0]
 
                 if n == name:
-                    new_log.append(new_entry)  # 🔥 replace
+                    new_log.append(new_entry)
                     found = True
                 else:
                     new_log.append(entry)
@@ -1986,8 +1981,6 @@ def update_score():
 
         return match
 
-
-    # 🔵 CALL FUNCTION
     match = update_bowler_log(
         match,
         match.get("bowler"),
@@ -1997,12 +1990,8 @@ def update_score():
         match.get("b_wickets"),
         match.get("b_er")
     )
-    # 🔥 INSTANT WICKET LOG SAVE (FINAL FIX)
 
-    
-
-    # 🔥 FINAL NEED CALCULATION (SAFE POSITION)
-
+    # 🔥 NEED CALCULATION
     if str(match.get("innings")) == "2":
 
         target = int(match.get("target", 0) or 0)
@@ -2026,35 +2015,33 @@ def update_score():
 
         match["need_runs"] = str(runs_needed)
         match["need_balls"] = str(balls_left)
-        # 🔥 FINAL NEED TEXT (NEW)
 
         batting_team = match.get("batting", "")
 
         match["need_text"] = f"{batting_team} need {runs_needed} runs in {balls_left} balls"
 
-     # 🔥 MATCH FILE LOGIC (UNCHANGED)
+    # 🔥 MATCH FILE SAVE
     match_file = match.get("match_file")
 
     if match_file:
 
-        if match.get("innings") == "1":
+        # 🔥 SAFE FIRST INNINGS
+        if str(match.get("innings", "1")).strip() == "1":
+
             with open(match_file, "w") as f:
                 for k, v in match.items():
                     f.write(f"{k}={v}\n")
 
-        else:
-            old_content = ""
-            if os.path.exists(match_file):
-                with open(match_file, "r") as f:
-                    old_content = f.read()
+        # 🔥 SAFE SECOND INNINGS
+        elif str(match.get("innings", "1")).strip() == "2":
 
             marker = "===== END OF FIRST INNINGS ====="
 
-            if not os.path.exists(match_file):
-                return jsonify({"status": "no-file"})
+            old_content = ""
 
-            with open(match_file, "r") as f:
-                old_content = f.read()
+            if os.path.exists(match_file):
+                with open(match_file, "r") as f:
+                    old_content = f.read()
 
             if marker in old_content:
                 first_part = old_content.split(marker)[0] + marker + "\n\n"
@@ -2062,31 +2049,31 @@ def update_score():
                 first_part = old_content + "\n" + marker + "\n\n"
 
             second_part = ""
+
             for k, v in match.items():
                 second_part += f"{k}={v}\n"
 
             with open(match_file, "w") as f:
                 f.write(first_part + second_part)
-    # 🔥 CLEAN DATA (VERY IMPORTANT)
+
+    # 🔥 SAFE HISTORY
     safe_match = {}
 
     for k, v in match.items():
+
         if isinstance(v, str):
             v = v.replace("\n", "").replace(";;", "")
+
         safe_match[k] = v
 
-    # 🔥 SAVE HISTORY
     with open("data/history.txt", "a") as f:
         line = ";;".join([f"{k}={safe_match[k]}" for k in safe_match])
         f.write(line + "\n")
-
-    
 
     # 🔥 SAVE CURRENT MATCH
     with open("data/current_match.txt", "w") as f:
         for k, v in match.items():
             f.write(f"{k}={v}\n")
-    
 
     return jsonify({"status": "ok"})
 
