@@ -1254,7 +1254,8 @@ def save_match():
     open(file_name, "a").close()
 
     from datetime import datetime
-    match_time = datetime.now().strftime("%d %b %Y, %I:%M %p")
+    bd_time = datetime.now(pytz.timezone("Asia/Dhaka"))
+    match_time = bd_time.strftime("%d %b %Y, %I:%M %p")
 
     import json
 
