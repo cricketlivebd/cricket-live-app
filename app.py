@@ -201,8 +201,9 @@ def home_live_data():
     import os
     import time
 
-    if time.time() - home_cache["time"] < 2:
+    if time.time() - home_cache["time"] < 2 and home_cache["data"]:
         return home_cache["data"]
+
     live_match = None
     completed_match = None
 
@@ -212,7 +213,7 @@ def home_live_data():
 
         files = sorted(os.listdir(folder), reverse=True)
 
-        # 🔥 LOCK LOAD (FIXED)
+        # 🔥 LOCK LOAD
         if os.path.exists(lock_file):
             with open(lock_file) as f:
                 locked = f.read().strip()
@@ -292,25 +293,23 @@ def home_live_data():
                 match_data["status"] = "COMPLETED"
                 completed_match = match_data
 
-            
-
             if live_match and completed_match:
                 break
 
-        live_match = live_match  # শুধু live থাকলেই show হবে
+        live_match = live_match
 
     except:
         pass
 
-        response = render_template(
-            "home_live_partial.html",
-            live_match=live_match
-        )
+    response = render_template(
+        "home_live_partial.html",
+        live_match=live_match
+    )
 
-        home_cache["data"] = response
-        home_cache["time"] = time.time()
+    home_cache["data"] = response
+    home_cache["time"] = time.time()
 
-        return response
+    return response
 
 @app.route("/match")
 def match_page():
