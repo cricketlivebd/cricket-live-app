@@ -2337,6 +2337,8 @@ def choose_bowler():
 @app.route("/undo")
 def undo():
 
+    import os
+
     try:
 
         # 🔥 READ HISTORY
@@ -2374,8 +2376,9 @@ def undo():
         # 🔥 SAVE CURRENT MATCH
         safe_write("data/current_match.txt", new_data)
 
-        # 🔥 ALSO UPDATE MATCH FILE
-        # 🔥 UPDATE MATCH FILE
+        # =====================================
+        # 🔥 UPDATE MATCH FILE (DUAL FILE FIX)
+        # =====================================
 
         if new_data.get("innings") == "1":
 
@@ -2389,48 +2392,11 @@ def undo():
 
             safe_write(match_file, new_data)
 
-        if match_file:
-
-            # 🔥 FIRST INNINGS
-            if new_data.get("innings") == "1":
-
-                safe_write(match_file, new_data)
-
-            # 🔥 SECOND INNINGS
-            else:
-
-                old_content = ""
-
-                if os.path.exists(match_file):
-
-                    with open(match_file, "r") as f:
-                        old_content = f.read()
-
-                marker = "===== END OF FIRST INNINGS ====="
-
-                if marker in old_content:
-                    first_part = old_content.split(marker)[0] + marker + "\n\n"
-                else:
-                    first_part = ""
-
-                second_part = ""
-
-                for k, v in new_data.items():
-                    second_part += f"{k}={v}\n"
-
-                temp_match = match_file + ".tmp"
-
-                with open(temp_match, "w") as f:
-                    f.write(first_part + second_part)
-
-                os.replace(temp_match, match_file)
-
     except Exception as e:
 
         print("UNDO ERROR:", e)
 
     return redirect("/live-match")
-
 
 
 @app.route("/start-second")
