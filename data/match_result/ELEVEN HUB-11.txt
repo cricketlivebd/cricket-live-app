@@ -1,3 +1,0 @@
-matches=2
-won=1
-lost=1
