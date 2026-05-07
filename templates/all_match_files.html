@@ -25,7 +25,7 @@
 
         <!-- 🔴 TEAM 1 -->
         <div class="team-side">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team1|lower + '.png') }}">
+            <img src="{{ url_for('static', filename='images/teams/' ~ m.team1|lower|replace(' ', '_') ~ '.png') }}">
             <span>{{ m.team1 }}</span>
         </div>
 
@@ -34,7 +34,7 @@
 
         <!-- 🔵 TEAM 2 -->
         <div class="team-side">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team2|lower + '.png') }}">
+            <img src="{{ url_for('static', filename='images/teams/' ~ m.team2|lower|replace(' ', '_') ~ '.png') }}">
             <span>{{ m.team2 }}</span>
         </div>
 
