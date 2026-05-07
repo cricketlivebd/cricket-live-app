@@ -3037,26 +3037,28 @@ def delete_match(filename):
 
     import os
 
+    # 🔥 REMOVE _1st/_2nd IF EXISTS
+    base = filename.replace("_1st.txt", "").replace("_2nd.txt", "")
+
     first_file = os.path.join(
         "data/all_match",
-        filename + "_1st.txt"
+        base + "_1st.txt"
     )
 
     second_file = os.path.join(
         "data/all_match",
-        filename + "_2nd.txt"
+        base + "_2nd.txt"
     )
 
-    # 🔥 DELETE FIRST INNINGS
+    # 🔥 DELETE FIRST
     if os.path.exists(first_file):
         os.remove(first_file)
 
-    # 🔥 DELETE SECOND INNINGS
+    # 🔥 DELETE SECOND
     if os.path.exists(second_file):
         os.remove(second_file)
 
     return redirect("/history")
-
 @app.route("/resume-match/<file>")
 def resume_match(file):
 
@@ -5343,7 +5345,9 @@ def current_squad_data():
         t1=t1,
         t2=t2
     )
-
+@app.route("/ping")
+def ping():
+    return "OK"
 if __name__ == "__main__":
     import os
 
