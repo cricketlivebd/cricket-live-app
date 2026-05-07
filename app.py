@@ -11,6 +11,289 @@ from flask_compress import Compress
 Compress(app)
 import os
 from werkzeug.utils import secure_filename
+# =========================================
+# EXACT DATA FOLDER → SQLITE CONVERTER
+# =========================================
+
+# 🔥 RESULT:
+#
+# data/
+# ├── all_match/
+# ├── NRR_calculation/
+# ├── match_result/
+# ├── teamlist/
+# ├── current_match.txt
+# ├── history.txt
+# ├── most_runs.txt
+# └── ...
+#
+# ⬇ EXACT SAME STRUCTURE INSIDE SQLITE
+#
+# TABLE: folders
+# TABLE: files
+#
+# 🔥 FULL ORIGINAL CONTENT PRESERVED
+# 🔥 NO DATA LOSS
+# 🔥 SAME FOLDER STRUCTURE
+# 🔥 SAME FILE CONTENT
+# 🔥 FUTURE RESTORE POSSIBLE
+#
+# =========================================
+
+import sqlite3
+import os
+
+DB_NAME = "data/cricket.db"
+
+
+def get_db():
+
+    conn = sqlite3.connect(DB_NAME)
+
+    conn.row_factory = sqlite3.Row
+
+    return conn
+
+
+@app.route("/full-convert")
+def full_convert():
+
+    conn = get_db()
+
+    c = conn.cursor()
+
+    # =====================================
+    # CREATE FOLDERS TABLE
+    # =====================================
+
+    c.execute("""
+
+    CREATE TABLE IF NOT EXISTS folders (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        folder_name TEXT UNIQUE
+
+    )
+
+    """)
+
+    # =====================================
+    # CREATE FILES TABLE
+    # =====================================
+
+    c.execute("""
+
+    CREATE TABLE IF NOT EXISTS files (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        folder_name TEXT,
+
+        file_name TEXT,
+
+        full_path TEXT,
+
+        content TEXT
+
+    )
+
+    """)
+
+    # =====================================
+    # CLEAR OLD DATA
+    # =====================================
+
+    c.execute("DELETE FROM folders")
+    c.execute("DELETE FROM files")
+
+    # =====================================
+    # ROOT DATA FOLDER
+    # =====================================
+
+    root = "data"
+
+    # =====================================
+    # WALK THROUGH EVERYTHING
+    # =====================================
+
+    for current_path, dirs, files in os.walk(root):
+
+        # =================================
+        # RELATIVE FOLDER NAME
+        # =================================
+
+        relative_folder = os.path.relpath(current_path, root)
+
+        if relative_folder == ".":
+            relative_folder = "root"
+
+        # =================================
+        # SAVE FOLDER
+        # =================================
+
+        c.execute("""
+
+        INSERT OR IGNORE INTO folders (
+
+            folder_name
+
+        )
+
+        VALUES (?)
+
+        """, (
+
+            relative_folder,
+
+        ))
+
+        # =================================
+        # SAVE FILES
+        # =================================
+
+        for file in files:
+
+            # 🔥 SKIP DB ITSELF
+            if file == "cricket.db":
+                continue
+
+            full_path = os.path.join(current_path, file)
+
+            try:
+
+                with open(full_path, "r", encoding="utf-8") as f:
+
+                    content = f.read()
+
+            except:
+
+                continue
+
+            c.execute("""
+
+            INSERT INTO files (
+
+                folder_name,
+                file_name,
+                full_path,
+                content
+
+            )
+
+            VALUES (?, ?, ?, ?)
+
+            """, (
+
+                relative_folder,
+                file,
+                full_path,
+                content
+
+            ))
+
+    # =====================================
+    # SAVE
+    # =====================================
+
+    conn.commit()
+
+    conn.close()
+
+    return "FULL EXACT DATA STRUCTURE CONVERTED"
+
+def sync_db():
+
+    import sqlite3
+    import os
+
+    conn = sqlite3.connect("data/cricket.db")
+
+    c = conn.cursor()
+
+    # =====================================
+    # CREATE TABLE
+    # =====================================
+
+    c.execute("""
+
+    CREATE TABLE IF NOT EXISTS files (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        folder_name TEXT,
+
+        file_name TEXT,
+
+        full_path TEXT,
+
+        content TEXT
+
+    )
+
+    """)
+
+    # =====================================
+    # CLEAR OLD
+    # =====================================
+
+    c.execute("DELETE FROM files")
+
+    root = "data"
+
+    # =====================================
+    # WALK THROUGH DATA
+    # =====================================
+
+    for current_path, dirs, files in os.walk(root):
+
+        relative_folder = os.path.relpath(current_path, root)
+
+        if relative_folder == ".":
+            relative_folder = "root"
+
+        for file in files:
+
+            # 🔥 SKIP DB ITSELF
+            if file == "cricket.db":
+                continue
+
+            full_path = os.path.join(current_path, file)
+
+            try:
+
+                with open(full_path, "r", encoding="utf-8") as f:
+
+                    content = f.read()
+
+                c.execute("""
+
+                INSERT INTO files (
+
+                    folder_name,
+                    file_name,
+                    full_path,
+                    content
+
+                )
+
+                VALUES (?, ?, ?, ?)
+
+                """, (
+
+                    relative_folder,
+                    file,
+                    full_path,
+                    content
+
+                ))
+
+            except:
+                pass
+
+    conn.commit()
+
+    conn.close()
 # 🔥 SAFE FILE WRITE
 def safe_write(path, data):
 
@@ -4016,6 +4299,10 @@ def points():
     # 🔥 NRR UPDATE (ADD THIS)
     try:
         update_nrr_stats()
+    except:
+        pass
+    try:
+        sync_db()
     except:
         pass
     group_a = []
