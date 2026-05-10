@@ -182,7 +182,7 @@ h3 {
     font-size: 22px;
     font-weight: bold;
 
-    background: linear-gradient(45deg, #4151ff, #2fff2b, #00c6ff);
+    background: linear-gradient(45deg, #4151ff, #009270, #00c6ff);
     
 }
 /* Match Card */
@@ -1806,7 +1806,7 @@ input {
     padding:10px 18px;
     border:none;
     border-radius:8px;
-    background:#4CAF50;
+    background:#009270;
     color:white;
     font-weight:500;
     cursor:pointer;
