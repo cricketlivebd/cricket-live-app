@@ -151,10 +151,10 @@
 <script>
     const team1Squad = JSON.parse(`{{ team1_squad | tojson | safe }}`);
     const team2Squad = JSON.parse(`{{ team2_squad | tojson | safe }}`);
-    const existingMotm = "{{ pom }}";
+    const existingMotm = `{{ pom | safe }}`;
 
-    const team1 = "{{ team1 }}";
-    const team2 = "{{ team2 }}";
+    const team1 = `{{ team1 | safe }}`;
+    const team2 = `{{ team2 | safe }}`;
 
     const input = document.getElementById("motm-input");
     const datalist = document.getElementById("players-list");

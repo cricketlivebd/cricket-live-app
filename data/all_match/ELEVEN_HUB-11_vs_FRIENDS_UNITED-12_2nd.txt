@@ -41,7 +41,7 @@ non_striker=S.SANDHAN
 bowler=ARMAN
 bowler_log=RAJKUMAR=1.0,14,0,0,14.0|SHUVO=1.0,3,0,0,3.0|ARMAN=1.0,11,0,1,0
 target=38
-Man_of_the_Match=
+Man_of_the_Match=ARMAN
 need_runs=10
 need_balls=0
 need_text=FRIENDS UNITED-12 need 10 runs in 0 balls

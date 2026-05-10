@@ -3902,12 +3902,16 @@ def match_editor():
         except:
             return []
 
+    # 🔥 SAFE KEY FIX (NO SIDE EFFECT)
+    team1_key = team1.replace(" ", "_")
+    team2_key = team2.replace(" ", "_")
+
     team1_squad = safe_json(
-        first.get(team1 + "_squad", "[]")
+        first.get(team1_key + "_squad", "[]")
     )
 
     team2_squad = safe_json(
-        first.get(team2 + "_squad", "[]")
+        first.get(team2_key + "_squad", "[]")
     )
 
     return render_template(
