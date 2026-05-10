@@ -1652,24 +1652,44 @@ def opening_players():
     data = {}
     with open("data/current_match.txt") as f:
         for line in f:
-            key, value = line.strip().split("=",1)
+            key, value = line.strip().split("=", 1)
             data[key] = value
 
     batting_team = data["batting"]
     bowling_team = data["bowling"]   # 🔥 NEW
 
-    # 🔥 batting players (clean name)
+    # 🔥 batting players (filtered)
     with open(f"data/teamlist/{batting_team}.txt") as f:
-        players = [line.strip().split(",")[0] for line in f]
+        players = []
+        for line in f:
+            parts = line.strip().split(",")
+            name = parts[0].strip()
+            roles = [p.strip().lower() for p in parts[1:]]
 
-    # 🔥 bowling players (clean name)
+            # ❌ remove STF / BENCH / COACH
+            if "stf" in roles or "bench" in roles or "coach" in roles:
+                continue
+
+            players.append(name)
+
+    # 🔥 bowling players (filtered)
     with open(f"data/teamlist/{bowling_team}.txt") as f:
-        bowlers = [line.strip().split(",")[0] for line in f]
+        bowlers = []
+        for line in f:
+            parts = line.strip().split(",")
+            name = parts[0].strip()
+            roles = [p.strip().lower() for p in parts[1:]]
+
+            # ❌ remove STF / BENCH / COACH
+            if "stf" in roles or "bench" in roles or "coach" in roles:
+                continue
+
+            bowlers.append(name)
 
     return render_template(
         "opening_players.html",
-        players=players,        # 🔥 ager ta same
-        bowlers=bowlers         # 🔥 NEW
+        players=players,
+        bowlers=bowlers
     )
 
 @app.route("/save-match")
@@ -3797,6 +3817,8 @@ def update_match():
 def match_editor():
 
     import os
+    import json
+
     from flask import request
 
     file = request.args.get("file")
@@ -3805,7 +3827,6 @@ def match_editor():
     second = {}
 
     pom = ""
-
     result = ""
 
     team1 = ""
@@ -3815,79 +3836,79 @@ def match_editor():
 
         path = os.path.join("data/all_match", file)
 
+        second_file = path.replace("_1st.txt", "_2nd.txt")
+
         # =========================
         # 🔥 LOAD FIRST INNINGS
         # =========================
 
         if os.path.exists(path):
 
-            try:
+            with open(path) as f:
 
-                with open(path) as f:
+                for line in f:
 
-                    for line in f:
+                    if "=" in line:
 
-                        if "=" in line:
+                        k, v = line.strip().split("=", 1)
 
-                            k, v = line.strip().split("=", 1)
+                        first[k] = v
 
-                            if k in ["wickets_log", "bowler_log"]:
+                        if k == "batting":
+                            team1 = v
 
-                                first[k] = v
-
-                            # 🔥 TEAM1
-                            if k == "batting":
-                                team1 = v
-
-                            # 🔥 fallback TEAM2
-                            if k == "bowling" and not team2:
-                                team2 = v
-
-                            # 🔥 SAVE
-                            first[k] = v
-
-            except:
-                pass
+                        if k == "bowling":
+                            team2 = v
 
         # =========================
         # 🔥 LOAD SECOND INNINGS
         # =========================
 
-        second_file = path.replace("_1st.txt", "_2nd.txt")
-
         if os.path.exists(second_file):
 
-            try:
+            with open(second_file) as sf:
 
-                with open(second_file) as sf:
+                for line in sf:
 
-                    for line in sf:
+                    if "=" in line:
 
-                        if "=" in line:
+                        k, v = line.strip().split("=", 1)
 
-                            k, v = line.strip().split("=", 1)
+                        second[k] = v
 
-                            if k in ["wickets_log", "bowler_log"]:
+                        if k == "batting":
+                            team2 = v
 
-                                second[k] = v
+        # =========================
+        # 🏆 PLAYER OF MATCH
+        # =========================
 
-                            # 🔥 TEAM2 priority
-                            if k == "batting":
-                                team2 = v
+        pom = second.get("Man_of_the_Match", "")
 
-                            # 🔥 RESULT
-                            if k == "match_result":
-                                result = v
+        # =========================
+        # 🏁 MATCH RESULT
+        # =========================
 
-                            # 🔥 POM
-                            if k == "Man_of_the_Match":
-                                pom = v
+        result = second.get("match_result", "")
 
-                            # 🔥 SAVE
-                            second[k] = v
+    # =========================
+    # 🔥 LOAD SQUADS
+    # =========================
 
-            except:
-                pass
+    def safe_json(text):
+
+        try:
+            return json.loads(text)
+        except:
+            return []
+
+    team1_squad = safe_json(
+        first.get(team1 + "_squad", "[]")
+    )
+
+    team2_squad = safe_json(
+        first.get(team2 + "_squad", "[]")
+    )
 
     return render_template(
 
@@ -3897,13 +3918,15 @@ def match_editor():
         second=second,
 
         pom=pom,
-
         result=result,
 
         file=file,
 
         team1=team1,
-        team2=team2
+        team2=team2,
+
+        team1_squad=team1_squad,
+        team2_squad=team2_squad
     )
 
 import os, json

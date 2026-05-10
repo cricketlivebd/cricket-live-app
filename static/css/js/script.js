@@ -292,13 +292,15 @@ if (page.includes("live-match") || page.includes("match")) {
 
         for (let b of overArr) {
 
-            // number run থাকলে maiden না
-            if (!isNaN(b) && Number(b) > 0) {
+            let text = String(b);
+
+            // normal run > 0
+            if (!isNaN(text) && Number(text) > 0) {
                 return false;
             }
 
-            // WD / NB থাকলে maiden না
-            if (b.includes("WD") || b.includes("NB")) {
+            // wide / no ball
+            if (text.includes("WD") || text.includes("NB")) {
                 return false;
             }
         }
