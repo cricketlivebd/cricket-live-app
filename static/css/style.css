@@ -1672,7 +1672,7 @@ input {
     display:flex;
     align-items:center;
     justify-content:space-between;
-    background:#2e7d32;
+    background:rgb(0, 146, 112);
     color:white;
     padding:10px;
     font-weight:bold;
@@ -1695,7 +1695,7 @@ input {
 }
 
 .table-header{
-    background:#c8d6c4;
+    background:#c8d6c4a6;
     font-weight:bold;
 }
 

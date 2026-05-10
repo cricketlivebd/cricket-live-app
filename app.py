@@ -4840,6 +4840,10 @@ def build_most_runs():
 
                         for p in data:
 
+                            # 🔥 ONLY REAL PLAYER
+                            if len(p.get("extra", [])) != 0:
+                                continue
+
                             name = p["name"].strip()
 
                             match_players.add(name)
@@ -5041,6 +5045,10 @@ def build_most_wickets():
 
                 for p in squad:
 
+                    # 🔥 ONLY REAL PLAYER
+                    if len(p.get("extra", [])) != 0:
+                        continue
+
                     name = p["name"]
 
                     # 🔥 already counted
@@ -5185,7 +5193,14 @@ def most_wicket():
                         "runs": int(parts[6])
                     })
 
-    players.sort(key=lambda x: (-x["wickets"], x["avg"], x["runs"]))
+    players.sort(
+        key=lambda x: (
+            x["balls"] == 0,     # 🔥 যারা বলই করে নাই তারা নিচে
+            -x["wickets"],       # 🔥 বেশি উইকেট উপরে
+            -x["balls"],         # 🔥 উইকেট না পেলেও যারা বল করেছে তারা উপরে
+            x["runs"]            # 🔥 কম রান দিলে উপরে
+        )
+    )
 
     return render_template("most_wicket.html", players=players)
 
