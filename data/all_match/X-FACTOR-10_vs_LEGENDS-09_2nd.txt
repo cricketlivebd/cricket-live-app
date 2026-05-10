@@ -43,7 +43,7 @@ bowler_log=RASEL=1.0,14,0,0,14.0|PALLAB=1.0,10,0,1,0
 last_wicket_player=MUNNA (C)
 last_wicket_type=Bowled
 target=22
-Man_of_the_Match=
+Man_of_the_Match=MEHEDI (VC)
 need_runs=0
 need_balls=6
 need_text=X-FACTOR-10 need 0 runs in 6 balls
