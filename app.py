@@ -3495,7 +3495,7 @@ def latest_history():
 
     return render_template(
         "history_partial.html",
-        matches=matches[:10],
+        matches=matches[:20],
         hide_delete=True
     )
 

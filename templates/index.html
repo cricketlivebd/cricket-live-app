@@ -37,7 +37,10 @@
 <div id="home-live-container">
     {% include "home_live_partial.html" %}
 </div>
-
+<div class="history-nav">
+    <button onclick="scrollHistory(-400)">⬅</button>
+    <button onclick="scrollHistory(400)">➡</button>
+</div>
 <h3> Latest Match</h3>
 <!-- Latest News -->
 <div id="latest-history-container"></div>
@@ -156,6 +159,17 @@ document.getElementById("latest-history-container")
     }
 
 });
+</script>
+<script>
+function scrollHistory(amount){
+
+    document.getElementById("latest-history-container")
+    .scrollBy({
+        left: amount,
+        behavior: "smooth"
+    });
+
+}
 </script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
 </body>

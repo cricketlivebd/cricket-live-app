@@ -2032,3 +2032,25 @@ input {
 .knockout{ background:#ff3d00; }
 .final{ background:gold; color:black; }
 
+.history-nav{
+    display:none;
+}
+
+@media (min-width:768px){
+
+    .history-nav{
+        display:flex;
+        justify-content:flex-end;
+        gap:10px;
+        margin:10px;
+    }
+
+    .history-nav button{
+        padding:8px 14px;
+        font-size:18px;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+    }
+
+}
