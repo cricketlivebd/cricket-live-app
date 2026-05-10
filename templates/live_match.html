@@ -69,7 +69,7 @@
 
     <!-- BATSMAN -->
     <div class="live-card">
-        <div class="live-row header">
+       <div class="live-row header" style="background:#b0afaf; color:rgb(41, 41, 41);">
             <span>Batsman</span>
             <span>R</span>
             <span>B</span>
@@ -98,7 +98,7 @@
 
         </div>
 
-        <div class="live-row header">
+        <div class="live-row header" style="background:#b0afaf; color:rgb(41, 41, 41);">
             <span>Bowler</span>
             <span>O</span>
             <span>R</span>
@@ -120,17 +120,66 @@
         </div>
     </div>
 
-   <!-- THIS OVER -->
+    <!-- THIS OVER -->
     <div class="live-card">
-       <div class="live-card this-over-row">
+        <div class="this-over-row">
             <span class="this-label">This over:</span>
-            <div id="thisOver" class="this-inline">
-            {{ data.this_over }}
-        </div>
-        </div>
-    
-    </div>
 
+            <div id="thisOver" class="this-inline">
+                {{ data.this_over }}
+            </div>
+        </div>
+    </div>
+    <!-- OVER LOG -->
+    <div class="live-card this-over-row" id="overLogMain">
+
+        <!-- FIXED TEXT -->
+        <span class="this-label" style="
+            min-width:90px;
+            font-weight:bold;
+            color:white;
+        ">
+            Over Log:
+        </span>
+
+        <!-- ONLY BOXES SCROLL -->
+        <div style="
+            display:flex;
+            gap:8px;
+            overflow-x:auto;
+            white-space:nowrap;
+            flex:1;
+        ">
+
+        {% for ov in data.get("over_log","").split("|") if ov.strip() %}
+
+            {% for ball in ov.split(",") %}
+
+            <div style="
+                min-width:30px;
+                height:30px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:#e5e5e5;
+                color:black;
+                border-radius:6px;
+                font-weight:bold;
+                font-size:14px;
+                flex-shrink:0;
+            ">
+                {{ "0" if ball == "." else ball }}
+            </div>
+
+            {% endfor %}
+
+            <div style="width:10px; flex-shrink:0;"></div>
+
+        {% endfor %}
+
+        </div>
+
+    </div>
     <!-- OPTIONS -->
     
     <div class="live-card options">

@@ -3,9 +3,9 @@
     <!-- SCORE -->
     <div class="live-card">
         <div class="live-top">
-            <span>
-            {{ data.batting }},
-            {{ "2nd innings" if data.get("innings") == "2" else "1st innings" }}
+           <span style="color:rgb(14, 244, 106);font-weight: bold; ">
+                {{ data.batting }},
+                {{ "2nd innings" if data.get("innings") == "2" else "1st innings" }}
             </span>
 
             <div style="display:flex; gap:40px; align-items:center;">
@@ -53,7 +53,7 @@
 
     <!-- BATSMAN -->
     <div class="live-card">
-        <div class="live-row header">
+        <div class="live-row header" style="background:#b0afaf; color:rgb(41, 41, 41);">
             <span>Batsman</span>
             <span>R</span>
             <span>B</span>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="live-row">
-            <span id="strikerName">
+            <span id="strikerName"style="color:rgb(14, 244, 106);">
                 {{ data.striker }} <span class="striker-mark">★</span>
             </span>
             <span id="sRuns">{{ data.s_runs }}</span>
@@ -74,7 +74,7 @@
         </div>
 
         <div class="live-row">
-            <span id="nonStrikerName">{{ data.non_striker }}</span>
+            <span id="nonStrikerName" style="color:rgb(14, 244, 106);">{{ data.non_striker }}</span>
             <span id="nsRuns">{{ data.ns_runs }}</span>
             <span id="nsBalls">{{ data.ns_balls }}</span>
             <span id="ns4">{{ data.ns_4 }}</span>
@@ -82,7 +82,7 @@
             <span id="nsSR">{{ data.ns_sr }}</span>
         </div>
 
-        <div class="live-row header">
+        <div class="live-row header" style="background:#b0afaf; color:rgb(41, 41, 41);">
             <span>Bowler</span>
             <span>O</span>
             <span>R</span>
@@ -92,7 +92,7 @@
         </div>
 
         <div class="live-row">
-            <span id="bowlerName">{{ data.bowler }}</span>
+            <span id="bowlerName" style="color:rgb(14, 244, 106);">{{ data.bowler }}</span>
             <span id="bOver">
                 {{ (data.get('b_balls', 0)|int // 6) }}.{{ (data.get('b_balls', 0)|int % 6) }}
             </span>
@@ -104,13 +104,84 @@
     </div>
 
     <!-- THIS OVER -->
+    <!-- THIS OVER -->
     <div class="live-card">
-        <div class="this-over-row">
-            <span>This over:</span>
-            <div id="thisOver">{{ data.this_over }}</div>
-        </div>
-    </div>
 
+        <div class="this-over-row">
+
+            <span class="this-label">This over:</span>
+
+            <div class="this-inline">
+
+            {% for ball in data.this_over.split(",") if ball.strip() %}
+
+                {% set b = "0" if ball == "." else ball %}
+
+                <span class="ball-box
+                    {% if b == '4' %} four
+                    {% elif b == '6' %} six
+                    {% elif b == 'W' %} wicket
+                    {% endif %}
+                    ">
+                    {{ b }}
+                </span>
+
+            {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- OVER LOG -->
+    <div class="live-card this-over-row">
+
+        <!-- FIXED TEXT -->
+        <span class="this-label" style="
+            min-width:90px;
+            font-weight:bold;
+            color:white;
+            flex-shrink:0;
+        ">
+            Previous Overs :
+        </span>
+
+        <!-- ONLY BOXES SCROLL -->
+        <div id="overLogScroll"
+            onscroll="saveOverScroll(this.scrollLeft)"
+            style="
+                display:flex;
+                gap:8px;
+                overflow-x:auto;
+                white-space:nowrap;
+                flex:1;
+                scroll-behavior:auto;
+            ">
+
+        {% for ov in data.get("over_log","").split("|") if ov.strip() %}
+
+            {% for ball in ov.split(",") %}
+
+            {% set b = "0" if ball == "." else ball %}
+
+            <div class="over-ball
+            {% if b == '4' %} four
+            {% elif b == '6' %} six
+            {% elif b == 'W' %} wicket
+            {% endif %}
+            ">
+                {{ b }}
+            </div>
+
+            {% endfor %}
+
+            <div style="width:10px; flex-shrink:0;"></div>
+
+        {% endfor %}
+
+        </div>
+
+    </div>
     <!-- BUTTON -->
     <div class="live-card">
         <button onclick="openPartner()">Partnerships</button>

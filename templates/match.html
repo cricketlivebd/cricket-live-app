@@ -19,6 +19,10 @@
 <div class="nav">
     <button onclick="showTab('live')">Live</button>
     <button onclick="showTab('score')">Scorecard</button>
+    <a href="/current-squads"
+   style="background:rgb(0, 146, 112); color:white; border-radius:8px;">
+   Squads
+</a>
     
 </div>
 
@@ -105,5 +109,33 @@ setInterval(() => {
 
 </script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
+<script>
+
+let savedOverScroll = 0;
+
+function saveOverScroll(pos){
+    savedOverScroll = pos;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    let observer = new MutationObserver(() => {
+
+        let el = document.getElementById("overLogScroll");
+
+        if(el){
+            el.scrollLeft = savedOverScroll;
+        }
+
+    });
+
+    observer.observe(document.getElementById("matchLiveContainer"), {
+        childList: true,
+        subtree: true
+    });
+
+});
+
+</script>
 </body>
 </html>

@@ -4656,70 +4656,61 @@ def update_nrr():
 
     return "NRR updated"
 
-@app.route("/current-squad")
-def current_squad():
+@app.route("/current-squads")
+def current_squads():
 
     import os
+    import json
 
     path = "data/current_match.txt"
 
-    t1_play, t2_play = [], []
-    t1_bench, t2_bench = [], []
-    t1_staff, t2_staff = [], []
+    if not os.path.exists(path):
+        return "No Live Match"
 
-    first = {"host": "", "visitor": ""}
+    data = {}
 
-    if os.path.exists(path):
+    with open(path, encoding="utf-8") as f:
 
-        with open(path) as f:
-            content = f.read()
+        for line in f:
 
-        data = {}
-        for line in content.splitlines():
             if "=" in line:
-                k, v = line.split("=", 1)
-                data[k.strip()] = v.strip()
 
-        # 🔥 team names
-        first["host"] = data.get("team1", "")
-        first["visitor"] = data.get("team2", "")
+                k, v = line.strip().split("=", 1)
 
-        # 🔥 helper
-        def parse_players(text):
-            players = []
-            for item in text.split("|"):
-                if item.strip():
-                    if "," in item:
-                        name, role = item.split(",",1)
-                    else:
-                        name, role = item, ""
-                    players.append({
-                        "name": name.strip(),
-                        "role": role.strip()
-                    })
-            return players
+                data[k] = v
 
-        # 🔥 load all
-        t1_play = parse_players(data.get("t1_play",""))
-        t2_play = parse_players(data.get("t2_play",""))
+    host = data.get("host", "")
+    visitor = data.get("visitor", "")
 
-        t1_bench = parse_players(data.get("t1_bench",""))
-        t2_bench = parse_players(data.get("t2_bench",""))
+    host_key = host.replace(" ", "_") + "_squad"
+    visitor_key = visitor.replace(" ", "_") + "_squad"
 
-        t1_staff = parse_players(data.get("t1_staff",""))
-        t2_staff = parse_players(data.get("t2_staff",""))
+    t1 = json.loads(data.get(host_key, "[]"))
+    t2 = json.loads(data.get(visitor_key, "[]"))
+
+    # 🔥 FILTER
+    t1_play = [p for p in t1 if len(p.get("extra", [])) == 0]
+    t1_staff = [p for p in t1 if "stf" in [x.lower() for x in p.get("extra", [])]]
+    t1_bench = [p for p in t1 if "bench" in [x.lower() for x in p.get("extra", [])]]
+
+    t2_play = [p for p in t2 if len(p.get("extra", [])) == 0]
+    t2_staff = [p for p in t2 if "stf" in [x.lower() for x in p.get("extra", [])]]
+    t2_bench = [p for p in t2 if "bench" in [x.lower() for x in p.get("extra", [])]]
 
     return render_template(
-        "current_squad.html",
-        first=first,
-        t1_play=t1_play,
-        t2_play=t2_play,
-        t1_bench=t1_bench,
-        t2_bench=t2_bench,
-        t1_staff=t1_staff,
-        t2_staff=t2_staff
-    )
+        "current_squads.html",
 
+        host=host,
+        visitor=visitor,
+
+        t1_play=t1_play,
+        t1_staff=t1_staff,
+        t1_bench=t1_bench,
+
+        t2_play=t2_play,
+        t2_staff=t2_staff,
+        t2_bench=t2_bench
+    )
 
 @app.route("/stats")
 def stats_page():

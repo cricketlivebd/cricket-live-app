@@ -2054,3 +2054,66 @@ input {
     }
 
 }
+.this-inline{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    white-space:nowrap;
+}
+
+.ball-box{
+    min-width:30px;
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-weight:bold;
+    flex-shrink:0;
+    color:white;
+    background:#555;
+}
+
+.ball-box.four{
+    background:#1e88e5;
+}
+
+.ball-box.six{
+    background:#43a047;
+}
+
+.ball-box.wicket{
+    background:#e53935;
+}
+.over-ball{
+    min-width:30px;
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:6px;
+    font-weight:bold;
+    font-size:14px;
+    flex-shrink:0;
+    background:#555;
+    color:white;
+}
+
+.over-ball.four{
+    background:#1e88e5;
+}
+
+.over-ball.six{
+    background:#43a047;
+}
+
+.over-ball.wicket{
+    background:#e53935;
+}
+.over-card{
+    margin:12px;
+    padding:15px;
+    border-radius:16px;
+    background:rgb(0, 146, 112);
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}

@@ -150,7 +150,7 @@
 <!-- ✅ JS FIX -->
 <script>
     const team1Squad = JSON.parse(`{{ team1_squad | tojson | safe }}`);
-const team2Squad = JSON.parse(`{{ team2_squad | tojson | safe }}`);
+    const team2Squad = JSON.parse(`{{ team2_squad | tojson | safe }}`);
     const existingMotm = "{{ pom }}";
 
     const team1 = "{{ team1 }}";
@@ -173,8 +173,7 @@ const team2Squad = JSON.parse(`{{ team2_squad | tojson | safe }}`);
             if (
                 player.extra &&
                 Array.isArray(player.extra) &&
-                player.extra.length === 0 &&
-                player.name !== existingMotm
+                player.extra.length === 0
             ) {
                 let option = document.createElement("option");
                 option.value = player.name;
@@ -192,8 +191,7 @@ const team2Squad = JSON.parse(`{{ team2_squad | tojson | safe }}`);
             if (
                 player.extra &&
                 Array.isArray(player.extra) &&
-                player.extra.length === 0 &&
-                player.name !== existingMotm
+                player.extra.length === 0
             ) {
                 let option = document.createElement("option");
                 option.value = player.name;
