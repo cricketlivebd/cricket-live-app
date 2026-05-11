@@ -2753,19 +2753,17 @@ def start_second():
 
     match_file = data.get("first_match_file")
 
-    # 🔥 SAFE SAVE 1ST INNINGS (ATOMIC)
-    # 🔥 SAVE FIRST INNINGS FILE
-
+    # 🔥 SAVE 1ST INNINGS
     if match_file:
-
         safe_write(match_file, data)
 
+    # 🔥 TARGET
     data["target"] = str(int(data.get("score", 0)) + 1)
 
-    # 🔥 swap
+    # 🔥 TEAM SWAP
     data["batting"], data["bowling"] = data["bowling"], data["batting"]
 
-    # 🔥 reset
+    # 🔥 RESET SCORE
     data["score"] = "0"
     data["wickets"] = "0"
     data["over"] = "0"
@@ -2777,6 +2775,7 @@ def start_second():
     data["partnerships"] = "[]"
     data["extra"] = "0,0LB,0B,0WD,0NB"
 
+    # 🔥 BATSMAN RESET
     data["s_runs"] = "0"
     data["s_balls"] = "0"
     data["s_4"] = "0"
@@ -2789,19 +2788,25 @@ def start_second():
     data["ns_6"] = "0"
     data["ns_sr"] = "0"
 
+    # 🔥 BOWLER RESET
     data["b_runs"] = "0"
     data["b_balls"] = "0"
     data["b_wickets"] = "0"
     data["b_maiden"] = "0"
     data["b_er"] = "0"
 
+    # 🔥 RESET LOGS
     data["bowler_log"] = ""
     data["wickets_log"] = "[]"
     data["Man_of_the_Match"] = ""
 
+    # 🔥 SECOND INNINGS
     data["innings"] = "2"
 
-    # 🔥 SAFE SAVE CURRENT MATCH
+    # 🔥 SAVE SECOND INNINGS FILE
+    safe_write(data["second_match_file"], data)
+
+    # 🔥 SAVE CURRENT MATCH
     safe_write("data/current_match.txt", data)
 
     return redirect("/opening-players")
