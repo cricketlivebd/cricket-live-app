@@ -466,6 +466,46 @@
 
         {% endfor %}
 
+        <!-- 🔥 RUNNING OVER -->
+        {% if first.this_over.strip() %}
+
+        <div>
+
+            <div style="
+                color:#00ff9c;
+                margin-bottom:6px;
+                font-weight:bold;
+            ">
+                Over {{ first.over_log.split("|")|length + 1 }}
+            </div>
+
+            <div style="
+                display:flex;
+                gap:8px;
+                overflow-x:auto;
+            ">
+
+            {% for ball in first.this_over.split(",") if ball.strip() %}
+
+                {% set b = "0" if ball == "." else ball %}
+
+                <div class="over-ball
+                {% if b == '4' %} four
+                {% elif b == '6' %} six
+                {% elif b == 'W' %} wicket
+                {% endif %}
+                ">
+                    {{ b }}
+                </div>
+
+            {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
         </div>
 
     </div>
@@ -524,6 +564,46 @@
             </div>
 
         {% endfor %}
+
+        <!-- 🔥 RUNNING OVER -->
+        {% if second.this_over.strip() %}
+
+        <div>
+
+            <div style="
+                color:#00ff9c;
+                margin-bottom:6px;
+                font-weight:bold;
+            ">
+                Over {{ second.over_log.split("|")|length + 1 }}
+            </div>
+
+            <div style="
+                display:flex;
+                gap:8px;
+                overflow-x:auto;
+            ">
+
+            {% for ball in second.this_over.split(",") if ball.strip() %}
+
+                {% set b = "0" if ball == "." else ball %}
+
+                <div class="over-ball
+                {% if b == '4' %} four
+                {% elif b == '6' %} six
+                {% elif b == 'W' %} wicket
+                {% endif %}
+                ">
+                    {{ b }}
+                </div>
+
+            {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
 
         </div>
 

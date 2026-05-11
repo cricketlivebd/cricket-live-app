@@ -43,7 +43,7 @@ bowler_log=RASEL=1.0,19,0,0,19.0|PIYAS=0.5,26,0,0,31.20
 last_wicket_player=DEBASHISH
 last_wicket_type=Bowled
 target=42
-Man_of_the_Match=
+Man_of_the_Match=MEHEDI (VC)
 need_runs=0
 need_balls=7
 need_text=X-FACTOR-10 need 0 runs in 7 balls
