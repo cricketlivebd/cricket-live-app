@@ -345,19 +345,40 @@ def load_teams():
     return teams
 # Fixture file theke data ana
 def load_fixtures():
+
     fixtures = []
+
     with open("data/fixture.txt", "r") as f:
+
         for line in f:
-            parts = line.strip().split("|")
+
+            raw = line.strip()
+
+            parts = [p.strip() for p in raw.split("|")]
+
             teams = parts[0].split("vs")
 
             if len(teams) == 2:
+
                 fixtures.append({
+
                     "team1": teams[0].strip(),
+
                     "team2": teams[1].strip(),
-                    "time": parts[1].strip() if len(parts) > 1 else "TBD",
-                    "date": parts[2].strip() if len(parts) > 2 else ""
+
+                    "time": parts[1] if len(parts) > 1 else "TBD",
+
+                    "date": parts[2] if len(parts) > 2 else "",
+
+                    "stage": parts[3].lower() if len(parts) > 3 else "group",
+
+                    "completed": (
+                        len(parts) > 4 and
+                        parts[4].lower() == "completed"
+                    )
+
                 })
+
     return fixtures
 
 import random
@@ -954,6 +975,7 @@ def load_fixtures():
             for line in f:
 
                 line = line.strip()
+
                 if not line:
                     continue
 
@@ -964,37 +986,52 @@ def load_fixtures():
                 time = ""
                 date = ""
                 stage = "group"
+                completed = False
 
                 # 🔥 TEAM
                 if "vs" in parts[0].lower():
+
                     t = parts[0].split("vs")
+
                     team1 = t[0].strip()
                     team2 = t[1].strip()
 
-                # 🔥 OTHER
+                # 🔥 TIME
                 if len(parts) > 1:
                     time = parts[1]
 
+                # 🔥 DATE
                 if len(parts) > 2:
                     date = parts[2]
 
+                # 🔥 STAGE
                 if len(parts) > 3:
                     stage = parts[3].lower()
+
+                # 🔥 COMPLETED
+                if len(parts) > 4:
+                    completed = "completed" in parts[4].lower()
 
                 # 🔥 NORMALIZE
                 if "knock" in stage:
                     stage = "knockout"
+
                 elif "final" in stage:
                     stage = "final"
+
                 else:
                     stage = "group"
 
                 fixtures.append({
+
                     "team1": team1,
                     "team2": team2,
+
                     "time": time,
                     "date": date,
-                    "stage": stage
+
+                    "stage": stage,
+                    "completed": completed
                 })
 
     except:
@@ -1471,6 +1508,7 @@ def fixture_manage():
         pass
 
     return render_template("fixture_manage.html", fixtures=fixtures)
+
 @app.route("/add-fixture", methods=["POST"])
 def add_fixture():
 

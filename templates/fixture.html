@@ -71,11 +71,19 @@
             </div>
 
             <div class="vs-box">
+
                 <div class="vs">VS</div>
 
                 {% if match.stage == "knockout" %}
                 <div class="stage-tag knockout">Knock Out</div>
                 {% endif %}
+
+                {% if match.completed %}
+                <div class="stage-tag" style="background:#00b4c8;">
+                    COMPLETED
+                </div>
+                {% endif %}
+
             </div>
 
             <div class="team">

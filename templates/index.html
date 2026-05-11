@@ -63,10 +63,19 @@
 </div>
 
 <!-- Next Match -->
+<!-- Next Match -->
 <h3>Next Match</h3>
 
 <div class="matches">
-    {% for match in fixtures[:2] %}
+
+{% set count = namespace(value=0) %}
+
+{% for match in fixtures %}
+
+    {% if not match.completed and count.value < 2 %}
+
+    {% set count.value = count.value + 1 %}
+
     <div class="card match">
 
         <!-- 🔥 TIME + DATE -->
@@ -87,6 +96,7 @@
 
             <!-- 🔥 VS + STAGE -->
             <div class="vs-box">
+
                 <div class="vs">VS</div>
 
                 {% if match.stage == "knockout" %}
@@ -95,6 +105,7 @@
                 {% elif match.stage == "final" %}
                 <div class="stage-tag final">Final 🏆</div>
                 {% endif %}
+
             </div>
 
             <div class="team">
@@ -105,7 +116,11 @@
         </div>
 
     </div>
-    {% endfor %}
+
+    {% endif %}
+
+{% endfor %}
+
 </div>
 <script>
 setInterval(() => {
