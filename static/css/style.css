@@ -845,20 +845,21 @@ input[type="file"]::-webkit-file-upload-button {
 
 /* image */
 .slider-track img {
+
     height: 120px;
+
     width: auto;
-    margin-right: 10px;
+
+    object-fit: contain;
+
     flex-shrink: 0;
-    margin-right: 0 !important;
+
+    margin: 0;
+
+    padding: 0;
 }
 /* 💻 FORCE PC FIX */
-@media (min-width: 769px) {
 
-    .slider-track img {
-        width: 50vw !important;   /* 🔥 force half screen */
-        margin-right: 0;          /* 🔥 gap remove */
-    }
-}
 
 /* 🔥 DROPDOWN FIX FINAL */
 
