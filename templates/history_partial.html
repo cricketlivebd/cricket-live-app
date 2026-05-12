@@ -14,7 +14,7 @@
             <img src="{{ url_for('static', filename='images/teams/' + m.team1 + '.png') }}"
                 class="logo-img"
                 onerror="this.src='/static/images/sample.png'">
-            <span>{{ m.team1 }}</span>
+            <span style="font-size:18px; font-weight:bold;">{{ m.team1 }}</span>
         </div>
 
         <div class="team-score">
@@ -28,7 +28,7 @@
             <img src="{{ url_for('static', filename='images/teams/' + m.team2 + '.png') }}"
                 class="logo-img"
                 onerror="this.src='/static/images/sample.png'">
-            <span>{{ m.team2 }}</span>
+            <span style="font-size:18px; font-weight:bold;">{{ m.team2 }}</span>
         </div>
 
         <div class="team-score">
@@ -46,16 +46,27 @@
         <span class="result-text">
 
             {% if m.result %}
-                {{ m.result }}
+
+                {{ m.result | safe }}
 
             {% elif m.need_text %}
-                {{ m.need_text }}
+
+                {{ m.need_text | safe }}
 
             {% elif m.innings_break %}
-                Innings Break
+
+                <span style="
+                    font-size:18px;
+                    font-weight:bold;
+                    color:#00ff9c;
+                ">
+                    Innings Break
+                </span>
 
             {% else %}
-                {{ m.toss }} opted to {{ m.opt }}
+
+                <b>{{ m.toss }}</b> opted to {{ m.opt }}
+
             {% endif %}
 
         </span>
