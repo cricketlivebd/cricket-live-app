@@ -22,8 +22,19 @@
 <h2 class="fixture-title">🏏 Current Match Squads</h2>
 
 <div class="squad-header">
-    <span>{{ host|upper }}</span>
-    <span>{{ visitor|upper }}</span>
+
+    <span style="display:flex; align-items:center; gap:6px;">
+        <img src="{{ url_for('static', filename='images/teams/' + host + '.png') }}"
+             style="width:65px; height:45px;">
+        {{ host|upper }}
+    </span>
+
+    <span style="display:flex; align-items:center; gap:6px;">
+        <img src="{{ url_for('static', filename='images/teams/' + visitor + '.png') }}"
+             style="width:65px; height:45px;">
+        {{ visitor|upper }}
+    </span>
+
 </div>
 
 <div class="squad-grid">

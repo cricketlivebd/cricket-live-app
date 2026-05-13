@@ -5,7 +5,7 @@
         {{ m.status }}
     </div>
 
-    <div class="match-date">
+    <div class="match-date"  style="color:rgb(7, 7, 7);">
         {{ m.date if m.date else "Match" }}
     </div>
 
@@ -19,7 +19,7 @@
 
         <div class="team-score">
             {{ m.team1_score }}/{{ m.team1_wickets }}
-            <span>({{ m.team1_over }})</span>
+            <span style="color:rgb(8, 8, 8);">({{ m.team1_over }})</span>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
 
             {% if m.team2_score != "" %}
                 {{ m.team2_score }}/{{ m.team2_wickets }}
-                <span>({{ m.team2_over }})</span>
+                <span style="color:rgb(8, 8, 8);">({{ m.team2_over }})</span>
             {% endif %}
 
         </div>

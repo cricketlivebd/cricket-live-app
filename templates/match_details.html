@@ -269,9 +269,20 @@
 <div id="squadTab" style="display:none;">
 <h2 class="fixture-title">🏏 Team Squads</h2>
 
-    <div class="squad-header">
-        <span>{{ first.host|upper }}</span>
-        <span>{{ first.visitor|upper }}</span>
+   <div class="squad-header">
+
+        <span style="display:flex; align-items:center; gap:6px;">
+            <img src="{{ url_for('static', filename='images/teams/' + first.host + '.png') }}"
+                style="width:65px; height:50px;">
+            {{ first.host|upper }}
+        </span>
+
+        <span style="display:flex; align-items:center; gap:6px;">
+            <img src="{{ url_for('static', filename='images/teams/' + first.visitor + '.png') }}"
+                style="width:65px; height:50px;">
+            {{ first.visitor|upper }}
+        </span>
+
     </div>
 
     <div class="squad-grid">
