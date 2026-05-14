@@ -96,7 +96,35 @@
         </span>
     </div>
 {% endfor %}
+{% if first.partnerships %}
 
+    <div class="table-header">
+        <span>Partnerships</span>
+        <span></span>
+        <span></span>
+    </div>
+
+    {% for p in first.partnerships %}
+
+    <div class="partnership-row">
+
+        <div class="partnership-left">
+            {{ p.striker }}
+        </div>
+
+        <div class="partnership-center">
+            {{ p.runs }} ({{ p.balls }})
+        </div>
+
+        <div class="partnership-right">
+            {{ p.nonStriker }}
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% endif %}
 <!-- 🔵 SECOND INNINGS -->
 {% if second and second.score %}
 
@@ -188,5 +216,33 @@
 {% endfor %}
 
 {% endif %}
+{% if second.partnerships %}
 
+    <div class="table-header">
+        <span>Partnerships</span>
+        <span></span>
+        <span></span>
+    </div>
+
+    {% for p in second.partnerships %}
+
+    <div class="partnership-row">
+
+        <div class="partnership-left">
+            {{ p.striker }}
+        </div>
+
+        <div class="partnership-center">
+            {{ p.runs }} ({{ p.balls }})
+        </div>
+
+        <div class="partnership-right">
+            {{ p.nonStriker }}
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
 </div>

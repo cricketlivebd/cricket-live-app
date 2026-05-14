@@ -2118,3 +2118,39 @@ input {
     background:rgb(0, 146, 112);
     box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
+/* 🔥 Partnerships */
+.partnership-row{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    padding:8px 8px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.partnership-row:last-child{
+    border-bottom:none;
+}
+
+.partnership-left{
+    font-size:15px;
+    font-weight:600;
+    color:rgb(7, 7, 7);
+    text-align:left;
+}
+
+.partnership-center{
+    font-size:15px;
+    font-weight:600;
+    color:rgb(11, 11, 11);
+    text-align:center;
+}
+
+.partnership-right{
+    font-size:15px;
+    font-weight:600;
+    color:rgb(3, 3, 3);
+    text-align:right;
+    justify-self:end;
+}
+
+

@@ -142,6 +142,7 @@ let extraB = 0;
 let extraWD = 0;
 let extraNB = 0;
 let partnerships = [];
+let fallOfWickets = [];
 // 🔥 current running partnership
 let pRuns = 0;
 let pBalls = 0;
@@ -235,6 +236,23 @@ if (page.includes("live-match") || page.includes("match")) {
             extraNB = parseInt(parts[4]) || 0;
         }
         partnerships = [];
+        // 🔥 FALL OF WICKETS LOAD
+
+        let fowData =
+        document.getElementById("fowData")?.textContent.trim();
+
+        if(fowData && fowData !== "[]"){
+
+            try{
+                fallOfWickets = JSON.parse(fowData);
+            }catch(e){
+                fallOfWickets = [];
+            }
+
+        }else{
+
+            fallOfWickets = [];
+        }
         // 🔥 PARTNERSHIP LOAD (FINAL FIX)
         let pData = document.getElementById("partnerData")?.textContent.trim();
 
@@ -334,6 +352,14 @@ if (page.includes("live-match") || page.includes("match")) {
                 ball++;
             }
             wickets++;
+            // 🔥 FALL OF WICKET SAVE
+
+            fallOfWickets.push({
+                player: outPlayer,
+                run: score,
+                wicket: wickets,
+                over: `${over}.${ball}`
+            });
             bowlerBalls++;
 
             overRuns += run;
@@ -412,7 +438,8 @@ if (page.includes("live-match") || page.includes("match")) {
                     over_ended: overEnded,
                     wicket_type: localStorage.getItem("wicketType") || "pending",
                     extra: `${extraTotal},${extraLB}LB,${extraB}B,${extraWD}WD,${extraNB}NB`,
-                    partnerships: pSend
+                    partnerships: pSend,
+                    fall_of_wickets: JSON.stringify(fallOfWickets)
                 })
             }).then(() => {
                  // 🔥 SECOND INNINGS RESULT CHECK FIRST
@@ -430,7 +457,9 @@ if (page.includes("live-match") || page.includes("match")) {
                     } else {
 
                 localStorage.setItem("overEnded", overEnded);
-                window.location.href = `/fall-of-wicket`;
+                setTimeout(() => {
+                    window.location.href = `/fall-of-wicket`;
+                }, 200);
                 }
             });
 
@@ -895,7 +924,8 @@ if (page.includes("live-match") || page.includes("match")) {
                 b_er: (bowlerBalls === 0) ? 0 : (bowlerRuns / (bowlerBalls / 6)).toFixed(2),
 
                 extra: `${extraTotal},${extraLB}LB,${extraB}B,${extraWD}WD,${extraNB}NB`,
-                partnerships: pSend
+                partnerships: pSend,
+                fall_of_wickets: JSON.stringify(fallOfWickets)
             })
         });
         // 🔥 extra save (batsman + bowler)
@@ -1198,6 +1228,15 @@ function closeInnings(){
 }
 
 function startSecond(){
+
+    // 🔥 RESET FALL OF WICKETS
+    fallOfWickets = [];
+
+    localStorage.setItem(
+        "fallOfWickets",
+        "[]"
+    );
+
     window.location.href = "/start-second";
 }
 

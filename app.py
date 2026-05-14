@@ -837,6 +837,9 @@ def match_page():
     # 🔥 wickets
     first["wickets_log"] = safe_json(first.get("wickets_log", "[]"))
     second["wickets_log"] = safe_json(second.get("wickets_log", "[]"))
+    # 🔥 partnerships
+    first["partnerships"] = safe_json(first.get("partnerships", "[]"))
+    second["partnerships"] = safe_json(second.get("partnerships", "[]"))
 
     # 🔥 =========================
     # 🔥 DISMISSALS
@@ -1874,6 +1877,7 @@ def save_match():
         "extra": "0,0LB,0B,0WD,0NB",
 
         "partnerships": "[]",
+        "fall_of_wickets": "[]",
 
         "innings": "1",
 
@@ -2286,7 +2290,12 @@ def live_match():
         
 
     # 🔥 5. save
-    safe_write("data/current_match.txt", data)
+    # 🔥 5. save
+    try:
+        safe_write("data/current_match.txt", data)
+
+    except PermissionError:
+        pass
 
     # 🔥 LOAD PLAYERS FROM ADVANCED SETTINGS
     try:
@@ -2372,6 +2381,10 @@ def update_score():
     p = data.get("partnerships")
     if p and p.strip() not in ["", "[]", "null"]:
         match["partnerships"] = p
+    # 🔥 FALL OF WICKETS
+    fow = data.get("fall_of_wickets")
+    if fow and fow.strip() not in ["", "[]", "null"]:
+        match["fall_of_wickets"] = fow
 
     # 🔥 FORCE SAVE LAST BOWLER
     total_overs = int(match.get("overs", 0))
@@ -2773,6 +2786,7 @@ def start_second():
     data["over_log"] = ""
     data["batsman_log"] = ""
     data["partnerships"] = "[]"
+    data["fall_of_wickets"] = "[]"
     data["extra"] = "0,0LB,0B,0WD,0NB"
 
     # 🔥 BATSMAN RESET
@@ -2799,6 +2813,7 @@ def start_second():
     data["bowler_log"] = ""
     data["wickets_log"] = "[]"
     data["Man_of_the_Match"] = ""
+  
 
     # 🔥 SECOND INNINGS
     data["innings"] = "2"
@@ -3286,7 +3301,11 @@ def match_details():
     # =====================
     first["wickets_log"] = safe_json(first.get("wickets_log", "[]"))
     second["wickets_log"] = safe_json(second.get("wickets_log", "[]"))
-
+    # =====================
+    # 🔥 PARTNERSHIPS
+    # =====================
+    first["partnerships"] = safe_json(first.get("partnerships", "[]"))
+    second["partnerships"] = safe_json(second.get("partnerships", "[]"))
     # =====================
     # 🔥 DISMISSALS
     # =====================
