@@ -109,6 +109,11 @@
     </div>
     <h2 class="lebel">Bowlers Log</h2>
     <textarea name="bowler_log_1">{{ first.get("bowler_log","") }}</textarea>
+    <h2 class="lebel">Current Bowler Wickets</h2>
+    <input type="text"
+        name="current_b_wickets"
+        value="{{ current.get('b_wickets','0') }}">
+    <h2 class="lebel">Fall of Wicket - 1st Innings</h2> <textarea name="fow_1" rows="6"> {{ first.get("fall_of_wickets","") }} </textarea>
 </div>
 
 <!-- 🔵 2nd innings -->
@@ -121,6 +126,10 @@
     </div>
     <h2 class="lebel">Bowlers Log</h2>
     <textarea name="bowler_log_2">{{ second.get("bowler_log","") }}</textarea>
+    <input type="text"
+        name="current_b_wickets"
+        value="{{ current.get('b_wickets','0') }}">
+    <h2 class="lebel">Fall of Wicket - 2nd Innings</h2> <textarea name="fow_2" rows="6"> {{ second.get("fall_of_wickets","") }} </textarea>
 </div>
 
 <!-- 🏆 MAN OF THE MATCH (FIXED) -->

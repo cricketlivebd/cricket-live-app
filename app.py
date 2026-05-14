@@ -394,15 +394,6 @@ def home():
         sponsors = os.listdir("static/images/uploads")
     except:
         pass
-    news_images = []
-
-    try:
-        news_images = os.listdir(
-            "static/images/news_images"
-        )
-
-    except:
-        pass   
 
     banners = []
     try:
@@ -541,7 +532,6 @@ def home():
         "index.html",
         fixtures=fixtures,
         sponsors=sponsors,
-         news_images=news_images,
         banner=banner,
         admin=session.get("admin"),
         live_match=live_match
@@ -847,11 +837,21 @@ def match_page():
     # 🔥 wickets
     first["wickets_log"] = safe_json(first.get("wickets_log", "[]"))
     second["wickets_log"] = safe_json(second.get("wickets_log", "[]"))
-    # 🔥 partnerships
+
     first["partnerships"] = safe_json(first.get("partnerships", "[]"))
     second["partnerships"] = safe_json(second.get("partnerships", "[]"))
-    first["fall_of_wickets"] = safe_json(first.get("fall_of_wickets", "[]"))
-    second["fall_of_wickets"] = safe_json(second.get("fall_of_wickets", "[]"))
+    # =====================
+    # 🔥 FALL OF WICKETS
+    # =====================
+
+    first["fall_of_wickets"] = safe_json(
+        first.get("fall_of_wickets", "[]")
+    )
+
+    second["fall_of_wickets"] = safe_json(
+        second.get("fall_of_wickets", "[]")
+    )
+
 
     # 🔥 =========================
     # 🔥 DISMISSALS
@@ -1621,85 +1621,7 @@ def rename_sponsor_image():
         os.rename(old_path, new_path)
 
     return "OK"
-@app.route("/kcl-update-news")
-def kcl_update_news():
 
-    images = os.listdir("static/images/news_images")
-
-    return render_template(
-        "kcl_update_news.html",
-        images=images
-    )
-
-
-@app.route("/upload-kcl-update-news", methods=["POST"])
-def upload_kcl_update_news():
-
-    file = request.files["image"]
-
-    if file:
-
-        filename = file.filename
-
-        path = os.path.join(
-            "static/images/news_images",
-            filename
-        )
-
-        # 🔥 duplicate avoid
-        if os.path.exists(path):
-
-            import time
-
-            name, ext = os.path.splitext(filename)
-
-            filename = f"{name}_{int(time.time())}{ext}"
-
-        file.save(
-            os.path.join(
-                "static/images/news_images",
-                filename
-            )
-        )
-
-    return redirect("/kcl-update-news")
-
-
-@app.route("/delete-kcl-update-news", methods=["POST"])
-def delete_kcl_update_news():
-
-    files = request.form.getlist("files")
-
-    for file in files:
-
-        path = os.path.join(
-            "static/images/news_images",
-            file
-        )
-
-        if os.path.exists(path):
-
-            os.remove(path)
-
-    return redirect("/kcl-update-news")
-
-
-@app.route("/rename-kcl-update-news", methods=["POST"])
-def rename_kcl_update_news():
-
-    old = request.form.get("old")
-    new = request.form.get("new")
-
-    folder = "static/images/news_images"
-
-    old_path = os.path.join(folder, old)
-    new_path = os.path.join(folder, new)
-
-    if os.path.exists(old_path):
-
-        os.rename(old_path, new_path)
-
-    return "OK"
 @app.route("/banner-images")
 def banner_images():
 
@@ -2379,9 +2301,8 @@ def live_match():
 
         
 
-    # 🔥 5. save
-    # 🔥 5. save
-    # 🔥 PRESERVE WICKETS LOG
+    # 🔥 PRESERVE ONLY WICKETS LOG
+
     try:
 
         old = {}
@@ -2396,26 +2317,20 @@ def live_match():
 
                     old[k] = v
 
-        if "wickets_log" in old:
-            data["wickets_log"] = old["wickets_log"]
+        # 🔥 ONLY preserve when no new batsman
+        if not new_player:
+
+            if "wickets_log" in old:
+
+                data["wickets_log"] = old["wickets_log"]
 
     except:
         pass
+    # 🔥 5. save
+    safe_write("data/current_match.txt", data)
 
-    try:
-
-        safe_write(
-            "data/current_match.txt",
-            data
-        )
-
-    except:
-
-        return render_template(
-            "saving_score.html"
-        )
-
-    
+   
+      
 
     # 🔥 LOAD PLAYERS FROM ADVANCED SETTINGS
     try:
@@ -3426,9 +3341,20 @@ def match_details():
     # =====================
     first["partnerships"] = safe_json(first.get("partnerships", "[]"))
     second["partnerships"] = safe_json(second.get("partnerships", "[]"))
+   
+    # =====================
+    # 🔥 FALL OF WICKETS
+    # =====================
 
-    first["fall_of_wickets"] = safe_json(first.get("fall_of_wickets", "[]"))
-    second["fall_of_wickets"] = safe_json(second.get("fall_of_wickets", "[]"))
+    first["fall_of_wickets"] = safe_json(
+        first.get("fall_of_wickets", "[]")
+    )
+
+    second["fall_of_wickets"] = safe_json(
+        second.get("fall_of_wickets", "[]")
+    )
+
+
     # =====================
     # 🔥 DISMISSALS
     # =====================
@@ -3871,6 +3797,7 @@ def all_match_files_page():
         matches=matches
     )
 
+
 @app.route("/update-match", methods=["POST"])
 def update_match():
 
@@ -3933,19 +3860,31 @@ def update_match():
         first.get("bowler_log", "")
     )
 
+    first["fall_of_wickets"] = request.form.get(
+        "fow_1",
+        first.get("fall_of_wickets", "")
+    )
+
     # =========================
     # 🔥 UPDATE SECOND
     # =========================
 
-    second["wickets_log"] = request.form.get(
-        "wickets_log_2",
-        second.get("wickets_log", "")
-    )
+    if second:
 
-    second["bowler_log"] = request.form.get(
-        "bowler_log_2",
-        second.get("bowler_log", "")
-    )
+        second["wickets_log"] = request.form.get(
+            "wickets_log_2",
+            second.get("wickets_log", "")
+        )
+
+        second["bowler_log"] = request.form.get(
+            "bowler_log_2",
+            second.get("bowler_log", "")
+        )
+
+        second["fall_of_wickets"] = request.form.get(
+            "fow_2",
+            second.get("fall_of_wickets", "")
+        )
 
     # =========================
     # 🏆 PLAYER OF MATCH
@@ -3994,9 +3933,53 @@ def update_match():
     except:
         pass
 
+    # =========================
+    # 🔥 UPDATE CURRENT BOWLER WICKETS
+    # =========================
+
+    update_key(
+        "data/current_match.txt",
+        "b_wickets",
+        request.form.get("current_b_wickets", "0")
+    )
+
     return redirect(
         f"/match-editor?file={file}"
     )
+def update_key(path, key, value):
+
+    lines = []
+
+    found = False
+
+    try:
+
+        with open(path, "r") as f:
+
+            for line in f:
+
+                if line.startswith(key + "="):
+
+                    lines.append(f"{key}={value}\n")
+
+                    found = True
+
+                else:
+
+                    lines.append(line)
+
+    except:
+        pass
+
+    if not found:
+
+        lines.append(f"{key}={value}\n")
+
+    with open(path, "w") as f:
+
+        f.writelines(lines)
+
+
 
 @app.route("/match-editor")
 def match_editor():
@@ -4087,7 +4070,7 @@ def match_editor():
         except:
             return []
 
-    # 🔥 SAFE KEY FIX (NO SIDE EFFECT)
+    # 🔥 SAFE KEY FIX
     team1_key = team1.replace(" ", "_")
     team2_key = team2.replace(" ", "_")
 
@@ -4098,6 +4081,27 @@ def match_editor():
     team2_squad = safe_json(
         first.get(team2_key + "_squad", "[]")
     )
+
+    # =========================
+    # 🔥 LOAD CURRENT MATCH
+    # =========================
+
+    current = {}
+
+    try:
+
+        with open("data/current_match.txt") as f:
+
+            for line in f:
+
+                if "=" in line:
+
+                    k, v = line.strip().split("=", 1)
+
+                    current[k] = v
+
+    except:
+        pass
 
     return render_template(
 
@@ -4115,8 +4119,12 @@ def match_editor():
         team2=team2,
 
         team1_squad=team1_squad,
-        team2_squad=team2_squad
+        team2_squad=team2_squad,
+
+        current=current
     )
+
+
 
 import os, json
 from flask import request, render_template, jsonify
