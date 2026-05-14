@@ -840,6 +840,8 @@ def match_page():
     # 🔥 partnerships
     first["partnerships"] = safe_json(first.get("partnerships", "[]"))
     second["partnerships"] = safe_json(second.get("partnerships", "[]"))
+    first["fall_of_wickets"] = safe_json(first.get("fall_of_wickets", "[]"))
+    second["fall_of_wickets"] = safe_json(second.get("fall_of_wickets", "[]"))
 
     # 🔥 =========================
     # 🔥 DISMISSALS
@@ -3306,6 +3308,9 @@ def match_details():
     # =====================
     first["partnerships"] = safe_json(first.get("partnerships", "[]"))
     second["partnerships"] = safe_json(second.get("partnerships", "[]"))
+
+    first["fall_of_wickets"] = safe_json(first.get("fall_of_wickets", "[]"))
+    second["fall_of_wickets"] = safe_json(second.get("fall_of_wickets", "[]"))
     # =====================
     # 🔥 DISMISSALS
     # =====================

@@ -2152,5 +2152,21 @@ input {
     text-align:right;
     justify-self:end;
 }
+.fow-header{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+}
 
+.fow-header span:nth-child(1){
+    text-align:left;
+}
+
+.fow-header span:nth-child(2){
+    text-align:center;
+}
+
+.fow-header span:nth-child(3){
+    text-align:right;
+}
 

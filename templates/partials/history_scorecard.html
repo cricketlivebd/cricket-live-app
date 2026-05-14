@@ -125,6 +125,35 @@
     {% endfor %}
 
 {% endif %}
+{% if first.fall_of_wickets %}
+
+    <div class="table-header fow-header">
+        <span>Fall of Wickets</span>
+        <span>Score</span>
+        <span>Over</span>
+    </div>
+
+    {% for w in first.fall_of_wickets %}
+
+    <div class="partnership-row">
+
+        <div class="partnership-left">
+            {{ w.player }}
+        </div>
+
+        <div class="partnership-center">
+            {{ w.run }}-{{ w.wicket }}
+        </div>
+
+        <div class="partnership-right">
+            {{ w.over }}
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
 <!-- 🔵 SECOND INNINGS -->
 {% if second and second.score %}
 
@@ -245,4 +274,33 @@
     {% endfor %}
 
     {% endif %}
+    {% if second.fall_of_wickets %}
+
+        <div class="table-header fow-header">
+            <span>Fall of Wickets</span>
+            <span>Score</span>
+            <span>Over</span>
+        </div>
+
+        {% for w in second.fall_of_wickets %}
+
+        <div class="partnership-row">
+
+            <div class="partnership-left">
+                {{ w.player }}
+            </div>
+
+            <div class="partnership-center">
+                {{ w.run }}-{{ w.wicket }}
+            </div>
+
+            <div class="partnership-right">
+                {{ w.over }}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% endif %}   
 </div>
