@@ -394,6 +394,15 @@ def home():
         sponsors = os.listdir("static/images/uploads")
     except:
         pass
+    news_images = []
+
+    try:
+        news_images = os.listdir(
+            "static/images/news_images"
+        )
+
+    except:
+        pass   
 
     banners = []
     try:
@@ -532,6 +541,7 @@ def home():
         "index.html",
         fixtures=fixtures,
         sponsors=sponsors,
+         news_images=news_images,
         banner=banner,
         admin=session.get("admin"),
         live_match=live_match
@@ -1611,7 +1621,85 @@ def rename_sponsor_image():
         os.rename(old_path, new_path)
 
     return "OK"
+@app.route("/kcl-update-news")
+def kcl_update_news():
 
+    images = os.listdir("static/images/news_images")
+
+    return render_template(
+        "kcl_update_news.html",
+        images=images
+    )
+
+
+@app.route("/upload-kcl-update-news", methods=["POST"])
+def upload_kcl_update_news():
+
+    file = request.files["image"]
+
+    if file:
+
+        filename = file.filename
+
+        path = os.path.join(
+            "static/images/news_images",
+            filename
+        )
+
+        # 🔥 duplicate avoid
+        if os.path.exists(path):
+
+            import time
+
+            name, ext = os.path.splitext(filename)
+
+            filename = f"{name}_{int(time.time())}{ext}"
+
+        file.save(
+            os.path.join(
+                "static/images/news_images",
+                filename
+            )
+        )
+
+    return redirect("/kcl-update-news")
+
+
+@app.route("/delete-kcl-update-news", methods=["POST"])
+def delete_kcl_update_news():
+
+    files = request.form.getlist("files")
+
+    for file in files:
+
+        path = os.path.join(
+            "static/images/news_images",
+            file
+        )
+
+        if os.path.exists(path):
+
+            os.remove(path)
+
+    return redirect("/kcl-update-news")
+
+
+@app.route("/rename-kcl-update-news", methods=["POST"])
+def rename_kcl_update_news():
+
+    old = request.form.get("old")
+    new = request.form.get("new")
+
+    folder = "static/images/news_images"
+
+    old_path = os.path.join(folder, old)
+    new_path = os.path.join(folder, new)
+
+    if os.path.exists(old_path):
+
+        os.rename(old_path, new_path)
+
+    return "OK"
 @app.route("/banner-images")
 def banner_images():
 
@@ -2293,11 +2381,41 @@ def live_match():
 
     # 🔥 5. save
     # 🔥 5. save
+    # 🔥 PRESERVE WICKETS LOG
     try:
-        safe_write("data/current_match.txt", data)
 
-    except PermissionError:
+        old = {}
+
+        with open("data/current_match.txt") as f:
+
+            for line in f:
+
+                if "=" in line:
+
+                    k, v = line.strip().split("=", 1)
+
+                    old[k] = v
+
+        if "wickets_log" in old:
+            data["wickets_log"] = old["wickets_log"]
+
+    except:
         pass
+
+    try:
+
+        safe_write(
+            "data/current_match.txt",
+            data
+        )
+
+    except:
+
+        return render_template(
+            "saving_score.html"
+        )
+
+    
 
     # 🔥 LOAD PLAYERS FROM ADVANCED SETTINGS
     try:

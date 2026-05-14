@@ -56,8 +56,8 @@
 // 🔥 AUTO LOAD CURRENT PLAYERS
 window.onload = function(){
 
-    const striker = localStorage.getItem("strikerName");
-    const nonStriker = localStorage.getItem("nonStrikerName");
+    let striker =(localStorage.getItem("strikerName") || "").replace("★","").trim();
+    let nonStriker =(localStorage.getItem("nonStrikerName") || "").replace("★","").trim();
 
     const select = document.getElementById("outPlayer");
 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Saving...</title>
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body{
+
+            margin:0;
+            padding:0;
+
+            background:#0f172a;
+
+            color:white;
+
+            height:100vh;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            flex-direction:column;
+
+            font-family:Arial;
+        }
+
+        .loader{
+
+            width:55px;
+            height:55px;
+
+            border:5px solid #334155;
+
+            border-top:5px solid #22c55e;
+
+            border-radius:50%;
+
+            animation:spin 1s linear infinite;
+
+            margin-bottom:20px;
+        }
+
+        @keyframes spin{
+
+            100%{
+                transform:rotate(360deg);
+            }
+        }
+
+        h2{
+            margin:0;
+            font-size:22px;
+        }
+
+        p{
+            opacity:.7;
+            margin-top:8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="loader"></div>
+
+<h2>Saving wicket...</h2>
+
+<p>Please wait</p>
+
+<script>
+
+setTimeout(()=>{
+
+    window.location.href="/live-match";
+
+},1500);
+
+</script>
+
+</body>
+</html>

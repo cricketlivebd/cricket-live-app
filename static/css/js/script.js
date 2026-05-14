@@ -1,17 +1,21 @@
 const page = window.location.pathname;
-const slider = document.querySelector(".slider");
+const sliders = document.querySelectorAll(".slider");
 
 let speed = 1;
 
 function move() {
-    if (slider) {
+
+    sliders.forEach(slider => {
+
         slider.scrollLeft += speed;
 
-        // 🔥 FIXED RESET
         if (slider.scrollLeft >= slider.scrollWidth / 2) {
+
             slider.scrollLeft = 0;
         }
-    }
+
+    });
+
 }
 
 setInterval(move, 20);

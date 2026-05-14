@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KCL Update News</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<div class="nav">
+
+    <a href="/live">Back</a>
+
+    <a href="/">Home</a>
+
+    <a href="/team">Team Info</a>
+
+    <a href="/fixture">Match Fixture</a>
+
+    <a href="/points">Points Table</a>
+
+</div>
+
+<h2 class="fixture-title">
+    KCL Update News
+</h2>
+
+<!-- 🔥 TOP BAR -->
+<div class="top-bar">
+
+    <!-- Upload -->
+    <form action="/upload-kcl-update-news"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <input type="file"
+               name="image"
+               required>
+
+        <button type="submit">
+            Upload
+        </button>
+
+    </form>
+
+    <!-- Select + Delete -->
+    <div class="action-buttons">
+
+        <button type="button"
+                onclick="toggleSelect()">
+
+            Select
+
+        </button>
+
+        <form id="deleteForm"
+              action="/delete-kcl-update-news"
+              method="POST">
+
+            <button type="submit">
+                Delete
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="sponsor-section">
+
+<div class="image-grid">
+
+    {% for img in images %}
+
+    <div class="image-card"
+         oncontextmenu="renameImage(event, '{{img}}')">
+
+        <input type="checkbox"
+               name="files"
+               value="{{ img }}"
+               class="select-box"
+               form="deleteForm">
+
+        <img class="sponsor-img"
+             src="{{ url_for(
+             'static',
+             filename='images/news_images/' + img) }}">
+
+        <p>{{ img }}</p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+</div>
+
+<script>
+
+function toggleSelect() {
+
+    const boxes =
+    document.querySelectorAll(".select-box");
+
+    boxes.forEach(box => {
+
+        box.style.display = "block";
+
+    });
+}
+
+function renameImage(e, oldName) {
+
+    e.preventDefault();
+
+    let ext = oldName.split('.').pop();
+
+    let nameOnly =
+    oldName.replace('.' + ext, '');
+
+    let newName =
+    prompt("Enter new name:", nameOnly);
+
+    if (!newName) return;
+
+    newName = newName + "." + ext;
+
+    fetch("/rename-kcl-update-news", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type":
+            "application/x-www-form-urlencoded"
+
+        },
+
+        body:
+        "old=" + oldName +
+        "&new=" + newName
+
+    })
+
+    .then(() => location.reload());
+}
+
+</script>
+
+</body>
+</html>

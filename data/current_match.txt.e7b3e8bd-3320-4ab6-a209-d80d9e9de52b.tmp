@@ -34,12 +34,10 @@ innings=1
 first_match_file=data/all_match/ELEVEN_HUB-11_vs_FRIENDS_UNITED-12_1st.txt
 second_match_file=data/all_match/ELEVEN_HUB-11_vs_FRIENDS_UNITED-12_2nd.txt
 match_time=14 May 2026, 11:33 AM
-wickets_log=[{"batsman": "SHUVO", "type": "Bowled", "bowler": "BULBUL"}]
+wickets_log=[]
 ELEVEN_HUB-11_squad=[{"name": "ARMAN", "role": "ALL ROUNDER", "extra": []}, {"name": "AKASH AN", "role": "ALL ROUNDER", "extra": []}, {"name": "SHUVO", "role": "COACH", "extra": ["stf"]}, {"name": "RABBI", "role": "BATSMAN", "extra": []}, {"name": "SHAKKHAR", "role": "BATSMAN", "extra": []}, {"name": "AHSAN", "role": "BATSMAN", "extra": []}, {"name": "HIMU", "role": "WICKET KEEPER", "extra": []}, {"name": "MEHEDI.P", "role": "ALL ROUNDER", "extra": []}, {"name": "MEHEDI.H", "role": "BATSMAN", "extra": []}, {"name": "RAJKUMAR", "role": "BATSMAN", "extra": []}, {"name": "YOUSUF", "role": "STUDENTS", "extra": ["stf"]}, {"name": "SOMRAT", "role": "STUDENTS", "extra": ["stf"]}, {"name": "MANIK", "role": "STUDENTS", "extra": ["stf"]}, {"name": "SUMON", "role": "STUDENTS", "extra": ["stf"]}, {"name": "MUKTAR", "role": "STUDENTS", "extra": ["stf"]}, {"name": "SHABU", "role": "STUDENTS", "extra": ["stf"]}, {"name": "TONNI", "role": "STUDENTS", "extra": ["stf"]}]
 FRIENDS_UNITED-12_squad=[{"name": "NUR ISLAM", "role": "COACH", "extra": ["stf"]}, {"name": "S.SANDHAN", "role": "ALL ROUNDER", "extra": []}, {"name": "NURNABI", "role": "ALL ROUNDER", "extra": []}, {"name": "RAKIB", "role": "ALL ROUNDER", "extra": []}, {"name": "SAHABUL", "role": "BATSMAN", "extra": []}, {"name": "TUTUL", "role": "BATSMAN", "extra": []}, {"name": "NAZMUL", "role": "BATSMAN", "extra": []}, {"name": "AMRAN", "role": "BATSMAN", "extra": []}, {"name": "AHSAN", "role": "BOWLAR", "extra": []}, {"name": "BULBUL", "role": "BOWLAR", "extra": []}, {"name": "AGUN", "role": "BOWLAR", "extra": []}, {"name": "SHUVO", "role": "BOWLAR", "extra": []}, {"name": "ARAFAT", "role": "BOWLAR", "extra": []}]
 striker=RABBI
 non_striker=AKASH AN
 bowler=BULBUL
 bowler_log=BULBUL=0.4,0,0,1,0.00
-last_wicket_player=SHUVO
-last_wicket_type=Bowled

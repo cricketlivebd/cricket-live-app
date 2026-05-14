@@ -129,6 +129,29 @@
 {% endfor %}
 
 </div>
+<h3 style="color:#080808;font-weight:bold;">KCL News</h3>
+<!-- Image Slider -->
+<div class="slider">
+    <div class="slider-track"style="height:220px;">
+
+        {% for img in news_images %}
+        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        {% endfor %}
+
+        {% for img in news_images %}
+        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        {% endfor %}
+
+        {% for img in news_images %}
+        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        {% endfor %}
+
+        {% for img in news_images %}
+        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        {% endfor %}
+    </div>
+</div>
+
 <script>
 setInterval(() => {
     fetch("/home-live-data")
