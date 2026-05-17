@@ -228,11 +228,14 @@ function scrollHistory(amount){
 </script>
 <script>
 
+fetch("/heartbeat")
+
+
 setInterval(()=>{
 
 fetch("/heartbeat")
 
-},30000)
+},10000)
 
 
 
@@ -275,6 +278,8 @@ setInterval(
 loadUsers,
 10000
 )
+
+</script>
 
 </script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
