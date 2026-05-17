@@ -5755,7 +5755,17 @@ def heartbeat():
 
     return "ok"
 
+@app.route("/reset-users")
+def reset_users():
 
+    with open(
+        "data/users.txt",
+        "w"
+    ) as f:
+
+        f.write("")
+
+    return "Users reset done ✅"
 @app.route("/user-count")
 def user_count():
 
