@@ -241,6 +241,16 @@ window.onclick = function(e){
 }
 
 </script>
+<script>
 
+fetch("/heartbeat")
+
+setInterval(()=>{
+
+fetch("/heartbeat")
+
+},5000)
+
+</script>
 </body>
 </html>
