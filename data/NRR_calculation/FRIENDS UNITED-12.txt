@@ -1,4 +1,4 @@
-total_runs_scored=0
-total_overs_faced=0.0
-total_runs_conceded=1
+total_runs_scored=9
+total_overs_faced=1.0
+total_runs_conceded=10
 total_overs_bowled=0.5
