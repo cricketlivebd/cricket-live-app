@@ -321,5 +321,15 @@
 </span>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
 </body>
+<script>
 
+fetch("/heartbeat")
+
+setInterval(()=>{
+
+fetch("/heartbeat")
+
+},10000)
+
+</script>
 </html>

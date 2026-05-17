@@ -73,6 +73,17 @@
 
 
 </div>
+<script>
+
+fetch("/heartbeat")
+
+setInterval(()=>{
+
+fetch("/heartbeat")
+
+},10000)
+
+</script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
 </body>
 </html>
