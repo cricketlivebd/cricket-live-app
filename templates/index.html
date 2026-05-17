@@ -31,7 +31,17 @@
 <a href="/login">Admin</a>
 {% endif %}
 </div>
+<div class="user-box">
 
+    <span id="totalUsers">
+    👥 Users: 0
+    </span>
+
+    <span id="onlineUsers">
+    🟢 Online: 0
+    </span>
+
+</div>
 <!-- Live Score Card -->
 <!-- 🔥 LIVE CONTAINER -->
 <div id="home-live-container">
@@ -215,6 +225,57 @@ function scrollHistory(amount){
     });
 
 }
+</script>
+<script>
+
+setInterval(()=>{
+
+fetch("/heartbeat")
+
+},30000)
+
+
+
+function loadUsers(){
+
+fetch("/user-count")
+
+.then(r=>r.text())
+
+.then(d=>{
+
+document.getElementById(
+"totalUsers"
+).innerHTML=
+
+"👥 Users: "+d
+
+})
+
+
+fetch("/active-users")
+
+.then(r=>r.text())
+
+.then(d=>{
+
+document.getElementById(
+"onlineUsers"
+).innerHTML=
+
+"🟢 Online: "+d
+
+})
+
+}
+
+loadUsers()
+
+setInterval(
+loadUsers,
+10000
+)
+
 </script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
 </body>

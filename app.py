@@ -11,6 +11,9 @@ from flask_compress import Compress
 Compress(app)
 import os
 from werkzeug.utils import secure_filename
+import time
+import uuid
+active_users = {}
 # =========================================
 # EXACT DATA FOLDER → SQLITE CONVERTER
 # =========================================
@@ -309,6 +312,31 @@ def safe_write(path, data):
             f.write(f"{k}={v}\n")
 
     os.replace(temp_path, path)
+
+def track_user(device):
+
+    path = "data/users.txt"
+
+    users = set()
+
+    try:
+
+        with open(path) as f:
+
+            users = set(
+                x.strip()
+                for x in f.readlines()
+            )
+
+    except:
+        pass
+
+
+    if device not in users:
+
+        with open(path,"a") as f:
+
+            f.write(device+"\n")
 # 🔥 SAFE HISTORY APPEND
 def append_history(line):
 
@@ -388,6 +416,12 @@ def home():
     import os, random
 
     fixtures = load_fixtures()
+
+    device = request.cookies.get("kcl_user")
+    if not device:
+        device = str(uuid.uuid4())
+    track_user(device)
+    active_users[device] = time.time()
 
     sponsors = []
     try:
@@ -535,15 +569,29 @@ def home():
     except:
         pass
 
-    return render_template(
+    response = render_template(
         "index.html",
+
         fixtures=fixtures,
         sponsors=sponsors,
         news_images=news_images,
         banner=banner,
+
         admin=session.get("admin"),
+
         live_match=live_match
     )
+
+    resp = app.make_response(response)
+
+    resp.set_cookie(
+        "kcl_user",
+        device,
+        max_age=60*60*24*365
+    )
+
+    return resp
+
 home_cache = {
     "data": "",
     "time": 0
@@ -2090,7 +2138,29 @@ def live_match():
     wicket_type = request.args.get("type")
     # 🔥 FINAL FIX: COUNT WICKET BEFORE NEW BOWLER
     if new_player and wicket_type:
+        print(
+        "\nWICKET EVENT"
+        )
 
+        print(
+        "Striker:",
+        data.get("striker")
+        )
+
+        print(
+        "Non striker:",
+        data.get("non_striker")
+        )
+
+        print(
+        "Wicket type:",
+        wicket_type
+        )
+
+        print(
+        "New player:",
+        new_player
+        )
         if not wicket_type.startswith("Run out"):
 
             bw = data.get("b_wickets")
@@ -2412,9 +2482,16 @@ def live_match():
 
     except:
         pass
+    print(
+    "\nBEFORE WRITE",
+    data.get("wickets_log")
+    )
     # 🔥 5. save
     safe_write("data/current_match.txt", data)
-
+    print(
+    "\nAFTER WRITE",
+    data.get("wickets_log")
+    )
    
       
 
@@ -3337,6 +3414,10 @@ def save_wicket():
             "type": wicket_type,
             "bowler": bowler
         })
+        print(
+        "\nNEW LOG",
+        log
+        )
         # 🔥 ADD THIS
         match["last_wicket_player"] = out_player
         match["last_wicket_type"] = wicket_type
@@ -5660,6 +5741,56 @@ def current_squad_data():
 @app.route("/ping")
 def ping():
     return "OK"
+
+@app.route("/heartbeat")
+def heartbeat():
+
+    device = request.cookies.get(
+        "kcl_user"
+    )
+
+    if device:
+
+        active_users[device] = time.time()
+
+    return "ok"
+
+
+@app.route("/user-count")
+def user_count():
+
+    try:
+
+        with open("data/users.txt") as f:
+
+            total = len(
+                f.readlines()
+            )
+
+    except:
+
+        total = 0
+
+    return str(total)
+
+
+@app.route("/active-users")
+def active_users_count():
+
+    now = time.time()
+
+    total = sum(
+
+        1
+
+        for t in active_users.values()
+
+        if now - t < 60
+
+    )
+
+    return str(total)
+
 if __name__ == "__main__":
     import os
 
