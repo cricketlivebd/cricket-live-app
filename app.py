@@ -2407,13 +2407,9 @@ def live_match():
             data.get("batsman_log", ""),
             data.get("non_striker")
         )
-        if data.get("innings") == "1":
-            match_file = data.get("first_match_file")
-        else:
-            match_file = data.get("second_match_file")
+        
 
-        if match_file:
-            safe_write(match_file, data)
+        
         # 🔥 reset ONLY new batsman
         if data["striker"] == new_player:
             data["s_runs"] = "0"
