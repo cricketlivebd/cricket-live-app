@@ -2407,7 +2407,13 @@ def live_match():
             data.get("batsman_log", ""),
             data.get("non_striker")
         )
+        if data.get("innings") == "1":
+            match_file = data.get("first_match_file")
+        else:
+            match_file = data.get("second_match_file")
 
+        if match_file:
+            safe_write(match_file, data)
         # 🔥 reset ONLY new batsman
         if data["striker"] == new_player:
             data["s_runs"] = "0"
@@ -2486,8 +2492,11 @@ def live_match():
     "\nBEFORE WRITE",
     data.get("wickets_log")
     )
+    # 🔥 SAVE MATCH FILE AFTER FULL BATSMAN LOG READY
+    
     # 🔥 5. save
     safe_write("data/current_match.txt", data)
+    
     print(
     "\nAFTER WRITE",
     data.get("wickets_log")
@@ -2766,6 +2775,7 @@ def update_score():
         match["need_text"] = f"{batting_team} need {runs_needed} runs in {balls_left} balls"
 
     # 🔥 MATCH FILE SAVE
+    # 🔥 MATCH FILE SAVE
     if match.get("innings") == "1":
         match_file = match.get("first_match_file")
     else:
@@ -2773,20 +2783,78 @@ def update_score():
 
     if match_file:
 
+        # 🔥 KEEP BIGGER WICKET LOG
+        try:
+
+            old = {}
+
+            with open(match_file) as f:
+
+                for line in f:
+
+                    if "=" in line:
+
+                        k, v = line.strip().split("=",1)
+
+                        old[k] = v
+
+
+            import json
+
+            old_len = len(
+                json.loads(
+                    old.get(
+                        "wickets_log",
+                        "[]"
+                    )
+                )
+            )
+
+            cur_len = len(
+                json.loads(
+                    match.get(
+                        "wickets_log",
+                        "[]"
+                    )
+                )
+            )
+
+
+            if old_len > cur_len:
+
+                match[
+                    "wickets_log"
+                ] = old[
+                    "wickets_log"
+                ]
+
+        except:
+            pass
+
+
         # 🔥 SAFE FIRST INNINGS
-        if str(match.get("innings", "1")).strip() == "1":
+        if str(match.get("innings","1")).strip()=="1":
 
-            safe_write(match_file, match)
+            safe_write(
+                match_file,
+                match
+            )
 
-        # 🔥 SAFE SECOND INNINGS
+
         temp_match = match_file + ".tmp"
 
-        with open(temp_match, "w") as f:
+        with open(temp_match,"w") as f:
 
-            for k, v in match.items():
-                f.write(f"{k}={v}\n")
+            for k,v in match.items():
 
-        os.replace(temp_match, match_file)
+                f.write(
+                    f"{k}={v}\n"
+                )
+
+        os.replace(
+            temp_match,
+            match_file
+        )
 
     # 🔥 SAFE HISTORY
     safe_match = {}
@@ -3426,6 +3494,14 @@ def save_wicket():
 
     # 🔥 SAVE BACK
     safe_write("data/current_match.txt", match)
+    # 🔥 INSTANT MATCH FILE SAVE
+    if match.get("innings") == "1":
+        match_file = match.get("first_match_file")
+    else:
+        match_file = match.get("second_match_file")
+
+    if match_file:
+        safe_write(match_file, match)
 
     return {"status": "ok"}
 
