@@ -4099,7 +4099,10 @@ def update_match():
         "wickets_log_1",
         first.get("wickets_log", "")
     )
-
+    first["batsman_log"] = request.form.get(
+        "batsman_log_1",
+        first.get("batsman_log", "")
+    )
     first["bowler_log"] = request.form.get(
         "bowler_log_1",
         first.get("bowler_log", "")
@@ -4120,7 +4123,10 @@ def update_match():
             "wickets_log_2",
             second.get("wickets_log", "")
         )
-
+        second["batsman_log"] = request.form.get(
+            "batsman_log_2",
+            second.get("batsman_log", "")
+        )
         second["bowler_log"] = request.form.get(
             "bowler_log_2",
             second.get("bowler_log", "")
