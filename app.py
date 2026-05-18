@@ -3639,7 +3639,13 @@ def latest_history():
     import os
 
     folder = "data/all_match"
+    if not os.path.exists(folder):
 
+        return render_template(
+            "history_partial.html",
+            matches=[],
+            hide_delete=True
+        )
     matches = []
 
     # 🔥 ONLY FIRST INNINGS FILE
