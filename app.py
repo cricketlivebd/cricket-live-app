@@ -1191,7 +1191,7 @@ def fixture():
 
             return datetime.strptime(
 
-                f"{m['date']} {m['time']}",
+                f"{m['date']} 2026 {m['time']}",
 
                 "%d %b %Y %I:%M %p"
 
@@ -1202,24 +1202,17 @@ def fixture():
             return datetime.max
 
 
-    # 🔥 DATE + TIME অনুযায়ী sort
     fixtures.sort(
         key=parse_match
     )
 
-
     final_a, final_b = get_final_teams()
 
     return render_template(
-
         "fixture.html",
-
         fixtures=fixtures,
-
         final_a=final_a,
-
         final_b=final_b
-
     )
 @app.route("/team")
 def team():
