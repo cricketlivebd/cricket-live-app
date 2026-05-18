@@ -5878,7 +5878,26 @@ def active_users_count():
     )
 
     return str(total)
+@app.route("/reset-nrr")
+def reset_nrr():
 
+    import os
+
+    folder = "data/NRR_calculation"
+
+    for f in os.listdir(folder):
+
+        path = os.path.join(
+            folder,
+            f
+        )
+
+        open(
+            path,
+            "w"
+        ).close()
+
+    return "NRR reset done"
 if __name__ == "__main__":
     import os
 
