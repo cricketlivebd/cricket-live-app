@@ -246,56 +246,60 @@ function scrollHistory(amount){
 </script>
 <script>
 
-fetch("/heartbeat")
+    fetch("/heartbeat")
 
 
-setInterval(()=>{
+    setInterval(()=>{
 
-fetch("/heartbeat")
+    fetch("/heartbeat")
 
-},5000)
-
-
-
-function loadUsers(){
-
-fetch("/user-count")
-
-.then(r=>r.text())
-
-.then(d=>{
-
-document.getElementById(
-"totalUsers"
-).innerHTML=
-
-"👥 Users: "+d
-
-})
+    },5000)
 
 
-fetch("/active-users")
 
-.then(r=>r.text())
+    function loadUsers(){
 
-.then(d=>{
+        fetch("/user-count")
 
-document.getElementById(
-"onlineUsers"
-).innerHTML=
+        .then(r=>r.text())
 
-"🟢 Online: "+d
+        .then(d=>{
 
-})
+        document.getElementById(
+            "totalUsers"
+            ).innerHTML=
 
-}
+            "👥 Users: "
+            +
+            d
+            +
+            "K"
 
-loadUsers()
+        })
 
-setInterval(
-loadUsers,
-3000
-)
+
+        fetch("/active-users")
+
+        .then(r=>r.text())
+
+        .then(d=>{
+
+        document.getElementById(
+        "onlineUsers"
+        ).innerHTML=
+
+        "🟢 Online: "+d  +"K"
+
+        })
+
+    }
+
+    loadUsers()
+
+    setInterval(
+    loadUsers,
+    3000
+    )
 
 </script>
 
