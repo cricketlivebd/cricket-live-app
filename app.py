@@ -1044,6 +1044,7 @@ def load_fixtures():
                 date = ""
                 stage = "group"
                 completed = False
+                label = ""
 
                 # 🔥 TEAM
                 if "vs" in parts[0].lower():
@@ -1065,9 +1066,13 @@ def load_fixtures():
                 if len(parts) > 3:
                     stage = parts[3].lower()
 
-                # 🔥 COMPLETED
+                # 🔥 LABEL
                 if len(parts) > 4:
-                    completed = "completed" in parts[4].lower()
+                    label = parts[4]
+
+                # 🔥 COMPLETED
+                if len(parts) > 5:
+                    completed = "completed" in parts[5].lower()
 
                 # 🔥 NORMALIZE
                 if "knock" in stage:
@@ -1088,7 +1093,8 @@ def load_fixtures():
                     "date": date,
 
                     "stage": stage,
-                    "completed": completed
+                    "completed": completed,
+                    "label": label
                 })
 
     except:
@@ -1164,6 +1170,32 @@ def get_final_teams():
 
     return team_a, team_b
 
+def get_grand_final():
+
+    fixtures = load_fixtures()
+
+    for f in fixtures:
+
+        if (
+            f.get(
+                "label",""
+            ).lower()
+
+            ==
+
+            "grand final"
+        ):
+
+            return (
+                f["time"],
+                f["date"]
+            )
+
+    return (
+        "TBD",
+        "TBD"
+    )
+
 @app.route("/fixture")
 def fixture():
 
@@ -1191,14 +1223,41 @@ def fixture():
     fixtures.sort(
         key=parse_match
     )
+    all_knockout_done = all(
 
+        m["completed"]
+
+        for m in fixtures
+
+        if (
+            m["stage"] == "knockout"
+
+            and
+
+            m.get(
+                "label",""
+            ).lower()
+
+            != "grand final"
+        )
+
+    )
     final_a, final_b = get_final_teams()
+    grand_time, grand_date = get_grand_final()
 
     return render_template(
+
         "fixture.html",
+
         fixtures=fixtures,
+
         final_a=final_a,
-        final_b=final_b
+        final_b=final_b,
+        grand_time=grand_time,
+        grand_date=grand_date,
+
+        all_knockout_done=
+        all_knockout_done
     )
 @app.route("/team")
 def team():

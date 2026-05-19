@@ -117,10 +117,28 @@
                 <div class="vs">VS</div>
 
                 {% if match.stage == "knockout" %}
-                <div class="stage-tag knockout">Knock Out</div>
+
+                <div class="stage-tag knockout">
+                    Knock Out
+                </div>
+
+                {% if match.label %}
+                <div style="
+                font-size:18px;
+                color:#0a0a0a;
+                margin-top:4px;
+                ">
+                    {{ match.label }}
+                </div>
+                {% endif %}
+
 
                 {% elif match.stage == "final" %}
-                <div class="stage-tag final">Final 🏆</div>
+
+                <div class="stage-tag final">
+                    Final 🏆
+                </div>
+
                 {% endif %}
 
             </div>

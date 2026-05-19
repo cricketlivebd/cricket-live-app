@@ -75,7 +75,21 @@
                 <div class="vs">VS</div>
 
                 {% if match.stage == "knockout" %}
-                <div class="stage-tag knockout">Knock Out</div>
+
+                <div class="stage-tag knockout">
+                Knock Out
+                </div>
+
+                {% if match.label %}
+                <div style="
+                font-size:22px;
+                color:#055df7;
+                margin-top:4px;
+                ">
+                {{ match.label }}
+                </div>
+                {% endif %}
+
                 {% endif %}
 
                 {% if match.completed %}
@@ -105,14 +119,14 @@
 
 <div class="matches">
 
-{% if final_a and final_b %}
+{% if final_a and final_b and all_knockout_done %}
 
 <div class="card match">
 
     <div class="match-time">
-        Final Match
+        {{ grand_time }}
         <div class="match-date">
-            TBD
+            {{ grand_date }}
         </div>
     </div>
 
@@ -139,7 +153,21 @@
 
 {% else %}
 
-<p style="padding:10px;">Final teams not decided yet</p>
+<div style="
+    text-align:center;
+    padding:20px;
+    font-size:18px;
+    font-weight:bold;
+    color:#ddd;
+    background:linear-gradient(90deg, #07e664, #dd2476, #1fa2ff);
+    border-radius:12px;
+    margin:20px;
+    box-shadow:0 0 10px rgba(0,0,0,.4);
+    ">
+
+    🏆 Final teams not decided yet
+
+</div>
 
 {% endif %}
 
