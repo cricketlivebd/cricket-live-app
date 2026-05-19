@@ -372,42 +372,7 @@ def load_teams():
 
     return teams
 # Fixture file theke data ana
-def load_fixtures():
 
-    fixtures = []
-
-    with open("data/fixture.txt", "r") as f:
-
-        for line in f:
-
-            raw = line.strip()
-
-            parts = [p.strip() for p in raw.split("|")]
-
-            teams = parts[0].split("vs")
-
-            if len(teams) == 2:
-
-                fixtures.append({
-
-                    "team1": teams[0].strip(),
-
-                    "team2": teams[1].strip(),
-
-                    "time": parts[1] if len(parts) > 1 else "TBD",
-
-                    "date": parts[2] if len(parts) > 2 else "",
-
-                    "stage": parts[3].lower() if len(parts) > 3 else "group",
-
-                    "completed": (
-                        len(parts) > 4 and
-                        parts[4].lower() == "completed"
-                    )
-
-                })
-
-    return fixtures
 
 import random
 
@@ -416,7 +381,28 @@ def home():
     import os, random
 
     fixtures = load_fixtures()
+    from datetime import datetime
 
+    def parse_match(m):
+
+        try:
+
+            return datetime.strptime(
+
+                f"{m['date'].title()} 2026 {m['time']}",
+
+                "%d %b %Y %I:%M %p"
+
+            )
+
+        except:
+
+            return datetime.max
+
+
+    fixtures.sort(
+        key=parse_match
+    )
     device = request.cookies.get("kcl_user")
     if not device:
         device = str(uuid.uuid4())
