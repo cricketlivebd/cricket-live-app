@@ -1347,12 +1347,20 @@ def player_images():
 @app.route("/upload-player-image", methods=["POST"])
 def upload_player_image():
 
-    file = request.files["image"]
+    files = request.files.getlist("image")
 
-    if file:
-        filename = file.filename   # 🔥 ORIGINAL NAME (no change)
+    for file in files:
 
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        if file and file.filename:
+
+            filename = file.filename
+
+            file.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    filename
+                )
+            )
 
     return redirect("/player-images")
 @app.route("/rename-image", methods=["POST"])
