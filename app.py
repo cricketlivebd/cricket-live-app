@@ -1335,8 +1335,9 @@ def login():
         password = request.form.get("password")
 
         # 🔥 admin check
-        if username == "admin" and password == "1234":
+        if username == "KCL" and password == "Mehedi@33":
             session["admin"] = True   # 🔥 login success
+            session["pass"] ="Mehedi@33"
             return redirect("/")      # 🔥 home e jabe
 
         else:
@@ -1353,8 +1354,23 @@ def logout():
 
 @app.route("/live")
 def live():
-    if not session.get("admin"):
+
+    if (
+        not session.get("admin")
+
+        or
+
+        session.get("pass")
+        != "Mehedi@33"
+    ):
+
+        session.clear()
+
         return redirect("/login")
+
+    return render_template(
+        "live.html"
+    )
 
     return render_template("live.html")
 
