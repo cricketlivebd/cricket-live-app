@@ -6031,6 +6031,168 @@ def reset_nrr():
         ).close()
 
     return "NRR reset done"
+
+from flask import redirect
+
+
+@app.route(
+"/comments",
+
+methods=["GET","POST"]
+)
+
+def comments():
+
+    if request.method=="POST":
+
+        name =request.form[
+        "name"
+        ].strip()
+
+
+        comment =request.form[
+        "comment"
+        ].strip()
+
+
+        if not name:
+
+            return redirect(
+            "/comments"
+            )
+
+
+        if not comment:
+
+            comment ="Joined comments 💬"
+
+
+        with open(
+
+        "data/comments.txt",
+
+        "a",
+
+        encoding="utf-8"
+
+        ) as f:
+
+            from datetime import datetime
+
+            now = datetime.now()
+
+            time =now.strftime("%d %b | %I:%M %p")
+            f.write(
+            f"{name}|{comment}|{time}\n"
+            )
+
+
+        return redirect(
+        "/comments"
+        )
+
+
+    comments=[]
+
+    try:
+
+        with open(
+
+        "data/comments.txt",
+
+        encoding="utf-8"
+
+        ) as f:
+
+            comments=f.readlines()
+
+            comments.reverse()
+
+    except:
+        pass
+
+
+    return render_template(
+
+    "comments.html",
+
+    comments=comments
+    )
+
+
+@app.route(
+"/comments-admin"
+)
+
+def comments_admin():
+
+    comments=[]
+
+    try:
+
+        with open(
+
+        "data/comments.txt",
+
+        encoding="utf-8"
+
+        ) as f:
+
+            comments=f.readlines()
+
+            comments.reverse()
+
+    except:
+        pass
+
+
+    return render_template(
+
+    "comments_admin.html",
+
+    comments=
+    comments
+    )
+
+@app.route(
+"/delete-comment/<int:i>"
+)
+
+def delete_comment(i):
+
+    with open(
+    "data/comments.txt",
+    "r",
+    encoding="utf-8"
+    ) as f:
+
+        data=f.readlines()
+
+
+    data.pop(
+    len(data)-1-i
+    )
+
+
+    with open(
+
+    "data/comments.txt",
+
+    "w",
+
+    encoding="utf-8"
+
+    ) as f:
+
+        f.writelines(
+        data
+        )
+
+
+    return redirect(
+    "/comments-admin"
+    )
+
 if __name__ == "__main__":
     import os
 

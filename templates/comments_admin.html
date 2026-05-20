@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Comments Manage</title>
+    <link rel="stylesheet"href="{{ url_for('static',filename='css/style.css') }}">
+    <meta name="viewport"content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+<div class="nav">
+<a href="/">Home</a>
+<a href="/stats">Scorecard</a>
+<a href="/team">Team Info</a>
+<a href="/fixture">Fixture</a>
+<a href="/points">Points</a>
+<a href="/comments">Comments</a>
+
+</div>
+
+
+
+<h2 class="fixture-title">
+
+💬 Comments Manage
+
+</h2>
+
+
+
+{% for c in comments %}
+
+{% set p=
+c.strip().split("|")
+%}
+
+
+<div class="team-card row-card player-row">
+
+
+<div class="left">
+
+{{ loop.index }}.
+
+<b>
+
+{{ p[0] }}
+
+:</b>
+
+
+{{ p[1] }}
+
+
+{% if p|length>=4 %}
+
+<br>
+
+<span style="
+
+font-size:11px;
+
+color:#999;
+
+">
+
+{{ p[2] }}
+
+{{ p[3] }}
+
+</span>
+
+{% endif %}
+
+
+</div>
+
+
+
+<div class="right actions">
+
+
+<a
+
+href="/delete-comment/
+{{loop.index0}}"
+
+onclick=
+"return confirm(
+'Delete comment?'
+)"
+
+class="delete-btn">
+
+Delete
+
+</a>
+
+
+</div>
+
+
+</div>
+
+{% endfor %}
+
+
+
+<script>
+
+fetch("/heartbeat")
+
+setInterval(()=>{
+
+fetch("/heartbeat")
+
+},5000)
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Comments</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/style.css') }}">
+
+<style>
+
+body{
+
+margin:0;
+
+font-family:Arial;
+
+background:
+linear-gradient(
+135deg,
+#1d2b64,
+#f8cdda
+);
+
+height:100vh;
+
+overflow:hidden;
+
+}
+
+
+/* COMMENTS */
+
+.wrap{
+
+padding:1px;
+
+}
+
+
+.comments-box{
+
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(8px);
+border-radius:15px;
+padding:1px;
+height:72vh;
+overflow-y:auto;
+
+overflow-x:hidden;
+
+
+/* PC scrollbar hide */
+
+scrollbar-width:
+none;
+
+-ms-overflow-style:
+none;
+
+}
+
+
+/* PC */
+
+@media(min-width:769px){
+
+.comments-box::-webkit-scrollbar{
+
+display:none;
+
+}
+
+}
+
+
+/* COMMENT CARD */
+
+.comment{
+
+    background:rgba(255,255,255,.12);
+    padding:5px 0px 5px 0px;
+
+    margin-bottom:10px;
+    border-radius:12px;
+    color:white;
+    border-left:5px solid #0ae273;
+    font-size:17px;
+    /* long comment fix */
+    word-wrap:
+    break-word;
+    overflow-wrap:
+    break-word;
+    white-space:
+    normal;
+
+    }
+
+.comment-name{
+color:#00e5ff;
+font-size:18px;
+}
+
+
+/* BUTTON */
+
+.comment-btn{
+
+display:block;
+
+margin:20px auto;
+
+padding:14px 30px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:20px;
+
+font-weight:bold;
+
+background:
+linear-gradient(
+90deg,
+#00c6ff,
+#0072ff
+);
+
+color:white;
+
+cursor:pointer;
+
+}
+
+
+/* MODAL */
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+rgba(0,0,0,.6);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+padding:20px;
+
+border-radius:15px;
+
+width:90%;
+
+max-width:400px;
+
+}
+
+
+.modal-box input,
+
+.modal-box textarea{
+
+width:100%;
+
+padding:12px;
+
+margin-bottom:12px;
+
+border-radius:10px;
+
+border:none;
+
+background:#eee;
+
+box-sizing:
+border-box;
+
+}
+
+
+.modal-box textarea{
+
+height:150px;
+
+resize:none;
+
+}
+
+
+.modal-box button{
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:10px;
+
+background:
+linear-gradient(
+90deg,
+#00c6ff,
+#0072ff
+);
+
+color:white;
+
+font-size:18px;
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.comments-box{
+
+height:65vh;
+
+/* phone e scrollbar visible */
+
+scrollbar-width:auto;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="/stats">Scorecard</a>
+    <a href="/team">Team Info</a>
+    <a href="/fixture">Match Fixture</a>
+    <a href="/points">Points Table</a>
+    <a href="/comments">Comments</a>
+</div>
+<h2 class="fixture-title">💬 User Comments</h2>
+
+
+<button class="comment-btn"onclick="openModal()"> 💬 Click For Your Comments </button>
+<div style="text-align:center;color:white;font-size:16px;padding:0 15px;margin-bottom:20px;">
+🏏 খেলা কিংবা অ্যাপ সম্পর্কে আপনার মূল্যবান মতামত শেয়ার করুন — প্রতিটি মন্তব্য আমাদের জন্য গুরুত্বপূর্ণ।
+</div>
+<div class="wrap">
+
+<div class="comments-box">
+
+{% for c in comments %}
+
+{% set p =
+c.strip().split("|")
+%}
+
+
+<div class="comment">
+
+
+<div style="
+
+display:flex;
+
+justify-content:
+space-between;
+
+align-items:
+center;
+
+gap:10px;
+
+">
+
+
+<div>
+
+<b class="comment-name">
+
+{{ p[0] }}
+
+:
+
+</b>
+
+{{ p[1] }}
+
+</div>
+
+
+
+{% if p|length >= 4 %}
+
+<div style="
+
+font-size:11px;
+
+color:#0b0202;
+
+min-width:95px;
+
+text-align:right;
+
+line-height:1.3;
+
+">
+
+{{ p[2] }}
+
+<br>
+
+{{ p[3] }}
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+
+{% endfor %}
+
+</div>
+
+</div>
+
+
+
+<!-- POPUP -->
+
+<div
+
+id="commentModal"
+
+class="modal">
+
+
+<div class="modal-box">
+
+
+<form method="POST">
+
+
+<input
+
+name="name"
+
+placeholder=
+"Your name"
+
+required>
+
+
+
+<textarea
+
+name="comment"
+
+placeholder=
+"Write comment"
+
+required>
+
+</textarea>
+
+
+
+<button>
+
+Send 🚀
+
+</button>
+
+
+</form>
+
+
+</div>
+
+</div>
+
+
+
+<script>
+
+function openModal(){
+
+document
+.getElementById(
+"commentModal"
+)
+
+.style.display=
+
+"flex";
+
+}
+
+
+window.onclick=
+
+function(e){
+
+let m=
+
+document
+.getElementById(
+"commentModal"
+)
+
+if(
+
+e.target==m
+
+){
+
+m.style.display=
+
+"none";
+
+}
+
+}
+
+</script>
+
+
+</body>
+</html>
