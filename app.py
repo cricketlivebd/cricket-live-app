@@ -1071,8 +1071,26 @@ def load_fixtures():
                     label = parts[4]
 
                 # 🔥 COMPLETED
+                # 🔥 STATUS
+                status = ""
+
                 if len(parts) > 5:
-                    completed = "completed" in parts[5].lower()
+
+                    status = parts[5].lower()
+
+                    completed = (
+
+                        "completed"
+
+                        in status
+
+                        or
+
+                        "running"
+
+                        in status
+
+                    )
 
                 # 🔥 NORMALIZE
                 if "knock" in stage:
@@ -1094,7 +1112,8 @@ def load_fixtures():
 
                     "stage": stage,
                     "completed": completed,
-                    "label": label
+                    "label": label,
+                    "status": status
                 })
 
     except:
@@ -4856,6 +4875,8 @@ def points():
         pass
     group_a = []
     group_b = []
+    eliminated_a = []
+    eliminated_b = []
 
     try:
         with open("data/teamnamePoints.txt", "r") as f:
@@ -4929,12 +4950,21 @@ def points():
                         "nrr": f"{nrr_value:+.2f}"
                     }
 
-                    # 🔥 assign group
-                    if group == "a":
-                        group_a.append(data)
+                    if lost >= 1:
 
-                    elif group == "b":
-                        group_b.append(data)
+                        if group == "a":
+                            eliminated_a.append(data)
+
+                        elif group == "b":
+                            eliminated_b.append(data)
+
+                    else:
+
+                        if group == "a":
+                            group_a.append(data)
+
+                        elif group == "b":
+                            group_b.append(data)
 
     except Exception as e:
         print("Error:", e)
@@ -4951,9 +4981,14 @@ def points():
         t["top"] = True if i < 2 else False
 
     return render_template(
+
         "points.html",
+
         group_a=group_a,
-        group_b=group_b
+        group_b=group_b,
+
+        eliminated_a=eliminated_a,
+        eliminated_b=eliminated_b
     )
 
 #nrr file create

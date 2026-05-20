@@ -54,7 +54,7 @@
             display:grid;
             grid-template-columns: 2.5fr repeat(6, 1fr);
             padding:12px;
-            background: linear-gradient(90deg, #ff512f, #dd2476, #1fa2ff);
+            background: linear-gradient(90deg, #ff2f2f, #dd2476, #1fa2ff);
             color:white;
             font-weight:bold;
             border-radius:12px;
@@ -169,7 +169,33 @@
         <div>{{ t.nrr }}</div>
     </div>
     {% endfor %}
+    <div class="group-title"style="background: linear-gradient(90deg, #d32f2f, #cb2323, #ea0748); color:white; ">Eliminated A</div>
 
+        {% for t in eliminated_a %}
+
+        <div class="points-row">
+
+            <div class="team">
+
+                <img src="{{ url_for(
+                'static',
+                filename='images/teams/' + t.team + '.png'
+                ) }}">
+
+                {{ t.team }}
+
+            </div>
+
+            <div>{{ t.p }}</div>
+            <div>{{ t.w }}</div>
+            <div>{{ t.l }}</div>
+            <div>{{ t.nr }}</div>
+            <div>{{ t.pts }}</div>
+            <div>{{ t.nrr }}</div>
+
+        </div>
+
+        {% endfor %}
     <!-- GROUP B -->
     <div class="group-title">Group B</div>
 
@@ -188,7 +214,32 @@
         <div>{{ t.nrr }}</div>
     </div>
     {% endfor %}
+    <div class="group-title"style="background: linear-gradient(90deg, #d32f2f, #cb2323, #ea0748); color:white; ">Eliminated B</div>
+        {% for t in eliminated_b %}
 
+        <div class="points-row">
+
+            <div class="team">
+
+                <img src="{{ url_for(
+                'static',
+                filename='images/teams/' + t.team + '.png'
+                ) }}">
+
+                {{ t.team }}
+
+            </div>
+
+            <div>{{ t.p }}</div>
+            <div>{{ t.w }}</div>
+            <div>{{ t.l }}</div>
+            <div>{{ t.nr }}</div>
+            <div>{{ t.pts }}</div>
+            <div>{{ t.nrr }}</div>
+
+        </div>
+
+        {% endfor %}
 </div>
 <script>
 

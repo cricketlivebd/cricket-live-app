@@ -93,10 +93,13 @@
                 {% endif %}
 
                 {% if match.completed %}
-                <div class="stage-tag" style="background:#00b4c8;">
-                    COMPLETED
-                </div>
-                {% endif %}
+                    <div class="stage-tag"
+                    style="background:#00b4c8;">
+
+                    {{ match.status.upper() }}
+
+                    </div>
+                    {% endif %}
 
             </div>
 
