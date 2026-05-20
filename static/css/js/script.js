@@ -1254,7 +1254,7 @@ function closeResult(){
 }
 
 function goNewMatch(){
-    window.location.href = "/new-match";
+    window.location.href = "/all-match-files";
 }
 function checkMatchResultDirect(score, wickets, over, ball){
 
