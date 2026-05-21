@@ -305,6 +305,42 @@ function scrollHistory(amount){
 </script>
 
 </script>
+<script>
+
+const nav =
+document.querySelector(
+".nav"
+);
+
+if(nav){
+
+nav.addEventListener(
+"wheel",
+
+function(e){
+
+if(
+window.innerWidth
+> 768
+){
+
+e.preventDefault();
+
+nav.scrollLeft +=
+
+e.deltaY;
+
+}
+
+},
+
+{passive:false}
+
+);
+
+}
+
+</script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
 </body>
 </html>

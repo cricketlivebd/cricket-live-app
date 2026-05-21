@@ -43,13 +43,35 @@ h3 {
 /* Nav container */
 /* NAV */
 .nav {
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    background: linear-gradient(45deg, #4facfe, #00f2fe, #43e97b);
-    /*background: linear-gradient(45deg, #667eea, #764ba2);*/
-    overflow-y: visible;
-    scrollbar-width: none;
+
+    display:flex;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    white-space:nowrap;
+
+    background:linear-gradient(45deg,#4facfe,#00f2fe,#43e97b);
+
+    scrollbar-width:none;
+
+    scroll-behavior:
+    smooth;
+
+}
+
+
+/* PC hover scroll */
+
+@media(min-width:769px){
+
+.nav:hover{
+
+overflow-x:auto;
+
+}
+
 }
 
 .nav::-webkit-scrollbar {

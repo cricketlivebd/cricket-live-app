@@ -303,33 +303,16 @@ gap:10px;
 
 <div>
 
-<b class="comment-name">
+    <b class="comment-name">{{ p[0] }}:</b>
 
-{{ p[0] }}
-
-:
-
-</b>
-
-{{ p[1] }}
+    {{ p[1] }}
 
 </div>
 
 
-
 {% if p|length >= 4 %}
 
-<div style="
-
-font-size:11px;
-
-color:#0b0202;
-
-min-width:95px;
-
-text-align:right;
-
-line-height:1.3;
+<div style="font-size:11px;color:#0b0202;min-width:95px;text-align:right;line-height:1.3;
 
 ">
 
@@ -360,55 +343,14 @@ line-height:1.3;
 
 <!-- POPUP -->
 
-<div
-
-id="commentModal"
-
-class="modal">
-
-
-<div class="modal-box">
-
-
-<form method="POST">
-
-
-<input
-
-name="name"
-
-placeholder=
-"Your name"
-
-required>
-
-
-
-<textarea
-
-name="comment"
-
-placeholder=
-"Write comment"
-
-required>
-
-</textarea>
-
-
-
-<button>
-
-Send 🚀
-
-</button>
-
-
-</form>
-
-
-</div>
-
+<div id="commentModal" class="modal">
+    <div class="modal-box">
+        <form method="POST">
+            <input name="name" placeholder="Your name" required>
+            <textarea name="comment" placeholder="Write comment" required></textarea>
+            <button>Send 🚀</button>
+        </form>
+    </div>
 </div>
 
 

@@ -1742,22 +1742,38 @@ def sponsor_images():
 
     return render_template("sponsor_images.html", images=images)
 
-@app.route("/upload-sponsor-image", methods=["POST"])
+@app.route("/upload-sponsor-image",methods=["POST"])
 def upload_sponsor_image():
 
-    file = request.files["image"]
+    files =request.files.getlist("image")
 
-    if file:
-        filename = file.filename
-        path = os.path.join("static/images/uploads", filename)
+    for file in files:
 
-        # duplicate avoid
-        if os.path.exists(path):
-            import time
-            name, ext = os.path.splitext(filename)
-            filename = f"{name}_{int(time.time())}{ext}"
+        if file:
 
-        file.save(os.path.join("static/images/uploads", filename))
+            filename =file.filename
+
+
+            path =os.path.join("static/images/uploads",filename)
+            # duplicate avoid
+
+            if os.path.exists(
+            path
+            ):
+
+                import time
+
+                name, ext = os.path.splitext(
+                filename
+                )
+
+                filename = (f"{name}_"f"{int(time.time())}"f"{ext}")
+
+            file.save(
+            os.path.join("static/images/uploads",filename)
+
+            )
+
 
     return redirect("/sponsor-images")
 
@@ -1799,37 +1815,74 @@ def kcl_update_news():
     )
 
 
-@app.route("/upload-kcl-update-news", methods=["POST"])
+@app.route(
+"/upload-kcl-update-news",
+
+methods=["POST"]
+)
+
 def upload_kcl_update_news():
 
-    file = request.files["image"]
+    files =request.files.getlist(
+    "image"
+    )
 
-    if file:
 
-        filename = file.filename
+    for file in files:
 
-        path = os.path.join(
+        if file:
+
+            filename =file.filename
+
+
+            path =os.path.join(
+
             "static/images/news_images",
+
             filename
-        )
 
-        # 🔥 duplicate avoid
-        if os.path.exists(path):
-
-            import time
-
-            name, ext = os.path.splitext(filename)
-
-            filename = f"{name}_{int(time.time())}{ext}"
-
-        file.save(
-            os.path.join(
-                "static/images/news_images",
-                filename
             )
-        )
 
-    return redirect("/kcl-update-news")
+
+            # duplicate avoid
+
+            if os.path.exists(
+            path
+            ):
+
+                import time
+
+                name, ext = os.path.splitext(
+                filename
+                )
+
+                filename = (
+
+                f"{name}_"
+
+                f"{int(time.time())}"
+
+                f"{ext}"
+
+                )
+
+
+            file.save(
+
+            os.path.join(
+
+            "static/images/news_images",
+
+            filename
+
+            )
+
+            )
+
+
+    return redirect(
+    "/kcl-update-news"
+    )
 
 
 @app.route("/delete-kcl-update-news", methods=["POST"])
@@ -5312,16 +5365,18 @@ def most_runs():
 
                 parts = line.strip().split("|")
 
-                if len(parts) == 7:
+                if len(parts) == 8:
 
-                    data.append({
+                     data.append({
+
                         "player": parts[0],
                         "match": int(parts[1]),
                         "inns": int(parts[2]),
                         "runs": int(parts[3]),
-                        "sr": parts[4],
-                        "fours": parts[5],
-                        "sixes": parts[6]
+                        "avg": parts[4],
+                        "sr": parts[5],
+                        "fours": parts[6],
+                        "sixes": parts[7]
                     })
 
     # 🔥 SORT (RUNS DESC)
@@ -5431,7 +5486,8 @@ def build_most_runs():
                     "runs": 0,
                     "balls": 0,
                     "4s": 0,
-                    "6s": 0
+                    "6s": 0,
+                    "out": 0
                 }
 
             players[name]["match"] += 1
@@ -5443,6 +5499,34 @@ def build_most_runs():
         for inn in innings_parts:
 
             lines = inn.splitlines()
+
+            # 🔥 OUT COUNT
+            for line in lines:
+
+                if line.startswith("wickets_log="):
+
+                    try:
+
+                        logs = json.loads(
+                            line.split("=",1)[1]
+                        )
+
+                        for w in logs:
+
+                            batsman = w.get(
+                                "batsman",
+                                ""
+                            ).strip()
+
+                            if batsman in players:
+
+                                players[
+                                batsman
+                                ]["out"] += 1
+
+                    except:
+                        pass
+
 
             for line in lines:
 
@@ -5481,7 +5565,8 @@ def build_most_runs():
                                     "runs": 0,
                                     "balls": 0,
                                     "4s": 0,
-                                    "6s": 0
+                                    "6s": 0,
+                                    "out": 0
                                 }
 
                             # 🔥 INNS++
@@ -5502,15 +5587,27 @@ def build_most_runs():
 
     with open(save_path, "w") as f:
 
-        f.write("Player|Match|Inns|Runs|SR|4s|6s\n")
+        f.write("Player|Match|Inns|Runs|AVG|SR|4s|6s\n")
 
         for name, s in players.items():
 
-            sr = (s["runs"] / s["balls"] * 100) if s["balls"] > 0 else 0
+            sr = (
+                s["runs"] /
+                s["balls"] * 100
+            ) if s["balls"] > 0 else 0
+
+
+            avg = round(
+                s["runs"] /
+                s["out"],
+                2
+            ) if s["out"] > 0 else "N/A"
+
 
             line = (
                 f"{name}|{s['match']}|{s['inns']}|"
-                f"{s['runs']}|{sr:.2f}|{s['4s']}|{s['6s']}\n"
+                f"{s['runs']}|{avg}|"
+                f"{sr:.2f}|{s['4s']}|{s['6s']}\n"
             )
 
             f.write(line)
@@ -5720,7 +5817,7 @@ def build_most_wickets():
 
             runs = d["runs"]
 
-            avg = round(balls / wickets, 2) if wickets > 0 else 0
+            avg = round(runs / wickets, 2) if wickets > 0 else 0
 
             f.write(
                 f"{name}|{d['match']}|{overs}|"
@@ -6035,12 +6132,7 @@ def reset_nrr():
 from flask import redirect
 
 
-@app.route(
-"/comments",
-
-methods=["GET","POST"]
-)
-
+@app.route("/comments",methods=["GET","POST"])
 def comments():
 
     if request.method=="POST":
@@ -6120,10 +6212,7 @@ def comments():
     )
 
 
-@app.route(
-"/comments-admin"
-)
-
+@app.route("/comments-admin")
 def comments_admin():
 
     comments=[]
@@ -6154,15 +6243,11 @@ def comments_admin():
     comments
     )
 
-@app.route(
-"/delete-comment/<int:i>"
-)
+@app.route("/delete-comment/<int:i>")
 
 def delete_comment(i):
 
-    with open(
-    "data/comments.txt",
-    "r",
+    with open("data/comments.txt","r",
     encoding="utf-8"
     ) as f:
 

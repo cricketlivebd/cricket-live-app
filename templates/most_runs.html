@@ -51,7 +51,7 @@
 
         .header{
             display:grid;
-            grid-template-columns: 2fr repeat(6, 1fr);
+            grid-template-columns: 2fr repeat(7, 1fr);
             padding:12px;
             background: linear-gradient(90deg, #ff512f, #dd2476, #1fa2ff);
             color:white;
@@ -67,7 +67,7 @@
 
         .row{
             display:grid;
-            grid-template-columns: 2fr repeat(6, 1fr);
+            grid-template-columns: 2fr repeat(7, 1fr);
             padding:10px;
             margin:6px 0;
             background: rgba(255,255,255,0.08);
@@ -130,6 +130,7 @@
         <div>M</div>
         <div>Inns</div>
         <div>Runs</div>
+        <div>AVG</div>  
         <div>SR</div>
         <div>4s</div>
         <div>6s</div>
@@ -142,6 +143,7 @@
         <div>{{ p.match }}</div>
         <div>{{ p.inns }}</div>
         <div><b>{{ p.runs }}</b></div>
+        <div>{{ p.avg }}</div>
         <div>{{ p.sr }}</div>
         <div>{{ p.fours }}</div>
         <div>{{ p.sixes }}</div>
