@@ -11,6 +11,7 @@ from flask_compress import Compress
 Compress(app)
 import os
 from werkzeug.utils import secure_filename
+from PIL import Image
 import time
 import uuid
 active_users = {}
@@ -57,7 +58,71 @@ def get_db():
 
     return conn
 
+def save_as_webp(file, folder):
 
+    img = Image.open(file)
+
+    # png transparency safe
+    if img.mode in ("RGBA","P"):
+        img = img.convert("RGBA")
+    else:
+        img = img.convert("RGB")
+
+
+    filename = os.path.splitext(
+        file.filename
+    )[0] + ".webp"
+
+
+    path = os.path.join(
+        folder,
+        filename
+    )
+
+    # duplicate avoid
+    if os.path.exists(path):
+
+        import time
+
+        filename = (
+            os.path.splitext(
+            filename
+            )[0]
+
+            +
+
+            "_"
+
+            +
+
+            str(
+            int(time.time())
+            )
+
+            +
+
+            ".webp"
+        )
+
+        path = os.path.join(
+            folder,
+            filename
+        )
+
+
+    img.save(
+
+        path,
+
+        "WEBP",
+
+        quality=70,
+
+        optimize=True
+
+    )
+
+    return filename
 @app.route("/full-convert")
 def full_convert():
 
@@ -1390,11 +1455,9 @@ def upload_player_image():
 
             filename = file.filename
 
-            file.save(
-                os.path.join(
-                    app.config["UPLOAD_FOLDER"],
-                    filename
-                )
+            save_as_webp(
+            file,
+            app.config["UPLOAD_FOLDER"]
             )
 
     return redirect("/player-images")
@@ -1581,7 +1644,10 @@ def upload_team_logo():
             name, ext = os.path.splitext(filename)
             filename = f"{name}_{int(time.time())}{ext}"
 
-        file.save(os.path.join("static/images/teams", filename))
+        save_as_webp(
+        file,
+        "static/images/teams"
+        )
 
     return redirect("/team-logos")
 @app.route("/delete-team-logo", methods=["POST"])
@@ -1769,10 +1835,7 @@ def upload_sponsor_image():
 
                 filename = (f"{name}_"f"{int(time.time())}"f"{ext}")
 
-            file.save(
-            os.path.join("static/images/uploads",filename)
-
-            )
+            save_as_webp(file,"static/images/uploads")
 
 
     return redirect("/sponsor-images")
@@ -1815,11 +1878,7 @@ def kcl_update_news():
     )
 
 
-@app.route(
-"/upload-kcl-update-news",
-
-methods=["POST"]
-)
+@app.route("/upload-kcl-update-news",methods=["POST"])
 
 def upload_kcl_update_news():
 
@@ -1833,50 +1892,20 @@ def upload_kcl_update_news():
         if file:
 
             filename =file.filename
-
-
-            path =os.path.join(
-
-            "static/images/news_images",
-
-            filename
-
-            )
-
+            path =os.path.join("static/images/news_images",filename)
 
             # duplicate avoid
 
-            if os.path.exists(
-            path
-            ):
-
+            if os.path.exists(path):
                 import time
 
-                name, ext = os.path.splitext(
-                filename
-                )
+                name, ext = os.path.splitext(filename)
 
-                filename = (
+                filename = (f"{name}_"f"{int(time.time())}"f"{ext}")
 
-                f"{name}_"
-
-                f"{int(time.time())}"
-
-                f"{ext}"
-
-                )
-
-
-            file.save(
-
-            os.path.join(
-
-            "static/images/news_images",
-
-            filename
-
-            )
-
+            save_as_webp(
+            file,
+            "static/images/news_images"
             )
 
 
@@ -1945,7 +1974,7 @@ def upload_banner():
             name, ext = os.path.splitext(filename)
             filename = f"{name}_{int(time.time())}{ext}"
 
-        file.save(os.path.join("static/images/banner", filename))
+        save_as_webp(file,"static/images/banner")
 
     return redirect("/banner-images")
 
@@ -6247,9 +6276,7 @@ def comments_admin():
 
 def delete_comment(i):
 
-    with open("data/comments.txt","r",
-    encoding="utf-8"
-    ) as f:
+    with open("data/comments.txt","r",encoding="utf-8") as f:
 
         data=f.readlines()
 
@@ -6259,24 +6286,12 @@ def delete_comment(i):
     )
 
 
-    with open(
+    with open("data/comments.txt", "w",encoding="utf-8") as f:
 
-    "data/comments.txt",
-
-    "w",
-
-    encoding="utf-8"
-
-    ) as f:
-
-        f.writelines(
-        data
-        )
+        f.writelines(data)
 
 
-    return redirect(
-    "/comments-admin"
-    )
+    return redirect("/comments-admin")
 
 if __name__ == "__main__":
     import os

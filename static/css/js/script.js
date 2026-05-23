@@ -509,38 +509,76 @@ if (page.includes("live-match") || page.includes("match")) {
             extraTotal += 1 + run;
             extraNB += 1;
 
-            if(run > 0){
-                extraB += run;
-            }
-
             score += 1 + run;
             bowlerRuns += 1 + run;
             overRuns += 1 + run;
 
-            strikerRuns += run;
-            strikerBalls++;
+
+            // 🔥 NB + BYE
+            if(byes){
+
+                extraB += run;
+                strikerBalls++;
+
+            }
+
+            // 🔥 NB + LEG BYE
+            else if(legbyes){
+
+                extraLB += run;
+                strikerBalls++;
+
+            }
+
+            // 🔥 NORMAL NO BALL
+            else{
+
+                strikerRuns += run;
+                strikerBalls++;
+
+            }
+
 
             // 🔥 PARTNERSHIP UPDATE
             pRuns += (1 + run);
 
             if(partnerships.length === 0){
+
                 partnerships.push({
+
                     striker: striker,
                     nonStriker: nonStriker,
                     runs: 0,
                     balls: 0
+
                 });
+
             }
 
-            let current = partnerships[partnerships.length - 1];
-            current.runs += (1 + run);
+            let current =
+            partnerships[
+            partnerships.length - 1
+            ];
 
-            thisOver.push(run > 0 ? run + "NB" : "NB");
+            current.runs +=
+            (1 + run);
 
-            if (run % 2 === 1) swapStrike();
+
+            thisOver.push(
+                run > 0 ?
+                run + "NB"
+                :
+                "NB"
+            );
+
+
+            if(run % 2 === 1)
+                swapStrike();
+
 
             resetChecks();
             updateUI();
+
             return;
         }
 

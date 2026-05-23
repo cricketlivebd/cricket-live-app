@@ -26,7 +26,7 @@
 
     <!-- Upload -->
     <form action="/upload-sponsor-image" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" required>
+        <input type="file" name="image" multiple accept="image/*" required>
         <button type="submit">Upload</button>
     </form>
 
