@@ -431,12 +431,17 @@ app.secret_key = "cricket_live_super_secret_2026"
 @app.after_request
 def add_header(response):
 
-    response.headers[
-    "Cache-Control"
-    ] = (
-    "public,"
-    "max-age=31536000"
-    )
+    if "static" in request.path:
+
+        response.headers[
+        "Cache-Control"
+        ]="public,max-age=31536000"
+
+    else:
+
+        response.headers[
+        "Cache-Control"
+        ]="no-cache,no-store,must-revalidate"
 
     return response
 def load_teams():

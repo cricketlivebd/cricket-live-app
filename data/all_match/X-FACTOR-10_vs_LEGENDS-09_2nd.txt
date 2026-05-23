@@ -29,7 +29,7 @@ this_over=
 over_log=1,4,W,2,4,6
 extra=0,0LB,0B,0WD,0NB
 partnerships=[{"striker":"DEBASHISH_09","nonStriker":"SOHAN_09","runs":5,"balls":2},{"striker":"RUBEL_09","nonStriker":"DEBASHISH_09","runs":12,"balls":3}]
-fall_of_wickets=[{"player":"SOHAN_09","run":5,"wicket":1,"over":"0.3"}]
+fall_of_wickets= [{"player":"SOHAN_09","run":5,"wicket":1,"over":"0.3"}] 
 innings=2
 first_match_file=data/all_match/X-FACTOR-10_vs_LEGENDS-09_1st.txt
 second_match_file=data/all_match/X-FACTOR-10_vs_LEGENDS-09_2nd.txt
@@ -42,7 +42,7 @@ non_striker=RUBEL_09
 bowler=MEHEDI (VC)_10
 bowler_log=MEHEDI (VC)_10=1.0,17,0,1,0
 target=32
-Man_of_the_Match=
+Man_of_the_Match=MEHEDI (VC)_10
 need_runs=15
 need_balls=0
 need_text=LEGENDS-09 need 15 runs in 0 balls
