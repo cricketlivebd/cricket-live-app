@@ -11,7 +11,7 @@
 
 <!-- 🔴 FIRST INNINGS -->
 <div class="team-header">
-    <img src="{{ url_for('static', filename='images/teams/' + first.batting + '.png') }}">
+    <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + first.batting + '.webp') }}">
     <span>{{ first.batting }}</span>
     <span class="score-right">
         {{ first.score }}-{{ first.wickets }} ({{ first.over }}.{{ first.ball }})
@@ -158,7 +158,7 @@
 {% if second and second.score %}
 
 <div class="team-header">
-    <img src="{{ url_for('static', filename='images/teams/' + second.batting + '.png') }}">
+    <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + second.batting + '.webp') }}">
     <span>{{ second.batting }}</span>
     <span class="score-right">
         {{ second.score }}-{{ second.wickets }} ({{ second.over }}.{{ second.ball }})

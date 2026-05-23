@@ -428,6 +428,22 @@ UPLOAD_FOLDER = "static/images/players"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # 🔥 secret key (must)
 app.secret_key = "cricket_live_super_secret_2026"
+#@app.after_request
+#def add_header(response):
+
+    #if "static" in request.path:
+
+       # response.headers[
+       #"Cache-Control"
+        #]="public,max-age=604800"
+
+    #else:
+
+        #response.headers[
+        #"Cache-Control"
+       # ]="no-cache,no-store,must-revalidate"
+
+    #return response
 @app.after_request
 def add_header(response):
 
