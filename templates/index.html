@@ -10,7 +10,7 @@
 <!-- Banner -->
 <div class="banner">
     {% if banner %}
-    <img src="{{ url_for('static', filename='images/banner/' + banner) }}">
+    <img loading="lazy" src="{{ url_for('static', filename='images/banner/' + banner) }}">
     {% endif %}
 </div>
 
@@ -63,19 +63,19 @@
     <div class="slider-track">
 
         {% for img in sponsors %}
-        <img src="{{ url_for('static', filename='images/uploads/' + img) }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/uploads/' + img) }}">
         {% endfor %}
 
         {% for img in sponsors %}
-        <img src="{{ url_for('static', filename='images/uploads/' + img) }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/uploads/' + img) }}">
         {% endfor %}
 
         {% for img in sponsors %}
-        <img src="{{ url_for('static', filename='images/uploads/' + img) }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/uploads/' + img) }}">
         {% endfor %}
 
         {% for img in sponsors %}
-        <img src="{{ url_for('static', filename='images/uploads/' + img) }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/uploads/' + img) }}">
         {% endfor %}
     </div>
 </div>
@@ -108,7 +108,7 @@
         <div class="teams-row">
 
             <div class="team">
-                <img src="{{ url_for('static', filename='images/teams/' + match.team1 + '.webp') }}">
+                <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + match.team1 + '.webp') }}">
                 <p>{{ match.team1 }}</p>
             </div>
 
@@ -145,7 +145,7 @@
             </div>
 
             <div class="team">
-                <img src="{{ url_for('static', filename='images/teams/' + match.team2 + '.webp') }}">
+                <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + match.team2 + '.webp') }}">
                 <p>{{ match.team2 }}</p>
             </div>
 
@@ -164,19 +164,19 @@
     <div class="slider-track"style="height:220px;">
 
         {% for img in news_images %}
-        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        <img loading="lazy" src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
         {% endfor %}
 
         {% for img in news_images %}
-        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        <img loading="lazy" src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
         {% endfor %}
 
         {% for img in news_images %}
-        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        <img loading="lazy" src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
         {% endfor %}
 
         {% for img in news_images %}
-        <img src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
+        <img loading="lazy" src="{{ url_for('static', filename='images/news_images/' + img)}}" style="height:200px;width:auto;">
         {% endfor %}
     </div>
 </div>

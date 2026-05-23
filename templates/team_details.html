@@ -25,7 +25,7 @@
 <div class="team-card row-card team-main">
     <div class="left">{{ team }}</div>
     <div class="right">
-        <img src="{{ url_for('static', filename='images/teams/' + team + '.webp') }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + team + '.webp') }}">
     </div>
 </div>
 
@@ -45,7 +45,7 @@
 <div class="team-card row-card">
 
     <div class="left player-info">
-        <img src="{{ url_for('static', filename='images/players/' + p.name + '.webp') }}">
+        <img loading="lazy"src="{{ url_for('static', filename='images/players/' + p.name + '.webp') }}">
         <span>{{ p.name }}</span>
     </div>
 
@@ -64,7 +64,7 @@
 <div class="team-card row-card">
 
     <div class="left player-info">
-        <img src="{{ url_for('static', filename='images/players/' + b.name + '.webp') }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/players/' + b.name + '.webp') }}">
         <span>{{ b.name }}</span>
     </div>
 
@@ -85,7 +85,7 @@
 <div class="team-card row-card">
 
     <div class="left player-info">
-        <img src="{{ url_for('static', filename='images/players/' + s.name + '.webp') }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/players/' + s.name + '.webp') }}">
         <span>{{ s.name }}</span>
     </div>
 

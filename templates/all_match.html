@@ -33,9 +33,9 @@
 
     <div class="team-row">
         <div class="team-left">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team1 + '.png') }}"
+            <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + m.team1 + '.webp') }}"
                 class="logo-img"
-                onerror="this.src='/static/images/sample.png'">
+                onerror="this.src='/static/images/sample.webp'">
             <span>{{ m.team1 }}</span>
         </div>
 
@@ -47,9 +47,9 @@
 
     <div class="team-row">
         <div class="team-left">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team2 + '.png') }}"
+            <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + m.team2 + '.webp') }}"
                 class="logo-img"
-                onerror="this.src='/static/images/sample.png'">
+                onerror="this.src='/static/images/sample.webp'">
             <span>{{ m.team2 }}</span>
         </div>
 

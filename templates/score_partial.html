@@ -3,7 +3,7 @@
 <h3 class="result-text">{{ result }}</h3>
     <!-- 🔴 FIRST INNINGS -->
     <div class="team-header">
-        <img src="/static/images/teams/{{ first.batting|lower }}.png">
+        <img loading="lazy" src="/static/images/teams/{{ first.batting|lower }}.webp">
         <span>{{ first.batting }}</span>
         <span class="score-right">
             {{ first.score }}-{{ first.wickets }} ({{ first.over }}.{{ first.ball }})
@@ -89,7 +89,7 @@
     <!-- 🔵 SECOND INNINGS -->
     {% if second.score %}
     <div class="team-header">
-        <img src="/static/images/teams/{{ second.batting|lower }}.png">
+        <img loading="lazy" src="/static/images/teams/{{ second.batting|lower }}.webp">
         <span>{{ second.batting }}</span>
         <span class="score-right">
             {{ second.score }}-{{ second.wickets }} ({{ second.over }}.{{ second.ball }})

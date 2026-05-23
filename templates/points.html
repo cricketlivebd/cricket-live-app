@@ -158,7 +158,7 @@
     {% for t in group_a %}
     <div class="points-row {% if t.top %}top-team{% endif %}">
         <div class="team">
-            <img src="{{ url_for('static', filename='images/teams/' + t.team + '.png') }}">
+            <img loading="lazy"src="{{ url_for('static', filename='images/teams/' + t.team + '.webp') }}">
             {{ t.team }}
         </div>
 
@@ -178,9 +178,9 @@
 
             <div class="team">
 
-                <img src="{{ url_for(
+                <img loading="lazy" src="{{ url_for(
                 'static',
-                filename='images/teams/' + t.team + '.png'
+                filename='images/teams/' + t.team + '.webp'
                 ) }}">
 
                 {{ t.team }}
@@ -203,7 +203,7 @@
     {% for t in group_b %}
     <div class="points-row {% if t.top %}top-team{% endif %}">
         <div class="team">
-            <img src="{{ url_for('static', filename='images/teams/' + t.team + '.png') }}">
+            <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + t.team + '.webp') }}">
             {{ t.team }}
         </div>
 
@@ -222,9 +222,9 @@
 
             <div class="team">
 
-                <img src="{{ url_for(
+                <img loading="lazy" src="{{ url_for(
                 'static',
-                filename='images/teams/' + t.team + '.png'
+                filename='images/teams/' + t.team + '.webp'
                 ) }}">
 
                 {{ t.team }}

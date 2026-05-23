@@ -21,8 +21,8 @@
     <!-- 🔴 TEAM 1 -->
     <div class="team-row">
         <div class="team-left">
-            <img src="{{ url_for('static',
-                filename='images/teams/' + (live_match.team1 or 'sample') + '.png') }}"
+            <img loading="lazy" src="{{ url_for('static',
+                filename='images/teams/' + (live_match.team1 or 'sample') + '.webp') }}"
                 class="logo-img"
                 onerror="this.src='/static/images/sample.png'">
             <span>{{ live_match.team1 }}</span>
@@ -37,8 +37,8 @@
     <!-- 🔵 TEAM 2 -->
     <div class="team-row">
         <div class="team-left">
-           <img src="{{ url_for('static',
-                filename='images/teams/' + (live_match.team2 or 'sample') + '.png') }}"
+           <img loading="lazy" src="{{ url_for('static',
+                filename='images/teams/' + (live_match.team2 or 'sample') + '.webp') }}"
                 class="logo-img"
                 onerror="this.src='/static/images/sample.png'">
             <span>{{ live_match.team2 }}</span>

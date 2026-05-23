@@ -26,7 +26,7 @@
 
         <!-- 🔴 TEAM 1 -->
         <div class="team-side" style="display:flex; flex-direction:column; align-items:center;">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team1 + '.png') }}">
+            <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + m.team1 + '.webp') }}">
          
             <span>{{ m.team1 }}</span>
         </div>
@@ -36,7 +36,7 @@
 
         <!-- 🔵 TEAM 2 -->
         <div class="team-side" style="display:flex; flex-direction:column; align-items:center;">
-            <img src="{{ url_for('static', filename='images/teams/' + m.team2 + '.png') }}">
+            <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + m.team2 + '.webp') }}">
             <span>{{ m.team2 }}</span>
         </div>
 

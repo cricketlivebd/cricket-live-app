@@ -28,7 +28,7 @@
     {% for team in teams %}
     <a href="/team/{{team}}" class="team-card">
 
-        <img src="{{ url_for('static', filename='images/teams/' + team + '.webp') }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + team + '.webp') }}">
         <p>{{ team }}</p>
 
     </a>

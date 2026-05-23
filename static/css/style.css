@@ -21,7 +21,7 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: url("../images/banner.png") no-repeat center;
+    background: url("../images/banner.webp") no-repeat center;
     background-size: cover;
     filter: blur(8px);
     transform: scale(1.1);
@@ -31,7 +31,7 @@ body {
 .banner img {
     position: relative;
     z-index: 2;
-    max-width: 100%;
+    max-width: 200%;
     max-height: 100%;
     object-fit: contain;
     display: block;

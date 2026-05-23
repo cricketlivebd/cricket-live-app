@@ -47,7 +47,7 @@
 
         <input type="checkbox" name="files" value="{{ img }}" class="select-box" form="deleteForm">
 
-        <img src="{{ url_for('static', filename='images/teams/' + img) }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/teams/' + img) }}">
         <p>{{ img }}</p>
 
     </div>

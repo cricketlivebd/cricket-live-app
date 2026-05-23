@@ -7,6 +7,7 @@ from flask import request, redirect, session
 from flask import Flask, render_template, request, redirect, session
 from soupsieve import match
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT']=31536000
 from flask_compress import Compress
 Compress(app)
 import os
@@ -427,6 +428,17 @@ UPLOAD_FOLDER = "static/images/players"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # 🔥 secret key (must)
 app.secret_key = "cricket_live_super_secret_2026"
+@app.after_request
+def add_header(response):
+
+    response.headers[
+    "Cache-Control"
+    ] = (
+    "public,"
+    "max-age=31536000"
+    )
+
+    return response
 def load_teams():
     teams = []
 
