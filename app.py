@@ -1903,7 +1903,11 @@ def rename_sponsor_image():
 @app.route("/kcl-update-news")
 def kcl_update_news():
 
-    images = os.listdir("static/images/news_images")
+    folder = "static/images/news_images"
+
+    os.makedirs(folder, exist_ok=True)
+
+    images = os.listdir(folder)
 
     return render_template(
         "kcl_update_news.html",
@@ -1915,10 +1919,9 @@ def kcl_update_news():
 
 def upload_kcl_update_news():
 
-    files =request.files.getlist(
-    "image"
-    )
+    os.makedirs("static/images/news_images",exist_ok=True)
 
+    files =request.files.getlist("image")
 
     for file in files:
 
@@ -1936,15 +1939,10 @@ def upload_kcl_update_news():
 
                 filename = (f"{name}_"f"{int(time.time())}"f"{ext}")
 
-            save_as_webp(
-            file,
-            "static/images/news_images"
-            )
+            save_as_webp(file,"static/images/news_images")
 
 
-    return redirect(
-    "/kcl-update-news"
-    )
+    return redirect("/kcl-update-news")
 
 
 @app.route("/delete-kcl-update-news", methods=["POST"])
