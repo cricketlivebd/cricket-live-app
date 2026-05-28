@@ -191,7 +191,8 @@
         <label><input type="checkbox" id="wicket"> Wicket</label>
 
         <div class="action-btns">
-            <button class="small-btn">Retire</button>
+            <button class="small-btn" onclick="retirePlayer()"> Retire </button>
+
             <button class="small-btn" onclick="location.reload()">Reload</button>
         </div>
     </div>
@@ -320,6 +321,26 @@
         {{ data.bowling }}
     {% endif %}
 </span>
+<script>
+function retirePlayer(){
+
+
+localStorage.setItem(
+    "wicketType",
+    "Retire"
+);
+
+localStorage.setItem(
+    "overEnded",
+    "false"
+);
+
+window.location.href =
+"/fall-of-wicket";
+
+
+}
+</script>
 <script src="{{ url_for('static', filename='css/js/script.js') }}"></script>
 </body>
 <script>

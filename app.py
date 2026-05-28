@@ -2385,7 +2385,7 @@ def live_match():
         "New player:",
         new_player
         )
-        if not wicket_type.startswith("Run out"):
+        if (not wicket_type.startswith("Run out") and wicket_type != "retire" ):
 
             bw = data.get("b_wickets")
             prev_bw = int(bw) if str(bw).isdigit() else 0
